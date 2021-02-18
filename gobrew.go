@@ -97,6 +97,7 @@ func (gb *GoBrew) ListVersions() {
 
 // ListRemoteVersions that are installed by dir ls
 func (gb *GoBrew) ListRemoteVersions() {
+	log.Println("[Info]: Fetching remote versions")
 	cmd := exec.Command(
 		"git",
 		"ls-remote",
