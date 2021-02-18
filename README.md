@@ -88,5 +88,5 @@ $ gobrew install <version>            Download and install <version> (from binar
 $ gobrew uninstall <version>          Uninstall <version>
 $ gobrew list                         List installed versions
 $ gobrew ls                           Alias for list
-$ gobrew ls-remote                    (not implemented yet) List remote versions
+$ gobrew ls-remote                    List remote versions
 ```
