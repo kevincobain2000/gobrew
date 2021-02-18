@@ -17,6 +17,6 @@ elif [[ "$OSTYPE" == "win64" ]]; then
 fi
 
 
-curl -ks https://raw.githubusercontent.com/kevincobain2000/gobrew/master/bin/$GOBREW_ARCH_BIN -o $GOBREW_BIN_DIR/gobrew
+curl -kLs https://raw.githubusercontent.com/kevincobain2000/gobrew/master/bin/$GOBREW_ARCH_BIN -o $GOBREW_BIN_DIR/gobrew
 
 chmod +x $GOBREW_BIN_DIR/gobrew
