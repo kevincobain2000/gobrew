@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
 
 	"github.com/kevincobain2000/gobrew"
 )
@@ -13,6 +14,14 @@ var versionArg = ""
 
 func init() {
 	log.SetFlags(0)
+
+	if len(os.Args) > 1 {
+		if os.Args[1] == "-h" {
+			log.Print(usage())
+			return
+		}
+	}
+
 	flag.Parse()
 	args = flag.Args()
 	if len(args) == 0 {
@@ -31,32 +40,26 @@ func main() {
 	switch actionArg {
 	case "h", "help":
 		log.Print(usage())
-		break
 	case "ls", "list":
 		gb.ListVersions()
-		break
 	case "ls-remote":
 		gb.ListRemoteVersions()
-		break
 	case "install":
 		gb.Install(versionArg)
 		if gb.CurrentVersion() == "" {
 			gb.Use(versionArg)
 		}
-		break
 	case "use":
 		gb.Install(versionArg)
 		gb.Use(versionArg)
-		break
 	case "uninstall":
 		gb.Uninstall(versionArg)
-		break
 	}
 }
 
 func usage() string {
 	msg := `
-gobrew 1.0.0
+gobrew 1.0.2
 
 Usage:
     gobrew help                         Show this message

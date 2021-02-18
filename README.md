@@ -10,7 +10,7 @@ Install with curl
 $ curl https://raw.githubusercontent.com/kevincobain2000/gobrew/master/gobrew.sh | sh -
 ```
 
-Add `PATH` setting your shell config file (`.bashrc` or `.zshrc`).
+Add `GOPATH` & `PATH` setting your shell config file (`.bashrc` or `.zshrc`).
 
  ```sh
 export GOPATH="$HOME/.gobrew/current/go:$PATH"
