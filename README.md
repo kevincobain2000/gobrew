@@ -19,7 +19,6 @@ $ go get -u github.com/kevincobain2000/gobrew/cmd/gobrew
 Add `GOPATH` & `PATH` setting your shell config file (`.bashrc` or `.zshrc`).
 
  ```sh
-export GOPATH="$HOME/.gobrew/current/go:$PATH"
 export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
 ```
 
@@ -95,4 +94,11 @@ $ gobrew uninstall <version>          Uninstall <version>
 $ gobrew list                         List installed versions
 $ gobrew ls                           Alias for list
 $ gobrew ls-remote                    List remote versions
+```
+
+
+# Todo
+
+```
+export GOPATH="$HOME/.gobrew/current/go" (fixing)
 ```
