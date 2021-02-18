@@ -9,7 +9,6 @@ Install with curl
 ```sh
 $ curl https://raw.githubusercontent.com/kevincobain2000/gobrew/master/gobrew.sh | sh -
 ```
-### Step 2
 
 Add `PATH` setting your shell config file (`.bashrc` or `.zshrc`).
 
@@ -19,6 +18,7 @@ export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
 ```
 
 Reload config.
+<span style="color:#03c03c">DONE!</span>.
 
 ### Confirm
 
