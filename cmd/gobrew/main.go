@@ -52,7 +52,6 @@ func main() {
 		gb.Uninstall(versionArg)
 		break
 	}
-	// gobrew.Execute()
 }
 
 func usage() string {
