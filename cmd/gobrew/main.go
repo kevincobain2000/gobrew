@@ -12,14 +12,15 @@ var args = []string{}
 var actionArg = ""
 var versionArg = ""
 
+var allowedArgs = []string{"h", "help", "ls", "list", "ls-remote", "install", "use", "uninstall"}
+
 func init() {
 	log.SetFlags(0)
 
-	if len(os.Args) > 1 {
-		if os.Args[1] == "-h" {
-			log.Print(usage())
-			return
-		}
+	if isArgAllowed() != true {
+		log.Println("[Info] Invalid usage")
+		log.Print(usage())
+		return
 	}
 
 	flag.Parse()
@@ -57,9 +58,39 @@ func main() {
 	}
 }
 
+func isArgAllowed() bool {
+	ok := true
+	if len(os.Args) > 1 {
+		_, ok = Find(allowedArgs, os.Args[1])
+		if !ok {
+			return false
+		}
+	}
+
+	if len(os.Args) > 2 {
+		_, ok = Find(allowedArgs, os.Args[1])
+		if !ok {
+			return false
+		}
+	}
+
+	return ok
+}
+
+// Find takes a slice and looks for an element in it. If found it will
+// return it's key, otherwise it will return -1 and a bool of false.
+func Find(slice []string, val string) (int, bool) {
+	for i, item := range slice {
+		if item == val {
+			return i, true
+		}
+	}
+	return -1, false
+}
+
 func usage() string {
 	msg := `
-gobrew 1.0.2
+gobrew 1.0.3
 
 Usage:
     gobrew help                         Show this message
