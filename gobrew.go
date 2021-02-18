@@ -101,7 +101,7 @@ func (gb *GoBrew) ListRemoteVersions() {
 	cmd := exec.Command(
 		"git",
 		"ls-remote",
-		"--sort=version:refname",
+		// "--sort=version:refname",
 		"--tags",
 		fetchTagsRepo,
 		"go*")
