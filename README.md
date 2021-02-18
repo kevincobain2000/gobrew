@@ -18,7 +18,8 @@ export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
 ```
 
 Reload config.
-<span style="color:#03c03c">DONE!</span>.
+
+**All DONE!**
 
 ### Confirm
 
