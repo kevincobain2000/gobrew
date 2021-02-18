@@ -3,7 +3,7 @@
 ### Step 1
 
 ```sh
-curl https://raw.githubusercontent.com/kevincobain2000/gobrew/gobrew.sh | sh -
+curl https://raw.githubusercontent.com/kevincobain2000/gobrew/master/gobrew.sh | sh -
 ```
 ### Step 2
 
