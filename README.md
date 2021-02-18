@@ -7,7 +7,7 @@ Go version manager
 Install with curl
 
 ```sh
-$ curl https://raw.githubusercontent.com/kevincobain2000/gobrew/master/gobrew.sh | sh -
+$ curl https://git.io/gobrew | sh -
 ```
 
 or Install with go
