@@ -20,3 +20,6 @@ fi
 curl -kLs https://raw.githubusercontent.com/kevincobain2000/gobrew/master/bin/$GOBREW_ARCH_BIN -o $GOBREW_BIN_DIR/gobrew
 
 chmod +x $GOBREW_BIN_DIR/gobrew
+
+echo "Installed successfully"
+echo "don't forget to add GOPATH and PATH to your ~/.bashrc"
