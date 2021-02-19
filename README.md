@@ -20,10 +20,15 @@ Add `GOPATH` & `PATH` setting your shell config file (`.bashrc` or `.zshrc`).
 
  ```sh
 export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
+
 ```
+
+(optional)
 
 ```sh
 export GOPATH="$HOME/go"
+## or set for version specific
+export GOPATH="$HOME/.gobrew/current/go"
 ```
 
 Reload config.
