@@ -6,6 +6,8 @@ mkdir -p $GOBREW_BIN_DIR
 GOBREW_ARCH_BIN=''
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         GOBREW_ARCH_BIN="gobrew-linux-64"
+elif [[ "$OSTYPE" == "linux"*  ]]; then
+        GOBREW_ARCH_BIN="gobrew-linux-64"        
 elif [[ "$OSTYPE" == "darwin"* ]]; then
         GOBREW_ARCH_BIN="gobrew-darwin-64"
 elif [[ "$OSTYPE" == "win64" ]]; then
