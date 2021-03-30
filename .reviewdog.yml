@@ -1,0 +1,18 @@
+runner:
+  golint:
+    cmd: golint ./...
+  govet:
+    cmd: go vet -all .
+    format: govet
+    level: warning
+  golangci:
+    cmd: golangci-lint run --enable goimports --enable gocritic --skip-dirs ./vendor --out-format=line-number ./...
+    errorformat:
+      - '%E%f:%l:%c: %m'
+      - '%E%f:%l: %m'
+      - '%C%.%#'
+    level: warning
+  staticcheck:
+    cmd: staticcheck $(go list ./... | grep -v /vendor/)
+    errorformat:
+      - "%f:%l:%c: %m"
