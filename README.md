@@ -2,15 +2,15 @@
 
 Go version manager
 
-## Install
+## Install or update
 
-Install with curl
+With curl
 
 ```sh
 $ curl -sLk https://git.io/gobrew | sh -
 ```
 
-or Install with go
+or with go
 
 ```sh
 $ go get -u github.com/kevincobain2000/gobrew/cmd/gobrew
