@@ -6,13 +6,13 @@ runner:
     format: govet
     level: warning
   golangci:
-    cmd: golangci-lint run --enable goimports --enable gocritic --skip-dirs ./vendor --out-format=line-number ./...
+    cmd: golangci-lint run --enable goimports --enable gocritic --skip-dirs ./vendor --out-format=line-number ./... || true
     errorformat:
       - '%E%f:%l:%c: %m'
       - '%E%f:%l: %m'
       - '%C%.%#'
     level: warning
   staticcheck:
-    cmd: staticcheck $(go list ./... | grep -v /vendor/)
+    cmd: staticcheck $(go list ./... | grep -v /vendor/) || true
     errorformat:
       - "%f:%l:%c: %m"
