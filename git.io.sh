@@ -18,6 +18,14 @@ case $THISOS in
       ;;
 esac
 
+if [ -z "$GOBREW_VERSION" ]
+then
+      echo "using GOBREW_VERSION latest\n"
+      GOBREW_VERSION=master
+else
+      echo "using GOBREW_VERSION $GOBREW_VERSION\n"
+fi
+
 curl -kLs https://raw.githubusercontent.com/kevincobain2000/gobrew/master/bin/$GOBREW_ARCH_BIN -o $GOBREW_BIN_DIR/gobrew
 
 chmod +x $GOBREW_BIN_DIR/gobrew
