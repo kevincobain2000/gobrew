@@ -1,3 +1,5 @@
 module github.com/kevincobain2000/gobrew
 
 go 1.16
+
+require github.com/fatih/color v1.10.0
