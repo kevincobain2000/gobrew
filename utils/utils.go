@@ -4,7 +4,14 @@ import (
 	"io"
 	"net/http"
 	"os"
+
+	"github.com/fatih/color"
 )
+
+var ColorMajorVersion = color.New(color.FgHiCyan)
+var ColorSuccess = color.New(color.FgHiGreen)
+var ColorInfo = color.New(color.FgHiYellow)
+var ColorError = color.New(color.FgHiRed)
 
 // Download resource from url to a destination path
 func Download(url string, filepath string) (err error) {
