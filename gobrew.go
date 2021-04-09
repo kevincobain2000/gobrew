@@ -12,7 +12,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/fatih/color"
 	"github.com/kevincobain2000/gobrew/utils"
 )
 
@@ -21,11 +20,6 @@ const (
 	registryPath  string = "https://golang.org/dl/"
 	fetchTagsRepo string = "https://github.com/golang/go"
 )
-
-var colorMajorVersion = color.New(color.FgHiCyan)
-var colorSuccess = color.New(color.FgHiGreen)
-var colorInfo = color.New(color.FgHiYellow)
-var colorError = color.New(color.FgHiRed)
 
 // Command ...
 type Command interface {
@@ -86,7 +80,7 @@ func (gb *GoBrew) getArch() string {
 func (gb *GoBrew) ListVersions() {
 	files, err := ioutil.ReadDir(gb.versionsDir)
 	if err != nil {
-		colorError.Printf("[Error]: List versions failed: %s", err)
+		utils.ColorError.Printf("[Error]: List versions failed: %s", err)
 		os.Exit(0)
 	}
 	cv := gb.CurrentVersion()
@@ -94,7 +88,7 @@ func (gb *GoBrew) ListVersions() {
 		version := f.Name()
 		if version == cv {
 			version = cv + "*"
-			colorSuccess.Println(version)
+			utils.ColorSuccess.Println(version)
 		} else {
 			log.Println(version)
 		}
@@ -118,7 +112,7 @@ func (gb *GoBrew) ListRemoteVersions() {
 		"go*")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		colorError.Printf("[Error]: List remote versions failed: %s", err)
+		utils.ColorError.Printf("[Error]: List remote versions failed: %s", err)
 		os.Exit(0)
 	}
 	tagsRaw := utils.BytesToString(output)
@@ -159,10 +153,10 @@ func printGroupedVersions(versions []string) {
 
 	for _, k := range keys {
 		if k == "1.0" || k == "2.0" {
-			colorMajorVersion.Print(strings.Split(k, ".")[0])
+			utils.ColorMajorVersion.Print(strings.Split(k, ".")[0])
 			fmt.Print("\t")
 		} else {
-			colorMajorVersion.Print(k)
+			utils.ColorMajorVersion.Print(k)
 			fmt.Print("\t")
 		}
 
@@ -205,16 +199,16 @@ func (gb *GoBrew) Uninstall(version string) {
 		log.Fatal("[Error] No version provided")
 	}
 	if gb.CurrentVersion() == version {
-		colorError.Printf("[Error] Version: %s you are trying to remove is your current version. Please use a different version first before uninstalling the current version\n", version)
+		utils.ColorError.Printf("[Error] Version: %s you are trying to remove is your current version. Please use a different version first before uninstalling the current version\n", version)
 		os.Exit(0)
 		return
 	}
 	if gb.existsVersion(version) == false {
-		colorError.Printf("[Error] Version: %s you are trying to remove is not installed\n", version)
+		utils.ColorError.Printf("[Error] Version: %s you are trying to remove is not installed\n", version)
 		os.Exit(0)
 	}
 	gb.cleanVersionDir(version)
-	colorSuccess.Printf("[Success] Version: %s uninstalled\n", version)
+	utils.ColorSuccess.Printf("[Success] Version: %s uninstalled\n", version)
 }
 
 func (gb *GoBrew) cleanVersionDir(version string) {
@@ -232,26 +226,26 @@ func (gb *GoBrew) Install(version string) {
 	}
 	gb.mkdirs(version)
 	if gb.existsVersion(version) == true {
-		colorInfo.Printf("[Info] Version: %s exists \n", version)
+		utils.ColorInfo.Printf("[Info] Version: %s exists \n", version)
 		return
 	}
 
-	colorInfo.Printf("[Info] Downloading version: %s \n", version)
+	utils.ColorInfo.Printf("[Info] Downloading version: %s \n", version)
 	gb.downloadAndExtract(version)
 	gb.cleanDownloadsDir()
-	colorSuccess.Printf("[Success] Downloaded version: %s\n", version)
+	utils.ColorSuccess.Printf("[Success] Downloaded version: %s\n", version)
 }
 
 // Use a version
 func (gb *GoBrew) Use(version string) {
 	if gb.CurrentVersion() == version {
-		colorInfo.Printf("[Info] Version: %s is already your current version \n", version)
+		utils.ColorInfo.Printf("[Info] Version: %s is already your current version \n", version)
 		return
 	}
-	colorInfo.Printf("[Info] Changing go version to: %s \n", version)
+	utils.ColorInfo.Printf("[Info] Changing go version to: %s \n", version)
 	gb.changeSymblinkGoBin(version)
 	gb.changeSymblinkGo(version)
-	colorSuccess.Printf("[Success] Changed go version to: %s\n", version)
+	utils.ColorSuccess.Printf("[Success] Changed go version to: %s\n", version)
 }
 
 func (gb *GoBrew) mkdirs(version string) {
@@ -276,8 +270,8 @@ func (gb *GoBrew) downloadAndExtract(version string) {
 
 	if err != nil {
 		gb.cleanVersionDir(version)
-		colorInfo.Printf("[Info]: Downloading version failed: %s \n", err)
-		colorError.Printf("[Error]: Please check connectivity to url: %s\n", downloadURL)
+		utils.ColorInfo.Printf("[Info]: Downloading version failed: %s \n", err)
+		utils.ColorError.Printf("[Error]: Please check connectivity to url: %s\n", downloadURL)
 		os.Exit(0)
 	}
 
@@ -288,13 +282,13 @@ func (gb *GoBrew) downloadAndExtract(version string) {
 		"-C",
 		gb.getVersionDir(version))
 
-	colorInfo.Printf("[Success] Untar to %s\n", gb.getVersionDir(version))
+	utils.ColorInfo.Printf("[Success] Untar to %s\n", gb.getVersionDir(version))
 	_, err = cmd.Output()
 	if err != nil {
 		// clean up dir
 		gb.cleanVersionDir(version)
-		colorInfo.Printf("[Info]: Untar failed: %s \n", err)
-		colorError.Printf("[Error]: Please check if version exists from url: %s\n", downloadURL)
+		utils.ColorInfo.Printf("[Info]: Untar failed: %s \n", err)
+		utils.ColorError.Printf("[Error]: Please check if version exists from url: %s\n", downloadURL)
 		os.Exit(0)
 	}
 }
@@ -308,7 +302,7 @@ func (gb *GoBrew) changeSymblinkGoBin(version string) {
 
 	_, err := cmd.Output()
 	if err != nil {
-		colorError.Printf("[Error]: symbolic link failed: %s\n", err)
+		utils.ColorError.Printf("[Error]: symbolic link failed: %s\n", err)
 		os.Exit(0)
 	}
 
@@ -321,7 +315,7 @@ func (gb *GoBrew) changeSymblinkGo(version string) {
 
 	_, err := cmd.Output()
 	if err != nil {
-		colorError.Printf("[Error]: symbolic link failed: %s\n", err)
+		utils.ColorError.Printf("[Error]: symbolic link failed: %s\n", err)
 		os.Exit(0)
 	}
 }
