@@ -20,15 +20,24 @@ esac
 
 if [ -z "$GOBREW_VERSION" ]
 then
-      echo "using GOBREW_VERSION latest\n"
       GOBREW_VERSION=master
+      echo "Using gobrew version latest\n"
 else
-      echo "using GOBREW_VERSION $GOBREW_VERSION\n"
+      echo "Using gobrew version $GOBREW_VERSION\n"
 fi
 
 curl -kLs https://raw.githubusercontent.com/kevincobain2000/gobrew/master/bin/$GOBREW_ARCH_BIN -o $GOBREW_BIN_DIR/gobrew
 
 chmod +x $GOBREW_BIN_DIR/gobrew
 
-echo "Installed successfully"
+echo "Installed successfully to: $GOBREW_BIN_DIR/gobrew"
 
+echo "============================"
+$GOBREW_BIN_DIR/gobrew help
+echo "============================"
+
+echo
+echo "***Please add PATH below to your ~/.bashrc manually***"
+echo
+echo 'export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"'
+echo

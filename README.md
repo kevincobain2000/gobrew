@@ -23,6 +23,10 @@ export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
 
 ```
 
+Reload config.
+
+**All DONE!**
+
 (optional)
 
 ```sh
@@ -30,10 +34,6 @@ export GOPATH="$HOME/go"
 ## or set for version specific
 export GOPATH="$HOME/.gobrew/current/go"
 ```
-
-Reload config.
-
-**All DONE!**
 
 ### Confirm
 
