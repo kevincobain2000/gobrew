@@ -10,7 +10,7 @@ With curl
 $ curl -sLk https://git.io/gobrew | sh -
 ```
 
-or with go
+or install using go
 
 ```sh
 $ go get -u github.com/kevincobain2000/gobrew/cmd/gobrew
@@ -104,3 +104,8 @@ $ gobrew list                         List installed versions
 $ gobrew ls                           Alias for list
 $ gobrew ls-remote                    List remote versions
 ```
+
+# Screenshots
+
+![colors-ls-remote](https://i.imgur.com/1UIj4E8.png)
+![colors-install](https://i.imgur.com/DDD19w9.png)
