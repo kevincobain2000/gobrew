@@ -85,8 +85,29 @@ func (gb *GoBrew) ListVersions() {
 		os.Exit(0)
 	}
 	cv := gb.CurrentVersion()
-	for _, f := range files {
-		version := f.Name()
+
+	versionsSemantic := make([]*semver.Version, len(files))
+
+	for i, f := range files {
+		v, err := semver.NewVersion(f.Name())
+		if err != nil {
+			utils.ColorError.Printf("Error parsing version: %s", err)
+		}
+
+		versionsSemantic[i] = v
+	}
+
+	// sort semantic versions
+	sort.Sort(semver.Collection(versionsSemantic))
+
+	for _, versionSemantic := range versionsSemantic {
+		version := versionSemantic.String()
+		// 1.8.0 -> 1.8
+		reMajorVersion, _ := regexp.Compile("[0-9]+.[0-9]+.0")
+		if reMajorVersion.MatchString((version)) {
+			version = strings.Split(version, ".")[0] + "." + strings.Split(version, ".")[1]
+		}
+
 		if version == cv {
 			version = cv + "*"
 			utils.ColorSuccess.Println(version)
@@ -163,7 +184,7 @@ func printGroupedVersions(versions []string) {
 	sort.Sort(semver.Collection(versionsSemantic))
 
 	// match 1.0.0 or 2.0.0
-	reTopVersion, _ := regexp.Compile("[0-9].0.0")
+	reTopVersion, _ := regexp.Compile("[0-9]+.0.0")
 
 	for _, versionSemantic := range versionsSemantic {
 		strKey := versionSemantic.String()
