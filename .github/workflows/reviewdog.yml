@@ -26,12 +26,12 @@ jobs:
       # staticcheck codes: https://staticcheck.io/docs/checks
       - name: Install linters
         run: |
-          go get -u golang.org/x/lint/golint
-          go get -u github.com/golangci/golangci-lint/cmd/golangci-lint@v1.38.0
-          go get -u honnef.co/go/tools/cmd/staticcheck
+          go get golang.org/x/lint/golint
+          go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.38.0
+          go get honnef.co/go/tools/cmd/staticcheck
 
       - name: Install reviewdog
-        run: go get -u github.com/reviewdog/reviewdog/cmd/reviewdog
+        run: go get github.com/reviewdog/reviewdog/cmd/reviewdog
 
       - name: Checkout code
         uses: actions/checkout@v2
