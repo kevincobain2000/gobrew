@@ -12,6 +12,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/Masterminds/semver"
 	"github.com/kevincobain2000/gobrew/utils"
 )
 
@@ -125,8 +126,6 @@ func (gb *GoBrew) ListRemoteVersions() {
 		versions = append(versions, versionTag)
 	}
 	printGroupedVersions(versions)
-
-	printGroupedVersions(versions)
 }
 
 func printGroupedVersions(versions []string) {
@@ -144,23 +143,46 @@ func printGroupedVersions(versions []string) {
 		}
 	}
 
-	// sort
-	keys := make([]string, 0, len(groupedVersions))
-	for k := range groupedVersions {
-		keys = append(keys, k)
+	// groupedVersionKeys := []string{"1", "1.1", "1.2", ..., "1.17"}
+	groupedVersionKeys := make([]string, 0, len(groupedVersions))
+	for groupedVersionKey := range groupedVersions {
+		groupedVersionKeys = append(groupedVersionKeys, groupedVersionKey)
 	}
-	sort.Strings(keys)
 
-	for _, k := range keys {
-		if k == "1.0" || k == "2.0" {
-			utils.ColorMajorVersion.Print(strings.Split(k, ".")[0])
+	versionsSemantic := make([]*semver.Version, len(groupedVersionKeys))
+	for i, r := range groupedVersionKeys {
+		v, err := semver.NewVersion(r)
+		if err != nil {
+			utils.ColorError.Printf("Error parsing version: %s", err)
+		}
+
+		versionsSemantic[i] = v
+	}
+
+	// sort semantic versions
+	sort.Sort(semver.Collection(versionsSemantic))
+
+	// match 1.0.0 or 2.0.0
+	reTopVersion, _ := regexp.Compile("[0-9].0.0")
+
+	for _, versionSemantic := range versionsSemantic {
+		strKey := versionSemantic.String()
+		lookupKey := ""
+		versionParts := strings.Split(strKey, ".")
+
+		// prepare lookup key for the grouped version map.
+		// 1.0.0 -> 1.0, 1.1.1 -> 1.1
+		lookupKey = versionParts[0] + "." + versionParts[1]
+		// On match 1.0.0, print 1. On match 2.0.0 print 2
+		if reTopVersion.MatchString((strKey)) {
+			utils.ColorMajorVersion.Print(versionParts[0])
 			fmt.Print("\t")
 		} else {
-			utils.ColorMajorVersion.Print(k)
+			utils.ColorMajorVersion.Print(lookupKey)
 			fmt.Print("\t")
 		}
 
-		for _, v := range groupedVersions[k] {
+		for _, v := range groupedVersions[lookupKey] {
 			fmt.Print(v + "  ")
 		}
 		fmt.Println()

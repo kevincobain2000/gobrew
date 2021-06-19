@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 
@@ -12,7 +13,7 @@ var args = []string{}
 var actionArg = ""
 var versionArg = ""
 
-var allowedArgs = []string{"h", "help", "ls", "list", "ls-remote", "install", "use", "uninstall"}
+var allowedArgs = []string{"h", "help", "ls", "list", "ls-remote", "install", "use", "uninstall", "self-update"}
 
 func init() {
 	log.SetFlags(0)
@@ -55,6 +56,11 @@ func main() {
 		gb.Use(versionArg)
 	case "uninstall":
 		gb.Uninstall(versionArg)
+	case "self-update":
+		fmt.Println("Please execute curl cmd for self update")
+		fmt.Println("========================================")
+		fmt.Println("curl -sLk https://git.io/gobrew | sh -")
+		fmt.Println("========================================")
 	}
 }
 
@@ -90,7 +96,7 @@ func Find(slice []string, val string) (int, bool) {
 
 func usage() string {
 	msg := `
-gobrew 1.0.7
+gobrew 1.0.8
 
 Usage:
     gobrew help                         Show this message
@@ -100,6 +106,7 @@ Usage:
     gobrew list                         List installed versions
     gobrew ls                           Alias for list
     gobrew ls-remote                   	List remote versions
+    gobrew self-update                 	Self update this tool
 
 Example:
     # install and use
