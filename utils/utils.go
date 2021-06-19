@@ -8,7 +8,7 @@ import (
 	"github.com/fatih/color"
 )
 
-var ColorMajorVersion = color.New(color.FgHiCyan)
+var ColorMajorVersion = color.New(color.FgHiYellow)
 var ColorSuccess = color.New(color.FgHiGreen)
 var ColorInfo = color.New(color.FgHiYellow)
 var ColorError = color.New(color.FgHiRed)
