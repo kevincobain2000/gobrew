@@ -107,5 +107,5 @@ $ gobrew ls-remote                    List remote versions
 
 # Screenshots
 
-![colors-ls-remote](https://i.imgur.com/1UIj4E8.png)
+![colors-ls-remote](https://i.imgur.com/j6WP677.png)
 ![colors-install](https://i.imgur.com/DDD19w9.png)
