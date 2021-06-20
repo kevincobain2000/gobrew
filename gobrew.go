@@ -86,15 +86,15 @@ func (gb *GoBrew) ListVersions() {
 	}
 	cv := gb.CurrentVersion()
 
-	versionsSemantic := make([]*semver.Version, len(files))
+	versionsSemantic := make([]*semver.Version, 0)
 
-	for i, f := range files {
+	for _, f := range files {
 		v, err := semver.NewVersion(f.Name())
 		if err != nil {
-			utils.ColorError.Printf("Error parsing version: %s", err)
+			// utils.ColorError.Printf("Error parsing version: %s", err)
+		} else {
+			versionsSemantic = append(versionsSemantic, v)
 		}
-
-		versionsSemantic[i] = v
 	}
 
 	// sort semantic versions
@@ -170,14 +170,14 @@ func printGroupedVersions(versions []string) {
 		groupedVersionKeys = append(groupedVersionKeys, groupedVersionKey)
 	}
 
-	versionsSemantic := make([]*semver.Version, len(groupedVersionKeys))
-	for i, r := range groupedVersionKeys {
+	versionsSemantic := make([]*semver.Version, 0)
+	for _, r := range groupedVersionKeys {
 		v, err := semver.NewVersion(r)
 		if err != nil {
-			utils.ColorError.Printf("Error parsing version: %s", err)
+			// utils.ColorError.Printf("Error parsing version: %s", err)
+		} else {
+			versionsSemantic = append(versionsSemantic, v)
 		}
-
-		versionsSemantic[i] = v
 	}
 
 	// sort semantic versions
@@ -203,8 +203,21 @@ func printGroupedVersions(versions []string) {
 			fmt.Print("\t")
 		}
 
-		for _, v := range groupedVersions[lookupKey] {
-			fmt.Print(v + "  ")
+		groupedVersionsSemantic := make([]*semver.Version, 0)
+		for _, r := range groupedVersions[lookupKey] {
+			v, err := semver.NewVersion(r)
+			if err != nil {
+				// utils.ColorError.Printf("Error parsing version: %s", err)
+			} else {
+				groupedVersionsSemantic = append(groupedVersionsSemantic, v)
+			}
+
+		}
+		// sort semantic versions
+		sort.Sort(semver.Collection(groupedVersionsSemantic))
+
+		for _, gvSemantic := range groupedVersionsSemantic {
+			fmt.Print(gvSemantic.String() + "  ")
 		}
 		fmt.Println()
 	}
