@@ -198,7 +198,7 @@ func printGroupedVersions(versions []string) {
 		if reTopVersion.MatchString((strKey)) {
 			utils.ColorMajorVersion.Print(versionParts[0])
 			fmt.Print("\t")
-		} else {
+		} else if utils.Find(versions, lookupKey) {
 			utils.ColorMajorVersion.Print(lookupKey)
 			fmt.Print("\t")
 		}
