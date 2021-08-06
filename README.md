@@ -109,3 +109,8 @@ $ gobrew ls-remote                    List remote versions
 
 ![colors-ls-remote](https://i.imgur.com/gTBCfZL.png)
 ![colors-ls](https://i.imgur.com/KQbiuyH.png)
+
+
+# Change Log
+
+- v1.2.0 - Added rc|beta versions, appended at the end of list
