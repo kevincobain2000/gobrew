@@ -96,7 +96,7 @@ func Find(slice []string, val string) (int, bool) {
 
 func usage() string {
 	msg := `
-gobrew 1.1.0
+gobrew 1.1.1
 
 Usage:
     gobrew help                         Show this message
