@@ -127,7 +127,7 @@ $ gobrew ls-remote                    List remote versions
       run: $HOME/.gobrew/current/bin/go version
 ```
 
-Or you can also set path to gobrew inside $GITHUB_PATH
+Or you can also set path to gobrew inside ``$GITHUB_PATH``
 
 # Change Log
 
