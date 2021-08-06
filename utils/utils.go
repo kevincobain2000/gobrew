@@ -42,3 +42,13 @@ func Download(url string, filepath string) (err error) {
 func BytesToString(data []byte) string {
 	return string(data[:])
 }
+
+// Find takes a slice and looks for an element in it.
+func Find(slice []string, val string) bool {
+	for _, item := range slice {
+		if item == val {
+			return true
+		}
+	}
+	return false
+}
