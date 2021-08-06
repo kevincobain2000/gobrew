@@ -96,7 +96,7 @@ func Find(slice []string, val string) (int, bool) {
 
 func usage() string {
 	msg := `
-gobrew 1.1.1
+gobrew 1.2.0
 
 Usage:
     gobrew help                         Show this message
@@ -105,7 +105,7 @@ Usage:
     gobrew uninstall <version>          Uninstall <version>
     gobrew list                         List installed versions
     gobrew ls                           Alias for list
-    gobrew ls-remote                   	List remote versions
+    gobrew ls-remote                   	List remote versions (including rc|beta versions)
     gobrew self-update                 	Self update this tool
 
 Example:

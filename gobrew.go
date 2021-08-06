@@ -116,6 +116,21 @@ func (gb *GoBrew) ListVersions() {
 		}
 	}
 
+	// print rc and beta versions in the end
+	for _, f := range files {
+		rcVersion := f.Name()
+		r, _ := regexp.Compile("beta.*|rc.*")
+		matches := r.FindAllString(rcVersion, -1)
+		if len(matches) == 1 {
+			if rcVersion == cv {
+				rcVersion = cv + "*"
+				utils.ColorSuccess.Println(rcVersion)
+			} else {
+				log.Println(rcVersion)
+			}
+		}
+	}
+
 	if cv != "" {
 		log.Println()
 		log.Printf("current: %s", cv)
@@ -198,7 +213,7 @@ func printGroupedVersions(versions []string) {
 		if reTopVersion.MatchString((strKey)) {
 			utils.ColorMajorVersion.Print(versionParts[0])
 			fmt.Print("\t")
-		} else if utils.Find(versions, lookupKey) {
+		} else {
 			utils.ColorMajorVersion.Print(lookupKey)
 			fmt.Print("\t")
 		}
@@ -218,6 +233,15 @@ func printGroupedVersions(versions []string) {
 
 		for _, gvSemantic := range groupedVersionsSemantic {
 			fmt.Print(gvSemantic.String() + "  ")
+		}
+
+		// print rc and beta versions in the end
+		for _, rcVersion := range groupedVersions[lookupKey] {
+			r, _ := regexp.Compile("beta.*|rc.*")
+			matches := r.FindAllString(rcVersion, -1)
+			if len(matches) == 1 {
+				fmt.Print(rcVersion + "  ")
+			}
 		}
 		fmt.Println()
 	}
