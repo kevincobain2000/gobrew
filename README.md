@@ -114,20 +114,17 @@ $ gobrew ls-remote                    List remote versions
 # Setup Go in Github actions
 
 ```yml
+    - name: Set Env
+      run: |
+         echo "GOPATH=$HOME/.gobrew/current/go" >> $GITHUB_ENV
+         echo "$HOME/.gobrew/bin" >> $GITHUB_PATH
+         echo "$HOME/.gobrew/current/bin/" >> $GITHUB_PATH
     - name: Install Gobrew
       run: |
          curl -sLk https://git.io/gobrew | sh -
-         $HOME/.gobrew/bin/gobrew use ${{ matrix.go-version }}
-         $HOME/.gobrew/current/bin/go version
-
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Go version
-      run: $HOME/.gobrew/current/bin/go version
+         gobrew use ${{ matrix.go-version }}
+         go version
 ```
-
-Or you can also set path to gobrew inside ``$GITHUB_PATH``
 
 # Change Log
 
