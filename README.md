@@ -1,3 +1,10 @@
+# Build Status
+
+| Branch  | Status                                                                                     |
+| :------ | :----------------------------------------------------------------------------------------- |
+| master  | ![Test](https://github.com/kevincobain2000/gobrew/workflows/Test/badge.svg?branch=master)  |
+| develop | ![Test](https://github.com/kevincobain2000/gobrew/workflows/Test/badge.svg?branch=develop) |
+
 # gobrew
 
 Go version manager
@@ -114,6 +121,16 @@ $ gobrew ls-remote                    List remote versions
 # Setup Go in Github actions
 
 ```yml
+on: [push, pull_request]
+name: Test
+jobs:
+  test:
+    strategy:
+      matrix:
+        go-version: [1.13, 1.14, 1.15, 1.16.7, 1.17rc1, 1.17rc2]
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
     - name: Set Env
       run: |
          echo "GOPATH=$HOME/.gobrew/current/go" >> $GITHUB_ENV
@@ -124,6 +141,12 @@ $ gobrew ls-remote                    List remote versions
          curl -sLk https://git.io/gobrew | sh -
          gobrew use ${{ matrix.go-version }}
          go version
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Go version
+      run: go version
 ```
 
 # Change Log
