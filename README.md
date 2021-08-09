@@ -135,7 +135,7 @@ jobs:
       run: |
          echo "GOPATH=$HOME/.gobrew/current/go" >> $GITHUB_ENV
          echo "$HOME/.gobrew/bin" >> $GITHUB_PATH
-         echo "$HOME/.gobrew/current/bin/" >> $GITHUB_PATH
+         echo "$HOME/.gobrew/current/bin" >> $GITHUB_PATH
     - name: Install Gobrew
       run: |
          curl -sLk https://git.io/gobrew | sh -
