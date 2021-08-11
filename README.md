@@ -37,8 +37,6 @@ Reload config.
 (optional)
 
 ```sh
-export GOPATH="$HOME/go"
-## or set for version specific
 export GOPATH="$HOME/.gobrew/current/go"
 ```
 
@@ -50,13 +48,13 @@ $ gobrew help
 
 ### Usage
 
-**Will install and set Go**
+Will install and set Go
 
 ```sh
 $ gobrew use 1.16
 ```
 
-Will only install it and then use it
+Will only install it
 
 ```sh
 $ gobrew install 1.16
@@ -110,12 +108,8 @@ $ gobrew uninstall <version>          Uninstall <version>
 $ gobrew list                         List installed versions
 $ gobrew ls                           Alias for list
 $ gobrew ls-remote                    List remote versions
+$ gobrew self-update                 	Self update this tool
 ```
-
-# Screenshots
-
-![colors-ls-remote](https://i.imgur.com/gTBCfZL.png)
-![colors-ls](https://i.imgur.com/KQbiuyH.png)
 
 
 # Setup Go in Github actions
@@ -148,6 +142,11 @@ jobs:
     - name: Go version
       run: go version
 ```
+
+# Screenshots
+
+![colors-ls-remote](https://i.imgur.com/gTBCfZL.png)
+![colors-ls](https://i.imgur.com/KQbiuyH.png)
 
 # Change Log
 
