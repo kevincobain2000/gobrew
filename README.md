@@ -111,38 +111,6 @@ $ gobrew ls-remote                    List remote versions
 $ gobrew self-update                 	Self update this tool
 ```
 
-
-# Setup Go in Github actions
-
-```yml
-on: [push, pull_request]
-name: Test
-jobs:
-  test:
-    strategy:
-      matrix:
-        go-version: [1.13, 1.14, 1.15, 1.16.7, 1.17rc1, 1.17rc2]
-        os: [ubuntu-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-    - name: Set Env
-      run: |
-         echo "GOPATH=$HOME/.gobrew/current/go" >> $GITHUB_ENV
-         echo "$HOME/.gobrew/bin" >> $GITHUB_PATH
-         echo "$HOME/.gobrew/current/bin" >> $GITHUB_PATH
-    - name: Install Gobrew
-      run: |
-         curl -sLk https://git.io/gobrew | sh -
-         gobrew use ${{ matrix.go-version }}
-         go version
-
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Go version
-      run: go version
-```
-
 # Screenshots
 
 ![colors-ls-remote](https://i.imgur.com/gTBCfZL.png)

@@ -9,26 +9,18 @@ jobs:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-    - name: Set Env
-      run: |
-         echo "GOPATH=$HOME/.gobrew/current/go" >> $GITHUB_ENV
-         echo "$HOME/.gobrew/bin" >> $GITHUB_PATH
-         echo "$HOME/.gobrew/current/bin" >> $GITHUB_PATH
-    - name: Install Gobrew
-      run: |
-         curl -sLk https://git.io/gobrew | sh -
-         gobrew use ${{ matrix.go-version }}
-         go version
+      - uses: actions/checkout@v2
+      - name: Setup go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go }}
 
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Go version
+        run: go version
 
-    - name: Go version
-      run: go version
+      - name: Test
+        run: go test ./...
 
-    - name: Test
-      run: go test ./...
-
-    - name: Build
-      run: |
-        go build cmd/gobrew/main.go
+      - name: Build
+        run: |
+          go build cmd/gobrew/main.go
