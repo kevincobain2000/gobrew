@@ -18,7 +18,7 @@ var allowedArgs = []string{"h", "help", "ls", "list", "ls-remote", "install", "u
 func init() {
 	log.SetFlags(0)
 
-	if isArgAllowed() != true {
+	if !isArgAllowed() {
 		log.Println("[Info] Invalid usage")
 		log.Print(usage())
 		return
@@ -96,7 +96,7 @@ func Find(slice []string, val string) (int, bool) {
 
 func usage() string {
 	msg := `
-gobrew 1.2.0
+gobrew 1.3.0
 
 Usage:
     gobrew help                         Show this message

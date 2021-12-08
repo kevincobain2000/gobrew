@@ -248,7 +248,7 @@ func printGroupedVersions(versions []string) {
 }
 
 func (gb *GoBrew) existsVersion(version string) bool {
-	path := filepath.Join(gb.versionsDir, version, "go")
+	path := filepath.Join(gb.versionsDir, version)
 	_, err := os.Stat(path)
 	if err == nil {
 		return true
@@ -283,7 +283,7 @@ func (gb *GoBrew) Uninstall(version string) {
 		os.Exit(0)
 		return
 	}
-	if gb.existsVersion(version) == false {
+	if !gb.existsVersion(version) {
 		utils.ColorError.Printf("[Error] Version: %s you are trying to remove is not installed\n", version)
 		os.Exit(0)
 	}
@@ -305,7 +305,7 @@ func (gb *GoBrew) Install(version string) {
 		log.Fatal("[Error] No version provided")
 	}
 	gb.mkdirs(version)
-	if gb.existsVersion(version) == true {
+	if gb.existsVersion(version){
 		utils.ColorInfo.Printf("[Info] Version: %s exists \n", version)
 		return
 	}
