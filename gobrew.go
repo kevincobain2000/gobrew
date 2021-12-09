@@ -248,7 +248,7 @@ func printGroupedVersions(versions []string) {
 }
 
 func (gb *GoBrew) existsVersion(version string) bool {
-	path := filepath.Join(gb.versionsDir, version)
+	path := filepath.Join(gb.versionsDir, version, "go")
 	_, err := os.Stat(path)
 	if err == nil {
 		return true
