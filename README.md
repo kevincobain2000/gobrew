@@ -116,6 +116,12 @@ $ gobrew self-update                 	Self update this tool
 ![colors-ls-remote](https://i.imgur.com/gTBCfZL.png)
 ![colors-ls](https://i.imgur.com/KQbiuyH.png)
 
+# Uninstall gobrew
+
+```sh
+rm -rf $HOME/.gobrew
+```
+
 # Change Log
 
 - v1.2.0 - Added rc|beta versions, appended at the end of list
