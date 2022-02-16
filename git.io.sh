@@ -6,12 +6,21 @@ mkdir -p $GOBREW_BIN_DIR
 GOBREW_ARCH_BIN=''
 
 THISOS=$(uname -s)
+ARCH=$(uname -m)
+
 case $THISOS in
    Linux*)
       GOBREW_ARCH_BIN="gobrew-linux-64"
       ;;
    Darwin*)
-      GOBREW_ARCH_BIN="gobrew-darwin-64"
+      case $ARCH in
+        arm64)
+          GOBREW_ARCH_BIN="gobrew-darwin-arm-64"
+          ;;
+        *)
+          GOBREW_ARCH_BIN="gobrew-darwin-64"
+          ;;
+      esac
       ;;
    Windows*)
       GOBREW_ARCH_BIN="gobrew-windows-64.exe"
