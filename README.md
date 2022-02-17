@@ -148,3 +148,4 @@ rm -rf $HOME/.gobrew
 
 - v1.2.0 - Added rc|beta versions, appended at the end of list
 - v1.4.1 - Go mod updated to 1.17
+- v1.5.0 - Mac M1 support
