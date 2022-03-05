@@ -305,7 +305,7 @@ func (gb *GoBrew) Install(version string) {
 		log.Fatal("[Error] No version provided")
 	}
 	gb.mkdirs(version)
-	if gb.existsVersion(version){
+	if gb.existsVersion(version) {
 		utils.ColorInfo.Printf("[Info] Version: %s exists \n", version)
 		return
 	}
@@ -343,6 +343,7 @@ func (gb *GoBrew) downloadAndExtract(version string) {
 	tarName := "go" + version + "." + gb.getArch() + ".tar.gz"
 
 	downloadURL := registryPath + tarName
+	utils.ColorInfo.Printf("[Info] Downloading from: %s \n", downloadURL)
 
 	err := utils.Download(
 		downloadURL,

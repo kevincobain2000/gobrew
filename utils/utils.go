@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bufio"
 	"io"
 	"net/http"
 	"os"
@@ -15,27 +16,37 @@ var ColorError = color.New(color.FgHiRed)
 
 // Download resource from url to a destination path
 func Download(url string, filepath string) (err error) {
-
-	// Create the file
-	out, err := os.Create(filepath)
-	if err != nil {
-		return err
-	}
-	defer out.Close()
-
-	// Get the data
 	resp, err := http.Get(url)
 	if err != nil {
+		ColorError.Printf("[Error]: http get file: %s \n", url)
 		return err
 	}
+
+	if resp.StatusCode != http.StatusOK {
+		ColorError.Printf("[Error]: Response status code: %d \n", resp.StatusCode)
+		ColorInfo.Printf("[Info]: Please wait for the file to download.\n")
+	} else {
+		ColorSuccess.Printf("[Success]: Response status code: %d \n", resp.StatusCode)
+	}
+
 	defer resp.Body.Close()
 
-	// Writer the body to file
-	_, err = io.Copy(out, resp.Body)
+	out, err := os.Create(filepath)
+	wt := bufio.NewWriter(out)
+
+	if err != nil {
+		ColorError.Printf("[Error]: Creating file: %s \n", err.Error())
+		return err
+	}
+
+	defer out.Close()
+
+	_, err = io.Copy(wt, resp.Body)
+
 	if err != nil {
 		return err
 	}
-
+	wt.Flush()
 	return nil
 }
 
