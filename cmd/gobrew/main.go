@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/kevincobain2000/gobrew"
 )
@@ -34,6 +35,10 @@ func init() {
 	actionArg = args[0]
 	if len(args) == 2 {
 		versionArg = args[1]
+		versionArgSlice := strings.Split(versionArg, ".")
+		if len(versionArgSlice) == 3 && versionArgSlice[2] == "0" {
+			versionArg = versionArgSlice[0] + "." + versionArgSlice[1]
+		}
 	}
 }
 
