@@ -17,9 +17,9 @@ import (
 )
 
 const (
-	goBrewDir     string = ".gobrew"
-	registryPath  string = "https://golang.org/dl/"
-	fetchTagsRepo string = "https://github.com/golang/go"
+	goBrewDir           string = ".gobrew"
+	defaultRegistryPath string = "https://golang.org/dl/"
+	fetchTagsRepo       string = "https://github.com/golang/go"
 )
 
 // Command ...
@@ -342,6 +342,10 @@ func (gb *GoBrew) getVersionDir(version string) string {
 func (gb *GoBrew) downloadAndExtract(version string) {
 	tarName := "go" + version + "." + gb.getArch() + ".tar.gz"
 
+	registryPath := defaultRegistryPath
+	if p := os.Getenv("GOBREW_REGISTRY"); p != "" {
+		registryPath = p
+	}
 	downloadURL := registryPath + tarName
 	utils.ColorInfo.Printf("[Info] Downloading from: %s \n", downloadURL)
 
