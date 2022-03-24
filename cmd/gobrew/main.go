@@ -106,7 +106,7 @@ gobrew 1.5.3
 Usage:
     gobrew help                         Show this message
     gobrew use <version>                Use <version>
-    gobrew install <version>            Download and install <version> (from binary))
+    gobrew install <version>            Download and install <version> (binary from official or GOBREW_REGISTRY env)
     gobrew uninstall <version>          Uninstall <version>
     gobrew list                         List installed versions
     gobrew ls                           Alias for list
