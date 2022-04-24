@@ -1,3 +1,26 @@
+<p align="center">
+  <a href="https://github.com/kevincobain2000/gobrew">
+    <img alt="gobrew" src="https://imgur.com/09fGpKY.png" width="360">
+  </a>
+</p>
+
+<p align="center">
+  Go version manager, written in Go<br>
+  Update and switch Go versions easily<br>
+  Install Go on Linux or Mac or Mac with M1
+</p>
+
+**Quick Setup:** One command to install Go and manage versions.
+
+**Hassle Free:** Doesn't require root or sudo, or shell re-hash.
+
+**Platform:** Supports (arm64, arch64, Mac, Mac M1, and Ubuntu).
+
+**Flexible:** Manage multiple Go versions including beta and rc.
+
+**Colorful:** Colorful output.
+
+
 # Build Status
 
 | Branch  | Status                                                                                     |
@@ -5,15 +28,12 @@
 | master  | ![Test](https://github.com/kevincobain2000/gobrew/workflows/Test/badge.svg?branch=master)  |
 | develop | ![Test](https://github.com/kevincobain2000/gobrew/workflows/Test/badge.svg?branch=develop) |
 
-# gobrew
-
-Go version manager
 
 ## Install or update
 
-With curl
+Using curl
 
-```sh
+```curl
 $ curl -sLk https://git.io/gobrew | sh -
 ```
 
@@ -27,18 +47,11 @@ Add `GOPATH` & `PATH` setting your shell config file (`.bashrc` or `.zshrc`).
 
  ```sh
 export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
-
 ```
 
 Reload config.
 
 **All DONE!**
-
-(optional)
-
-```sh
-export GOPATH="$HOME/.gobrew/current/go"
-```
 
 ### Confirm
 
@@ -70,25 +83,31 @@ $ gobrew uninstall 1.16
 List installed versions
 
 ```sh
-$ gobrew ls
-
+╰─$ gobrew ls
 1.15.1
 1.16
 1.16.3
+1.17
 1.17.1
 1.17.2
+1.17.3
 1.17.4
 1.17.5
-1.17.6*
+1.17.6
+1.17.7
+1.17.8
+1.18
+1.18.1*
 1.18beta1
+1.18rc1
 
-current: 1.17.6
+current: 1.18.1
 ```
 
 List available versions
 
 ```sh
-╰─$ go run cmd/gobrew/main.go ls-remote
+╰─$ gobrew ls-remote
 [Info]: Fetching remote versions
 1	1.0.1  1.0.2  1.0.3
 1.1	1.1.0  1.1.1  1.1.2  1.1rc2  1.1rc3
@@ -106,17 +125,17 @@ List available versions
 1.13	1.13.0  1.13.1  1.13.2  1.13.3  1.13.4  1.13.5  1.13.6  1.13.7  1.13.8  1.13.9  1.13.10  1.13.11  1.13.12  1.13.13  1.13.14  1.13.15  1.13beta1  1.13rc1  1.13rc2
 1.14	1.14.0  1.14.1  1.14.2  1.14.3  1.14.4  1.14.5  1.14.6  1.14.7  1.14.8  1.14.9  1.14.10  1.14.11  1.14.12  1.14.13  1.14.14  1.14.15  1.14beta1  1.14rc1
 1.15	1.15.0  1.15.1  1.15.2  1.15.3  1.15.4  1.15.5  1.15.6  1.15.7  1.15.8  1.15.9  1.15.10  1.15.11  1.15.12  1.15.13  1.15.14  1.15.15  1.15beta1  1.15rc1  1.15rc2
-1.16	1.16.0  1.16.1  1.16.2  1.16.3  1.16.4  1.16.5  1.16.6  1.16.7  1.16.8  1.16.9  1.16.10  1.16.11  1.16.12  1.16.13  1.16.14  1.16beta1  1.16rc1
-1.17	1.17.0  1.17.1  1.17.2  1.17.3  1.17.4  1.17.5  1.17.6  1.17.7  1.17beta1  1.17rc1  1.17rc2
-1.18	1.18beta1  1.18beta2
+1.16	1.16.0  1.16.1  1.16.2  1.16.3  1.16.4  1.16.5  1.16.6  1.16.7  1.16.8  1.16.9  1.16.10  1.16.11  1.16.12  1.16.13  1.16.14  1.16.15  1.16beta1  1.16rc1
+1.17	1.17.0  1.17.1  1.17.2  1.17.3  1.17.4  1.17.5  1.17.6  1.17.7  1.17.8  1.17.9  1.17beta1  1.17rc1  1.17rc2
+1.18	1.18.0  1.18.1  1.18beta1  1.18beta2  1.18rc1
 ```
 
 # All commands
 
 ```sh
-╰─$ go run cmd/gobrew/main.go help
+╰─$ gobrew help
 
-gobrew 1.4.1
+gobrew 1.5.6
 
 Usage:
     gobrew help                         Show this message
@@ -126,17 +145,16 @@ Usage:
     gobrew list                         List installed versions
     gobrew ls                           Alias for list
     gobrew ls-remote                   	List remote versions (including rc|beta versions)
-    gobrew self-update                 	Self update this tool
+    gobrew self-update                 	Self update gobrew itself
 
 Example:
     # install and use
     gobrew use 1.16
+
+Installation Path:
+	# Add gobrew to your ~/.bashrc or ~/.zshrc
+	export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
 ```
-
-# Screenshots
-
-![colors-ls-remote](https://i.imgur.com/gTBCfZL.png)
-![colors-ls](https://i.imgur.com/KQbiuyH.png)
 
 # Uninstall gobrew
 
@@ -151,3 +169,4 @@ rm -rf $HOME/.gobrew
 - v1.5.0 - Mac M1 support
 - v1.5.1 - Oops
 - v1.5.5 - arm|M1|darwin support added
+- v1.5.6 - README updated
