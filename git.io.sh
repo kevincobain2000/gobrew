@@ -10,7 +10,17 @@ ARCH=$(uname -m)
 
 case $THISOS in
    Linux*)
-      GOBREW_ARCH_BIN="gobrew-linux-64"
+      case $ARCH in
+        arm64)
+          GOBREW_ARCH_BIN="gobrew-linux-arm-64"
+          ;;
+        aarch64)
+          GOBREW_ARCH_BIN="gobrew-linux-arm-64"
+          ;;
+        *)
+          GOBREW_ARCH_BIN="gobrew-linux-amd-64"
+          ;;
+      esac
       ;;
    Darwin*)
       case $ARCH in
