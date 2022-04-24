@@ -150,3 +150,4 @@ rm -rf $HOME/.gobrew
 - v1.4.1 - Go mod updated to 1.17
 - v1.5.0 - Mac M1 support
 - v1.5.1 - Oops
+- v1.5.5 - arm|M1|darwin support added

@@ -1,8 +1,12 @@
 #! /bin/sh
 
-echo "building linux 64"
-GOOS=linux GOARCH=amd64 go build cmd/gobrew/main.go && mv main bin/gobrew-linux-64
-echo "building linux done"
+echo "building linux amd 64"
+GOOS=linux GOARCH=amd64 go build cmd/gobrew/main.go && mv main bin/gobrew-linux-amd-64
+echo "building linux amd 64 done"
+
+echo "building linux arm 64"
+GOOS=linux GOARCH=arm64 go build cmd/gobrew/main.go && mv main bin/gobrew-linux-arm-64
+echo "building linux arm64  done"
 
 echo "building darwin 64"
 GOOS=darwin GOARCH=amd64 go build cmd/gobrew/main.go && mv main bin/gobrew-darwin-64
