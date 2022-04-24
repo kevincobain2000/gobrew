@@ -101,7 +101,7 @@ func Find(slice []string, val string) (int, bool) {
 
 func usage() string {
 	msg := `
-gobrew 1.5.5
+gobrew 1.5.6
 
 Usage:
     gobrew help                         Show this message
@@ -116,6 +116,10 @@ Usage:
 Example:
     # install and use
     gobrew use 1.16
+
+Installation Path:
+	# Add gobrew to your ~/.bashrc or ~/.zshrc
+	export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
 `
 	return msg
 }
