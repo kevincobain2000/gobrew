@@ -164,7 +164,7 @@ rm -rf $HOME/.gobrew
 
 # Use it in Github Actions
 
-I don't why would you want to do that, but go ahead
+I don't know why would you want to do that, but go ahead
 
 ```yaml
       - name: Install gobrew
