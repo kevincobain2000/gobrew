@@ -162,6 +162,27 @@ Installation Path:
 rm -rf $HOME/.gobrew
 ```
 
+# Use it in Github Actions
+
+I don't why would you want to do that, but go ahead
+
+```yaml
+      - name: Install gobrew
+        run: |
+          curl -sLk https://git.io/gobrew | sh -
+          export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$HOME/go/bin:$PATH"
+          gobrew use 1.19beta1
+      - name: Install Tools
+        run: |
+          export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$HOME/go/bin:$PATH"
+          go install github.com/axw/gocov/gocov@latest
+          go install github.com/AlekSi/gocov-xml@latest
+      - name: Build
+        run: |
+          export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$HOME/go/bin:$PATH"
+          go test -v ./... -race -count=1
+```
+
 # Change Log
 
 - v1.2.0 - Added rc|beta versions, appended at the end of list
