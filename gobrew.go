@@ -82,7 +82,7 @@ func (gb *GoBrew) ListVersions() {
 	files, err := ioutil.ReadDir(gb.versionsDir)
 	if err != nil {
 		utils.ColorError.Printf("[Error]: List versions failed: %s", err)
-		os.Exit(0)
+		os.Exit(1)
 	}
 	cv := gb.CurrentVersion()
 
@@ -150,7 +150,7 @@ func (gb *GoBrew) ListRemoteVersions() {
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		utils.ColorError.Printf("[Error]: List remote versions failed: %s", err)
-		os.Exit(0)
+		os.Exit(1)
 	}
 	tagsRaw := utils.BytesToString(output)
 	r, _ := regexp.Compile("tags/go.*")
@@ -280,12 +280,12 @@ func (gb *GoBrew) Uninstall(version string) {
 	}
 	if gb.CurrentVersion() == version {
 		utils.ColorError.Printf("[Error] Version: %s you are trying to remove is your current version. Please use a different version first before uninstalling the current version\n", version)
-		os.Exit(0)
+		os.Exit(1)
 		return
 	}
 	if !gb.existsVersion(version) {
 		utils.ColorError.Printf("[Error] Version: %s you are trying to remove is not installed\n", version)
-		os.Exit(0)
+		os.Exit(1)
 	}
 	gb.cleanVersionDir(version)
 	utils.ColorSuccess.Printf("[Success] Version: %s uninstalled\n", version)
@@ -357,7 +357,7 @@ func (gb *GoBrew) downloadAndExtract(version string) {
 		gb.cleanVersionDir(version)
 		utils.ColorInfo.Printf("[Info]: Downloading version failed: %s \n", err)
 		utils.ColorError.Printf("[Error]: Please check connectivity to url: %s\n", downloadURL)
-		os.Exit(0)
+		os.Exit(1)
 	}
 
 	cmd := exec.Command(
@@ -374,7 +374,7 @@ func (gb *GoBrew) downloadAndExtract(version string) {
 		gb.cleanVersionDir(version)
 		utils.ColorInfo.Printf("[Info]: Untar failed: %s \n", err)
 		utils.ColorError.Printf("[Error]: Please check if version exists from url: %s\n", downloadURL)
-		os.Exit(0)
+		os.Exit(1)
 	}
 }
 
@@ -388,7 +388,7 @@ func (gb *GoBrew) changeSymblinkGoBin(version string) {
 	_, err := cmd.Output()
 	if err != nil {
 		utils.ColorError.Printf("[Error]: symbolic link failed: %s\n", err)
-		os.Exit(0)
+		os.Exit(1)
 	}
 
 }
@@ -401,6 +401,6 @@ func (gb *GoBrew) changeSymblinkGo(version string) {
 	_, err := cmd.Output()
 	if err != nil {
 		utils.ColorError.Printf("[Error]: symbolic link failed: %s\n", err)
-		os.Exit(0)
+		os.Exit(1)
 	}
 }
