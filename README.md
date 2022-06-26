@@ -3,11 +3,16 @@
     <img alt="gobrew" src="https://imgur.com/09fGpKY.png" width="360">
   </a>
 </p>
-
 <p align="center">
   Go version manager, written in Go<br>
   Update and switch Go versions easily<br>
   Install Go on Linux or Mac or Mac with M1
+</p>
+<p align="center">
+
+  <a href="https://github.com/kevincobain2000/gobrew">
+    <img alt="gobrew" src="screenshot.svg">
+  </a>
 </p>
 
 **Quick Setup:** One command to install Go and manage versions.
@@ -191,3 +196,4 @@ I don't know why would you want to do that, but go ahead
 - v1.5.1 - Oops
 - v1.5.5 - arm|M1|darwin support added
 - v1.5.6 - README updated
+- v1.5.7 - Exit code fixed

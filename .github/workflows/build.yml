@@ -1,26 +1,30 @@
 on: [push, pull_request]
-name: Test
+name: CI
 jobs:
   test:
     strategy:
       matrix:
-        go-version: [1.13, 1.14, 1.15, 1.16.7, 1.17, 1.18]
-        # os: [ubuntu-latest, macos-latest, windows-latest]
+        go-version: [1.13, 1.14, 1.15, 1.16.7, 1.17, 1.18, "1.19beta1"]
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
-      - name: Setup go
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go }}
-
+      - name: Install Go
+        run: |
+          curl -sLk https://git.io/gobrew | sh -
+          export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$HOME/go/bin:$PATH"
+          gobrew use ${{ matrix.go-version }}
       - name: Go version
-        run: go version
+        run: |
+          export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$HOME/go/bin:$PATH"
+          go version
 
       - name: Test
-        run: go test ./...
+        run: |
+          export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$HOME/go/bin:$PATH"
+          go test -race ./... -count=1
 
       - name: Build
         run: |
+          export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$HOME/go/bin:$PATH"
           go build cmd/gobrew/main.go
