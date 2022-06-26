@@ -197,3 +197,4 @@ I don't know why would you want to do that, but go ahead
 - v1.5.5 - arm|M1|darwin support added
 - v1.5.6 - README updated
 - v1.5.7 - Exit code fixed
+- v1.5.8 - Show download progress and use Go's compression instead of tar command
