@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/Masterminds/semver"
+	"github.com/c4milo/unpackit"
 	"github.com/kevincobain2000/gobrew/utils"
 )
 
@@ -349,9 +350,9 @@ func (gb *GoBrew) downloadAndExtract(version string) {
 	downloadURL := registryPath + tarName
 	utils.ColorInfo.Printf("[Info] Downloading from: %s \n", downloadURL)
 
-	err := utils.Download(
-		downloadURL,
-		filepath.Join(gb.downloadsDir, tarName))
+	dstDownloadDir := filepath.Join(gb.downloadsDir)
+	utils.ColorInfo.Printf("[Info] Downloading to: %s \n", dstDownloadDir)
+	err := utils.Download(downloadURL, dstDownloadDir)
 
 	if err != nil {
 		gb.cleanVersionDir(version)
@@ -360,15 +361,13 @@ func (gb *GoBrew) downloadAndExtract(version string) {
 		os.Exit(1)
 	}
 
-	cmd := exec.Command(
-		"tar",
-		"-xf",
-		filepath.Join(gb.downloadsDir, tarName),
-		"-C",
-		gb.getVersionDir(version))
+	srcTar := filepath.Join(gb.downloadsDir, tarName)
+	dstDir := gb.getVersionDir(version)
 
-	utils.ColorInfo.Printf("[Success] Untar to %s\n", gb.getVersionDir(version))
-	_, err = cmd.Output()
+	utils.ColorInfo.Printf("[Info] Extracting from: %s \n", srcTar)
+	utils.ColorInfo.Printf("[Info] Extracting to: %s \n", dstDir)
+
+	err = gb.ExtractTarGz(srcTar, dstDir)
 	if err != nil {
 		// clean up dir
 		gb.cleanVersionDir(version)
@@ -376,6 +375,21 @@ func (gb *GoBrew) downloadAndExtract(version string) {
 		utils.ColorError.Printf("[Error]: Please check if version exists from url: %s\n", downloadURL)
 		os.Exit(1)
 	}
+	utils.ColorInfo.Printf("[Success] Untar to %s\n", gb.getVersionDir(version))
+}
+
+func (bg *GoBrew) ExtractTarGz(srcTar string, dstDir string) error {
+	//#nosec G304
+	file, err := os.Open(srcTar)
+	if err != nil {
+		return err
+	}
+	_, err = unpackit.Unpack(file, dstDir)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (gb *GoBrew) changeSymblinkGoBin(version string) {
