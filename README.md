@@ -33,13 +33,13 @@
 Using curl
 
 ```curl
-$ curl -sLk https://git.io/gobrew | sh -
+curl -sLk https://git.io/gobrew | sh -
 ```
 
 or install using go
 
 ```sh
-$ go get -u github.com/kevincobain2000/gobrew/cmd/gobrew
+go install github.com/kevincobain2000/gobrew/cmd/gobrew@latest
 ```
 
 Add `PATH` setting your shell config file (`.bashrc` or `.zshrc`).
@@ -55,7 +55,7 @@ Reload config.
 ### Confirm
 
 ```sh
-$ gobrew help
+gobrew help
 ```
 
 ### Usage
@@ -63,20 +63,20 @@ $ gobrew help
 Will install and set Go
 
 ```sh
-$ gobrew use 1.16
+gobrew use 1.16
 ```
 
 Will only install it
 
 ```sh
-$ gobrew install 1.16
-$ gobrew use 1.16
+gobrew install 1.16
+gobrew use 1.16
 ```
 
 Uninstall a version
 
 ```sh
-$ gobrew uninstall 1.16
+gobrew uninstall 1.16
 ```
 
 List installed versions
