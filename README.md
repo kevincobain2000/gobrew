@@ -255,11 +255,6 @@ jobs:
         run: |
           export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$HOME/go/bin:$PATH"
           go test -race ./... -count=1
-
-      - name: Build
-        run: |
-          export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$HOME/go/bin:$PATH"
-          go build cmd/gobrew/main.go
 ```
 
 # Change Log
