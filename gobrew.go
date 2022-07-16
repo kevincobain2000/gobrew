@@ -162,10 +162,10 @@ func (gb *GoBrew) ListRemoteVersions() {
 		versionTag := strings.ReplaceAll(match, "tags/go", "")
 		versions = append(versions, versionTag)
 	}
-	printGroupedVersions(versions)
+	getGroupedVersion(versions, true)
 }
 
-func printGroupedVersions(versions []string) {
+func getGroupedVersion(versions []string, shouldPrint bool) map[string][]string {
 	groupedVersions := make(map[string][]string)
 	for _, version := range versions {
 		parts := strings.Split(version, ".")
@@ -203,6 +203,7 @@ func printGroupedVersions(versions []string) {
 	reTopVersion, _ := regexp.Compile("[0-9]+.0.0")
 
 	for _, versionSemantic := range versionsSemantic {
+		maxPerLine := 0
 		strKey := versionSemantic.String()
 		lookupKey := ""
 		versionParts := strings.Split(strKey, ".")
@@ -213,10 +214,10 @@ func printGroupedVersions(versions []string) {
 		// On match 1.0.0, print 1. On match 2.0.0 print 2
 		if reTopVersion.MatchString((strKey)) {
 			utils.ColorMajorVersion.Print(versionParts[0])
-			fmt.Print("\t")
+			gb.print("\t", true)
 		} else {
 			utils.ColorMajorVersion.Print(lookupKey)
-			fmt.Print("\t")
+			gb.print("\t", true)
 		}
 
 		groupedVersionsSemantic := make([]*semver.Version, 0)
@@ -233,7 +234,12 @@ func printGroupedVersions(versions []string) {
 		sort.Sort(semver.Collection(groupedVersionsSemantic))
 
 		for _, gvSemantic := range groupedVersionsSemantic {
-			fmt.Print(gvSemantic.String() + "  ")
+			maxPerLine++
+			if maxPerLine == 6 {
+				maxPerLine = 0
+				gb.print("\n\t", true)
+			}
+			gb.print(gvSemantic.String()+"  ", true)
 		}
 
 		// print rc and beta versions in the end
@@ -241,10 +247,23 @@ func printGroupedVersions(versions []string) {
 			r, _ := regexp.Compile("beta.*|rc.*")
 			matches := r.FindAllString(rcVersion, -1)
 			if len(matches) == 1 {
-				fmt.Print(rcVersion + "  ")
+				gb.print(rcVersion+"  ", true)
+				maxPerLine++
+				if maxPerLine == 6 {
+					maxPerLine = 0
+					gb.print("\n\t", true)
+				}
 			}
 		}
-		fmt.Println()
+		gb.print("\n", true)
+		gb.print("\n", true)
+	}
+	return groupedVersions
+}
+
+func (gb *GoBrew) print(message string, shouldPrint bool) {
+	if shouldPrint {
+		fmt.Print(message)
 	}
 }
 
