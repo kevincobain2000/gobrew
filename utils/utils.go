@@ -1,17 +1,13 @@
 package utils
 
 import (
-	"bytes"
-	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"path"
-	"strconv"
-	"time"
 
 	"github.com/fatih/color"
+	"github.com/schollz/progressbar/v3"
 )
 
 var ColorMajorVersion = color.New(color.FgHiYellow)
@@ -19,104 +15,28 @@ var ColorSuccess = color.New(color.FgHiGreen)
 var ColorInfo = color.New(color.FgHiYellow)
 var ColorError = color.New(color.FgHiRed)
 
-func PrintDownloadPercent(done chan int64, path string, total int64) {
-
-	var stop bool = false
-
-	for {
-		select {
-		case <-done:
-			stop = true
-		default:
-
-			file, err := os.Open(path)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			fi, err := file.Stat()
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			size := fi.Size()
-
-			if size == 0 {
-				size = 1
-			}
-
-			var percent float64 = float64(size) / float64(total) * 100
-
-			fmt.Printf("%.0f", percent)
-			fmt.Println("%")
-		}
-
-		if stop {
-			break
-		}
-
-		time.Sleep(time.Second)
-	}
-}
-
-func Download(url string, dest string) (err error) {
-
-	file := path.Base(url)
-
-	ColorInfo.Printf("[Info] Downloading file %s from %s\n", file, url)
-
-	var path bytes.Buffer
-	path.WriteString(dest)
-	path.WriteString("/")
-	path.WriteString(file)
-
-	start := time.Now()
-
-	out, err := os.Create(path.String())
-
+func DownloadWithProgress(url string, tarName string, destFolder string) (err error) {
+	destTarPath := path.Join(destFolder, tarName)
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return err
 	}
-
-	defer out.Close()
-
-	headResp, err := http.Head(url)
-
-	if err != nil {
-		return err
-	}
-
-	defer headResp.Body.Close()
-
-	size, err := strconv.Atoi(headResp.Header.Get("Content-Length"))
-
-	if err != nil {
-		return err
-	}
-
-	done := make(chan int64)
-
-	go PrintDownloadPercent(done, path.String(), int64(size))
-
-	resp, err := http.Get(url)
-
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return err
 	}
 
 	defer resp.Body.Close()
 
-	n, err := io.Copy(out, resp.Body)
+	f, _ := os.OpenFile(destTarPath, os.O_CREATE|os.O_WRONLY, 0644)
+	defer f.Close()
 
-	if err != nil {
-		return err
-	}
-
-	done <- n
-
-	elapsed := time.Since(start)
-	ColorInfo.Printf("[Info] Download completed in %s", elapsed)
-	return err
+	bar := progressbar.DefaultBytes(
+		resp.ContentLength,
+		"Downloading",
+	)
+	io.Copy(io.MultiWriter(f, bar), resp.Body)
+	return nil
 }
 
 func BytesToString(data []byte) string {

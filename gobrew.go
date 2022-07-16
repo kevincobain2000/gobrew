@@ -139,7 +139,7 @@ func (gb *GoBrew) ListVersions() {
 }
 
 // ListRemoteVersions that are installed by dir ls
-func (gb *GoBrew) ListRemoteVersions() {
+func (gb *GoBrew) ListRemoteVersions(print bool) map[string][]string {
 	log.Println("[Info]: Fetching remote versions")
 	cmd := exec.Command(
 		"git",
@@ -162,10 +162,10 @@ func (gb *GoBrew) ListRemoteVersions() {
 		versionTag := strings.ReplaceAll(match, "tags/go", "")
 		versions = append(versions, versionTag)
 	}
-	printGroupedVersions(versions)
+	return gb.getGroupedVersion(versions, print)
 }
 
-func printGroupedVersions(versions []string) {
+func (gb *GoBrew) getGroupedVersion(versions []string, print bool) map[string][]string {
 	groupedVersions := make(map[string][]string)
 	for _, version := range versions {
 		parts := strings.Split(version, ".")
@@ -203,6 +203,7 @@ func printGroupedVersions(versions []string) {
 	reTopVersion, _ := regexp.Compile("[0-9]+.0.0")
 
 	for _, versionSemantic := range versionsSemantic {
+		maxPerLine := 0
 		strKey := versionSemantic.String()
 		lookupKey := ""
 		versionParts := strings.Split(strKey, ".")
@@ -212,11 +213,15 @@ func printGroupedVersions(versions []string) {
 		lookupKey = versionParts[0] + "." + versionParts[1]
 		// On match 1.0.0, print 1. On match 2.0.0 print 2
 		if reTopVersion.MatchString((strKey)) {
-			utils.ColorMajorVersion.Print(versionParts[0])
-			fmt.Print("\t")
+			if print {
+				utils.ColorMajorVersion.Print(versionParts[0])
+			}
+			gb.print("\t", print)
 		} else {
-			utils.ColorMajorVersion.Print(lookupKey)
-			fmt.Print("\t")
+			if print {
+				utils.ColorMajorVersion.Print(lookupKey)
+			}
+			gb.print("\t", print)
 		}
 
 		groupedVersionsSemantic := make([]*semver.Version, 0)
@@ -233,7 +238,12 @@ func printGroupedVersions(versions []string) {
 		sort.Sort(semver.Collection(groupedVersionsSemantic))
 
 		for _, gvSemantic := range groupedVersionsSemantic {
-			fmt.Print(gvSemantic.String() + "  ")
+			maxPerLine++
+			if maxPerLine == 6 {
+				maxPerLine = 0
+				gb.print("\n\t", print)
+			}
+			gb.print(gvSemantic.String()+"  ", print)
 		}
 
 		// print rc and beta versions in the end
@@ -241,10 +251,23 @@ func printGroupedVersions(versions []string) {
 			r, _ := regexp.Compile("beta.*|rc.*")
 			matches := r.FindAllString(rcVersion, -1)
 			if len(matches) == 1 {
-				fmt.Print(rcVersion + "  ")
+				gb.print(rcVersion+"  ", print)
+				maxPerLine++
+				if maxPerLine == 6 {
+					maxPerLine = 0
+					gb.print("\n\t", print)
+				}
 			}
 		}
-		fmt.Println()
+		gb.print("\n", print)
+		gb.print("\n", print)
+	}
+	return groupedVersions
+}
+
+func (gb *GoBrew) print(message string, shouldPrint bool) {
+	if shouldPrint {
+		fmt.Print(message)
 	}
 }
 
@@ -305,6 +328,7 @@ func (gb *GoBrew) Install(version string) {
 	if version == "" {
 		log.Fatal("[Error] No version provided")
 	}
+	version = gb.judgeVersion(version)
 	gb.mkdirs(version)
 	if gb.existsVersion(version) {
 		utils.ColorInfo.Printf("[Info] Version: %s exists \n", version)
@@ -315,6 +339,49 @@ func (gb *GoBrew) Install(version string) {
 	gb.downloadAndExtract(version)
 	gb.cleanDownloadsDir()
 	utils.ColorSuccess.Printf("[Success] Downloaded version: %s\n", version)
+}
+
+func (gb *GoBrew) judgeVersion(version string) string {
+	judgedVersion := ""
+	rcBetaOk := false
+	// check if version string ends with x
+
+	if strings.HasSuffix(version, "x") {
+		judgedVersion = version[:len(version)-1]
+	}
+
+	if strings.HasSuffix(version, ".x") {
+		judgedVersion = version[:len(version)-2]
+	}
+	if strings.HasSuffix(version, "@latest") {
+		judgedVersion = version[:len(version)-7]
+	}
+	if strings.HasSuffix(version, "@dev-latest") {
+		judgedVersion = version[:len(version)-11]
+		rcBetaOk = true
+	}
+
+	if judgedVersion != "" {
+		r, _ := regexp.Compile("beta.*|rc.*")
+		groupedVersions := gb.ListRemoteVersions(false) // donot print
+		// check if judgedVersion is in the groupedVersions
+		if _, ok := groupedVersions[judgedVersion]; ok {
+			// get last item in the groupedVersions excluding rc and beta
+			// loop in reverse groupedVersions
+			for i := len(groupedVersions[judgedVersion]) - 1; i >= 0; i-- {
+				matches := r.FindAllString(groupedVersions[judgedVersion][i], -1)
+				if len(matches) == 0 {
+					return groupedVersions[judgedVersion][i]
+				}
+			}
+			if rcBetaOk {
+				// return last element including beta and rc if present
+				return groupedVersions[judgedVersion][len(groupedVersions[judgedVersion])-1]
+			}
+		}
+	}
+
+	return version
 }
 
 // Use a version
@@ -352,7 +419,7 @@ func (gb *GoBrew) downloadAndExtract(version string) {
 
 	dstDownloadDir := filepath.Join(gb.downloadsDir)
 	utils.ColorInfo.Printf("[Info] Downloading to: %s \n", dstDownloadDir)
-	err := utils.Download(downloadURL, dstDownloadDir)
+	err := utils.DownloadWithProgress(downloadURL, tarName, dstDownloadDir)
 
 	if err != nil {
 		gb.cleanVersionDir(version)
