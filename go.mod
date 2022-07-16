@@ -6,7 +6,6 @@ require (
 	github.com/Masterminds/semver v1.5.0
 	github.com/c4milo/unpackit v0.1.0
 	github.com/fatih/color v1.10.0
-	github.com/k0kubun/pp v3.0.1+incompatible
 	github.com/schollz/progressbar/v3 v3.8.6
 )
 
