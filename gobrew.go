@@ -352,7 +352,7 @@ func (gb *GoBrew) downloadAndExtract(version string) {
 
 	dstDownloadDir := filepath.Join(gb.downloadsDir)
 	utils.ColorInfo.Printf("[Info] Downloading to: %s \n", dstDownloadDir)
-	err := utils.Download(downloadURL, dstDownloadDir)
+	err := utils.DownloadWithProgress(downloadURL, tarName, dstDownloadDir)
 
 	if err != nil {
 		gb.cleanVersionDir(version)
