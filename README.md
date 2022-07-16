@@ -8,12 +8,6 @@
   Update and switch Go versions easily<br>
   Install Go on Linux or Mac or Mac with M1
 </p>
-<p align="center">
-
-  <a href="https://github.com/kevincobain2000/gobrew">
-    <img alt="gobrew" src="screenshot.svg">
-  </a>
-</p>
 
 **Quick Setup:** One command to install Go and manage versions.
 
