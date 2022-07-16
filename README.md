@@ -194,7 +194,7 @@ List available versions
 ```sh
 ╰─$ gobrew help
 
-gobrew 1.6.0
+gobrew 1.6.1
 
 Usage:
 
@@ -280,3 +280,4 @@ jobs:
 - v1.5.8 - Show download progress and use Go's compression instead of tar command
 - v1.5.9 - oops
 - v1.6.0 - Added support for @latest and @dev-latest and progress bar for download
+- v1.6.1 - Bug on use

@@ -386,6 +386,7 @@ func (gb *GoBrew) judgeVersion(version string) string {
 
 // Use a version
 func (gb *GoBrew) Use(version string) {
+	version = gb.judgeVersion(version)
 	if gb.CurrentVersion() == version {
 		utils.ColorInfo.Printf("[Info] Version: %s is already your current version \n", version)
 		return
