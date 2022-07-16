@@ -194,34 +194,35 @@ List available versions
 ```sh
 ╰─$ gobrew help
 
-gobrew 1.5.6
+gobrew 1.6.0
 
 Usage:
-    gobrew help                         Show this message
-    gobrew use <version>                Use <version>
-    gobrew install <version>            Download and install <version> (binary from official or GOBREW_REGISTRY env)
-    gobrew uninstall <version>          Uninstall <version>
-    gobrew list                         List installed versions
-    gobrew ls                           Alias for list
-    gobrew ls-remote                   	List remote versions (including rc|beta versions)
-    gobrew self-update                 	Self update gobrew itself
+
+    gobrew use <version>           Install and set <version>
+    gobrew ls                      Alias for list
+    gobrew ls-remote               List remote versions (including rc|beta versions)
+
+    gobrew install <version>       Only install <version> (binary from official or GOBREW_REGISTRY env)
+    gobrew uninstall <version>     Uninstall <version>
+    gobrew list                    List installed versions
+    gobrew self-update             Self update this tool
+    gobrew help                    Show this message
 
 Examples:
-    gobrew use 1.16         // will install and set go version to 1.16
-    gobrew use 1.16.1       // will install and set go version to 1.16.1
-    gobrew use 1.16rc1      // will install and set go version to 1.16rc1
+    gobrew use 1.16                # will install and set go version to 1.16
+    gobrew use 1.16.1              # will install and set go version to 1.16.1
+    gobrew use 1.16rc1             # will install and set go version to 1.16rc1
 
-    gobrew use 1.16@latest  // will install and set go version to latest version of 1.16, which is: 1.16.9
-    gobrew use 1.16.x       // same as above
-    gobrew use 1.16x        // same as above
+    gobrew use 1.16@latest         # will install and set go version to
+                                   # the latest version of 1.16, which is: 1.16.9
 
-    gobrew use 1.16@dev-latest   // same as @latest
-                                 // will install and set go version to latest version
-                                 // or beta, rc version, when major release is published
+    gobrew use 1.16@dev-latest     # will install and set go version to
+                                   # latest including rc and beta
+                                   # Note: rc and beta become no longer latest upon major version release
 
 Installation Path:
-	# Add gobrew to your ~/.bashrc or ~/.zshrc
-	export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
+    # Add gobrew to your ~/.bashrc or ~/.zshrc
+    export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
 ```
 
 # Uninstall gobrew
