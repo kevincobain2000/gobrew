@@ -1,5 +1,7 @@
 #! /bin/sh
 
+mkdir -p bin
+
 echo "building linux amd 64"
 GOOS=linux GOARCH=amd64 go build cmd/gobrew/main.go && mv main bin/gobrew-linux-amd-64
 echo "building linux amd 64 done"
