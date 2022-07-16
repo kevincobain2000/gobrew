@@ -279,3 +279,4 @@ jobs:
 - v1.5.7 - Exit code fixed
 - v1.5.8 - Show download progress and use Go's compression instead of tar command
 - v1.5.9 - oops
+- v1.6.0 - Added support for @latest and @dev-latest and progress bar for download
