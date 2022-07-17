@@ -188,7 +188,7 @@ List available versions
 ```sh
 ╰─$ gobrew help
 
-gobrew 1.6.1
+gobrew 1.6.3
 
 Usage:
 
@@ -203,16 +203,18 @@ Usage:
     gobrew help                    Show this message
 
 Examples:
-    gobrew use 1.16                # will install and set go version to 1.16
-    gobrew use 1.16.1              # will install and set go version to 1.16.1
-    gobrew use 1.16rc1             # will install and set go version to 1.16rc1
+    gobrew use 1.16                # use go version 1.16
+    gobrew use 1.16.1              # use go version 1.16.1
+    gobrew use 1.16rc1             # use go version 1.16rc1
 
-    gobrew use 1.16@latest         # will install and set go version to
-                                   # the latest version of 1.16, which is: 1.16.9
+    gobrew use 1.16@latest         # use go version latest of 1.16
 
-    gobrew use 1.16@dev-latest     # will install and set go version to
-                                   # latest including rc and beta
-                                   # Note: rc and beta become no longer latest upon major version release
+    gobrew use 1.16@dev-latest     # use go version latest of 1.16, including rc and beta
+                                   # Note: rc and beta become no longer latest upon major release
+
+    gobrew use latest              # use go version latest available
+
+    gobrew use dev-latest          # use go version latest avalable, including rc and beta
 
 Installation Path:
     # Add gobrew to your ~/.bashrc or ~/.zshrc
@@ -236,7 +238,7 @@ jobs:
   test:
     strategy:
       matrix:
-        go-version: [1.13, 1.14, 1.15, 1.16.7, 1.17, 1.18, 1.18@latest, 1.19beta1, 1.19@dev-latest]
+        go-version: [1.13, 1.14, 1.15, 1.16.7, 1.17, 1.18, 1.18@latest, 1.19beta1, 1.19@dev-latest, latest, dev-latest]
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
@@ -267,3 +269,4 @@ jobs:
 - v1.6.0 - Added support for @latest and @dev-latest and progress bar for download
 - v1.6.1 - Bug on use
 - v1.6.2 - Using goreleaser #35 by @juev
+- v1.6.3 - Added latest and dev-latest

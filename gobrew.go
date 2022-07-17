@@ -329,6 +329,7 @@ func (gb *GoBrew) Install(version string) {
 		log.Fatal("[Error] No version provided")
 	}
 	version = gb.judgeVersion(version)
+	log.Fatal(version)
 	gb.mkdirs(version)
 	if gb.existsVersion(version) {
 		utils.ColorInfo.Printf("[Info] Version: %s exists \n", version)
@@ -344,6 +345,7 @@ func (gb *GoBrew) Install(version string) {
 func (gb *GoBrew) judgeVersion(version string) string {
 	judgedVersion := ""
 	rcBetaOk := false
+	reRcOrBeta, _ := regexp.Compile("beta.*|rc.*")
 	// check if version string ends with x
 
 	if strings.HasSuffix(version, "x") {
@@ -361,15 +363,53 @@ func (gb *GoBrew) judgeVersion(version string) string {
 		rcBetaOk = true
 	}
 
+	if version == "latest" || version == "dev-latest" {
+		groupedVersions := gb.ListRemoteVersions(false) // donot print
+		groupedVersionKeys := make([]string, 0, len(groupedVersions))
+		for groupedVersionKey := range groupedVersions {
+			groupedVersionKeys = append(groupedVersionKeys, groupedVersionKey)
+		}
+		versionsSemantic := make([]*semver.Version, 0)
+		for _, r := range groupedVersionKeys {
+			v, err := semver.NewVersion(r)
+			if err != nil {
+				// utils.ColorError.Printf("Error parsing version: %s", err)
+			} else {
+				versionsSemantic = append(versionsSemantic, v)
+			}
+		}
+
+		// sort semantic versions
+		sort.Sort(semver.Collection(versionsSemantic))
+		// loop in reverse
+		for i := len(versionsSemantic) - 1; i >= 0; i-- {
+			judgedVersions := groupedVersions[versionsSemantic[i].Original()]
+			// get last element
+			if version == "dev-latest" {
+				return judgedVersions[len(judgedVersions)-1]
+			}
+
+			// loop in reverse
+			for j := len(judgedVersions) - 1; j >= 0; j-- {
+				matches := reRcOrBeta.FindAllString(judgedVersions[j], -1)
+				if len(matches) == 0 {
+					return judgedVersions[j]
+				}
+			}
+		}
+
+		latest := versionsSemantic[len(versionsSemantic)-1].String()
+		return gb.judgeVersion(latest)
+	}
+
 	if judgedVersion != "" {
-		r, _ := regexp.Compile("beta.*|rc.*")
 		groupedVersions := gb.ListRemoteVersions(false) // donot print
 		// check if judgedVersion is in the groupedVersions
 		if _, ok := groupedVersions[judgedVersion]; ok {
 			// get last item in the groupedVersions excluding rc and beta
 			// loop in reverse groupedVersions
 			for i := len(groupedVersions[judgedVersion]) - 1; i >= 0; i-- {
-				matches := r.FindAllString(groupedVersions[judgedVersion][i], -1)
+				matches := reRcOrBeta.FindAllString(groupedVersions[judgedVersion][i], -1)
 				if len(matches) == 0 {
 					return groupedVersions[judgedVersion][i]
 				}
