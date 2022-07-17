@@ -329,7 +329,6 @@ func (gb *GoBrew) Install(version string) {
 		log.Fatal("[Error] No version provided")
 	}
 	version = gb.judgeVersion(version)
-	log.Fatal(version)
 	gb.mkdirs(version)
 	if gb.existsVersion(version) {
 		utils.ColorInfo.Printf("[Info] Version: %s exists \n", version)
