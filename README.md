@@ -229,7 +229,7 @@ rm -rf $HOME/.gobrew
 
 # Use it in Github Actions
 
-I don't know why would you want to do that, but go ahead
+For more details: https://github.com/kevincobain2000/action-gobrew
 
 ```yaml
 on: [push]
@@ -243,7 +243,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
-      - uses: kevincobain2000/gobrew@v1
+      - uses: kevincobain2000/action-gobrew@v1.0.0
         with:
           version: ${{ matrix.go-version }}
 
