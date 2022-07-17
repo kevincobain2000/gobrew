@@ -270,3 +270,4 @@ jobs:
 - v1.5.9 - oops
 - v1.6.0 - Added support for @latest and @dev-latest and progress bar for download
 - v1.6.1 - Bug on use
+- v1.6.2 - Using goreleaser #35 by @juev
