@@ -56,3 +56,27 @@ func TestJudgeVersion(t *testing.T) {
 		})
 	}
 }
+func TestListVersions(t *testing.T) {
+	gb := NewGoBrew()
+	err := gb.ListVersions()
+	assert.NilError(t, err)
+}
+func TestExistVersion(t *testing.T) {
+	gb := NewGoBrew()
+	exists := gb.existsVersion("1.0") //ideally on tests nothing exists yet
+	assert.Equal(t, false, exists)
+}
+
+func TestInstallAndExistVersion(t *testing.T) {
+	gb := NewGoBrew()
+	gb.Install("1.8.4")
+	exists := gb.existsVersion("1.8.4")
+	assert.Equal(t, true, exists)
+}
+
+func TestUnInstallThenNotExistVersion(t *testing.T) {
+	gb := NewGoBrew()
+	gb.Uninstall("1.8.4")
+	exists := gb.existsVersion("1.8.4")
+	assert.Equal(t, false, exists)
+}

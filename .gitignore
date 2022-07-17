@@ -18,3 +18,4 @@ tmp/
 *.pid
 dist/
 bin/
+build/
