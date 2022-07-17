@@ -270,3 +270,4 @@ jobs:
 - v1.6.1 - Bug on use
 - v1.6.2 - Using goreleaser #35 by @juev
 - v1.6.3 - Added latest and dev-latest
+- v1.6.4 - Github action publish
