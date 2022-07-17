@@ -13,6 +13,7 @@ import (
 var args = []string{}
 var actionArg = ""
 var versionArg = ""
+var version = "dev"
 
 var allowedArgs = []string{"h", "help", "ls", "list", "ls-remote", "install", "use", "uninstall", "self-update"}
 
@@ -101,7 +102,7 @@ func Find(slice []string, val string) (int, bool) {
 
 func usage() string {
 	msg := `
-gobrew 1.6.4
+gobrew ` + version + `
 
 Usage:
 
