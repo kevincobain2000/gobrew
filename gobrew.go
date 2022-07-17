@@ -79,7 +79,7 @@ func (gb *GoBrew) getArch() string {
 
 // ListVersions that are installed by dir ls
 // highlight the version that is currently symbolic linked
-func (gb *GoBrew) ListVersions() {
+func (gb *GoBrew) ListVersions() error {
 	files, err := ioutil.ReadDir(gb.versionsDir)
 	if err != nil {
 		utils.ColorError.Printf("[Error]: List versions failed: %s", err)
@@ -136,6 +136,7 @@ func (gb *GoBrew) ListVersions() {
 		log.Println()
 		log.Printf("current: %s", cv)
 	}
+	return nil
 }
 
 // ListRemoteVersions that are installed by dir ls
