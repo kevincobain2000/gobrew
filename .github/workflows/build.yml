@@ -4,27 +4,18 @@ jobs:
   test:
     strategy:
       matrix:
-        go-version: [1.13, 1.14, 1.15, 1.16.7, 1.17, 1.18, 1.18@latest, 1.19beta1, 1.19@dev-latest]
+        go-version: [1.13, 1.14, 1.15, 1.16.7, 1.17, 1.18, 1.18@latest, 1.19beta1, 1.19@dev-latest, latest, dev-latest]
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
-      - name: Install Go
-        run: |
-          curl -sLk https://git.io/gobrew | sh -
-          export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$HOME/go/bin:$PATH"
-          gobrew use ${{ matrix.go-version }}
+      - uses: kevincobain2000/action-gobrew@v1
+        with:
+          version: ${{ matrix.go-version }}
+
       - name: Go version
-        run: |
-          export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$HOME/go/bin:$PATH"
-          go version
-
-      - name: Test
-        run: |
-          export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$HOME/go/bin:$PATH"
-          go test -race ./... -count=1
-
+        run: go version
       - name: Build
-        run: |
-          export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$HOME/go/bin:$PATH"
-          go build cmd/gobrew/main.go
+        run: go build cmd/gobrew/main.go
+      - name: Test
+        run: go test -race ./... -count=1
