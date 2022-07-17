@@ -1,4 +1,4 @@
-name: "gobrew"
+name: "go-gobrew"
 author: "kevincobain2000"
 description: "gobrew, setup go for Github Actions"
 branding:
