@@ -241,21 +241,17 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
-      - name: Install Go
-        run: |
-          curl -sLk https://git.io/gobrew | sh -
-          export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$HOME/go/bin:$PATH"
-          gobrew use ${{ matrix.go-version }}
-      - name: Go version
-        run: |
-          export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$HOME/go/bin:$PATH"
-          go version
+      - uses: kevincobain2000/gobrew@v1
+        with:
+          version: ${{ matrix.go-version }}
 
-      - name: Test
-        run: |
-          export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$HOME/go/bin:$PATH"
-          go test -race ./... -count=1
+      - name: Go
+        run: go version
 ```
+
+# Limitations
+
+- Windows OS is not supported
 
 # Change Log
 
