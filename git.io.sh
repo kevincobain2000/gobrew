@@ -12,28 +12,28 @@ case $THISOS in
    Linux*)
       case $ARCH in
         arm64)
-          GOBREW_ARCH_BIN="gobrew-linux-arm-64"
+          GOBREW_ARCH_BIN="gobrew-linux-arm64"
           ;;
         aarch64)
-          GOBREW_ARCH_BIN="gobrew-linux-arm-64"
+          GOBREW_ARCH_BIN="gobrew-linux-arm64"
           ;;
         *)
-          GOBREW_ARCH_BIN="gobrew-linux-amd-64"
+          GOBREW_ARCH_BIN="gobrew-linux-amd64"
           ;;
       esac
       ;;
    Darwin*)
       case $ARCH in
         arm64)
-          GOBREW_ARCH_BIN="gobrew-darwin-arm-64"
+          GOBREW_ARCH_BIN="gobrew-darwin-arm64"
           ;;
         *)
-          GOBREW_ARCH_BIN="gobrew-darwin-64"
+          GOBREW_ARCH_BIN="gobrew-darwin-amd64"
           ;;
       esac
       ;;
    Windows*)
-      GOBREW_ARCH_BIN="gobrew-windows-64.exe"
+      GOBREW_ARCH_BIN="gobrew-windows-amd64.exe"
       ;;
 esac
 
@@ -45,7 +45,7 @@ else
       echo "Using gobrew version $GOBREW_VERSION\n"
 fi
 
-curl -kLs https://raw.githubusercontent.com/kevincobain2000/gobrew/master/bin/$GOBREW_ARCH_BIN -o $GOBREW_BIN_DIR/gobrew
+curl -kLs https://github.com/kevincobain2000/gobrew/releases/latest/download/$GOBREW_ARCH_BIN -o $GOBREW_BIN_DIR/gobrew
 
 chmod +x $GOBREW_BIN_DIR/gobrew
 
