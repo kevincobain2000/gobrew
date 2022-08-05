@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -63,10 +62,7 @@ func main() {
 	case "uninstall":
 		gb.Uninstall(versionArg)
 	case "self-update":
-		fmt.Println("Please execute curl cmd for self update")
-		fmt.Print("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓\n\n")
-		fmt.Println("curl -sLk https://git.io/gobrew | sh -")
-		fmt.Print("\n↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑\n")
+		gb.Upgrade(version)
 	}
 }
 

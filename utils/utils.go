@@ -52,3 +52,38 @@ func Find(slice []string, val string) bool {
 	}
 	return false
 }
+
+func Successf(format string, a ...interface{}) {
+	_, _ = ColorSuccess.Printf(format, a)
+}
+
+func Infof(format string, a ...interface{}) {
+	_, _ = ColorInfo.Printf(format, a)
+}
+
+func Errorf(format string, a ...interface{}) {
+	_, _ = ColorError.Printf(format, a)
+}
+
+func Major(a ...interface{}) {
+	_, _ = ColorMajorVersion.Print(a)
+}
+
+func Successln(a ...interface{}) {
+	_, _ = ColorSuccess.Println(a)
+}
+
+func Infoln(a ...interface{}) {
+	_, _ = ColorInfo.Println(a)
+}
+
+func Errorln(a ...interface{}) {
+	_, _ = ColorError.Println(a)
+}
+
+func CheckError(err error, format string) {
+	if err != nil {
+		Errorf(format+": %s", err)
+		os.Exit(1)
+	}
+}
