@@ -10,7 +10,7 @@ import (
 	"github.com/kevincobain2000/gobrew"
 )
 
-var args = []string{}
+var args []string
 var actionArg = ""
 var versionArg = ""
 var version = "dev"
@@ -49,7 +49,7 @@ func main() {
 	case "h", "help":
 		log.Print(usage())
 	case "ls", "list":
-		gb.ListVersions()
+		_ = gb.ListVersions()
 	case "ls-remote":
 		gb.ListRemoteVersions(true)
 	case "install":
