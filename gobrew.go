@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -60,6 +59,8 @@ type Helper interface {
 	downloadAndExtract(version string)
 	changeSymblinkGoBin(version string)
 	changeSymblinkGo(version string)
+	getLatestVersion() string
+	getGithubTags(repo string) (result []string)
 }
 
 var gb GoBrew
@@ -534,27 +535,20 @@ func (gb *GoBrew) ExtractTarGz(srcTar string, dstDir string) error {
 }
 
 func (gb *GoBrew) changeSymblinkGoBin(version string) {
-
 	goBinDst := filepath.Join(gb.versionsDir, version, "/go/bin")
 	_ = os.RemoveAll(gb.currentBinDir)
 
-	cmd := exec.Command("ln", "-snf", goBinDst, gb.currentBinDir)
-
-	_, err := cmd.Output()
-	if err != nil {
+	if err := os.Symlink(goBinDst, gb.currentBinDir); err != nil {
 		utils.Errorf("[Error]: symbolic link failed: %s\n", err)
 		os.Exit(1)
 	}
-
 }
 
 func (gb *GoBrew) changeSymblinkGo(version string) {
 	_ = os.RemoveAll(gb.currentGoDir)
 	versionGoDir := filepath.Join(gb.versionsDir, version, "go")
-	cmd := exec.Command("ln", "-snf", versionGoDir, gb.currentGoDir)
 
-	_, err := cmd.Output()
-	if err != nil {
+	if err := os.Symlink(versionGoDir, gb.currentGoDir); err != nil {
 		utils.Errorf("[Error]: symbolic link failed: %s\n", err)
 		os.Exit(1)
 	}
