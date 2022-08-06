@@ -1,11 +1,12 @@
 package gobrew
 
 import (
-	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/fs"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -16,14 +17,12 @@ import (
 
 	"github.com/Masterminds/semver"
 	"github.com/c4milo/unpackit"
-	"github.com/google/go-github/v45/github"
 	"github.com/kevincobain2000/gobrew/utils"
 )
 
 const (
 	goBrewDir           string = ".gobrew"
 	defaultRegistryPath string = "https://golang.org/dl/"
-	fetchTagsRepo       string = "https://github.com/golang/go"
 	goBrewDownloadUrl   string = "https://github.com/kevincobain2000/gobrew/releases/latest/download/"
 )
 
@@ -148,24 +147,13 @@ func (gb *GoBrew) ListVersions() error {
 // ListRemoteVersions that are installed by dir ls
 func (gb *GoBrew) ListRemoteVersions(print bool) map[string][]string {
 	log.Println("[Info]: Fetching remote versions")
-	cmd := exec.Command(
-		"git",
-		"ls-remote",
-		// "--sort=version:refname",
-		"--tags",
-		fetchTagsRepo,
-		"go*")
-	output, err := cmd.CombinedOutput()
-	utils.CheckError(err, "[Error]: List remote versions failed")
-	tagsRaw := utils.BytesToString(output)
-	r, _ := regexp.Compile("tags/go.*")
+	tags := gb.getGithubTags("golang/go")
 
-	matches := r.FindAllString(tagsRaw, -1)
-	versions := make([]string, len(matches))
-	for _, match := range matches {
-		versionTag := strings.ReplaceAll(match, "tags/go", "")
-		versions = append(versions, versionTag)
+	var versions []string
+	for _, tag := range tags {
+		versions = append(versions, strings.ReplaceAll(tag, "go", ""))
 	}
+
 	return gb.getGroupedVersion(versions, print)
 }
 
@@ -433,17 +421,19 @@ func (gb *GoBrew) Use(version string) {
 // Upgrade of GoBrew
 func (gb *GoBrew) Upgrade(currentVersion string) {
 	if currentVersion == gb.getLatestVersion() {
-		utils.Infoln("[INFO] your version already newest")
+		utils.Infoln("[INFO] your version is already newest")
 		return
 	}
 
-	tmp, _ := os.MkdirTemp("", "gobrew")
-	url := goBrewDownloadUrl + "gobrew-" + runtime.GOOS + "-" + runtime.GOARCH
-	if err := utils.DownloadWithProgress(url, "gobrew", tmp); err != nil {
+	mkdirTemp, _ := os.MkdirTemp("", "gobrew")
+	tmpFile := filepath.Join(mkdirTemp, "gobrew")
+	url := goBrewDownloadUrl + "gobrew-" + gb.getArch()
+	if err := utils.DownloadWithProgress(url, "gobrew", mkdirTemp); err != nil {
 		utils.Errorln("[Error] Download GoBrew failed:", err)
 		return
 	}
-	source, err := os.Open(filepath.Join(tmp, "gobrew"))
+
+	source, err := os.Open(tmpFile)
 	if err != nil {
 		utils.Errorln("[Error] Cannot open file", err)
 		return
@@ -451,26 +441,33 @@ func (gb *GoBrew) Upgrade(currentVersion string) {
 	defer func(source *os.File) {
 		_ = source.Close()
 	}(source)
-	destination, err := os.Create(filepath.Join(gb.installDir, "/bin/gobrew"))
+
+	goBrewFile := filepath.Join(gb.installDir, "/bin/gobrew")
+	destination, err := os.Create(goBrewFile)
 	if err != nil {
-		utils.Errorln("[Error] Cannot open file", err)
+		utils.Errorf("[Error] Cannot open file: %s", err)
 		return
 	}
 	defer func(destination *os.File) {
 		_ = destination.Close()
 	}(destination)
 
-	_, err = io.Copy(destination, source)
-	if err != nil {
-		utils.Errorln("[Error] Cannot copy file", err)
+	if _, err = io.Copy(destination, source); err != nil {
+		utils.Errorf("[Error] Cannot copy file: %s", err)
 		return
 	}
-	err = os.Chmod(filepath.Join(gb.installDir, "/bin/gobrew"), 0755)
-	if err != nil {
-		utils.Errorln("[Error] Cannot set file as executable", err)
+
+	if err = os.Chmod(goBrewFile, 0755); err != nil {
+		utils.Errorf("[Error] Cannot set file as executable: %s", err)
 		return
 	}
-	utils.Successln("Upgrade successful")
+
+	if err = os.Remove(tmpFile); err != nil {
+		utils.Errorf("[Error] Cannot remove tmp file: %s", err)
+		return
+	}
+
+	utils.Infoln("Upgrade successful")
 }
 
 func (gb *GoBrew) mkdirs(version string) {
@@ -564,13 +561,46 @@ func (gb *GoBrew) changeSymblinkGo(version string) {
 }
 
 func (gb *GoBrew) getLatestVersion() string {
-	client := github.NewClient(nil)
-	ctx := context.Background()
+	tags := gb.getGithubTags("kevincobain2000/gobrew")
 
-	tags, _, err := client.Repositories.ListTags(ctx, "kevincobain2000", "gobrew", nil)
+	return tags[len(tags)-1]
+}
+
+func (gb *GoBrew) getGithubTags(repo string) (result []string) {
+	request, err := http.NewRequest("GET", fmt.Sprintf("https://api.github.com/repos/%s/git/refs/tags", repo), nil)
 	if err != nil {
-		return ""
+		utils.Errorf("[Error] Cannot create request: %s", err)
+		return
 	}
 
-	return tags[0].GetName()
+	client := http.Client{}
+	response, err := client.Do(request)
+	if err != nil {
+		utils.Errorf("[Error] Cannot get response: %s", err)
+		return
+	}
+
+	data, err := io.ReadAll(response.Body)
+	if err != nil {
+		utils.Errorf("[Error] Cannot read response: %s", err)
+		return
+	}
+
+	type Tag struct {
+		Ref string
+	}
+	var tags []Tag
+
+	if err := json.Unmarshal(data, &tags); err != nil {
+		utils.Errorf("[Error] Cannot unmarshal data: %s", err)
+	}
+
+	for _, tag := range tags {
+		t := strings.ReplaceAll(tag.Ref, "refs/tags/", "")
+		if strings.HasPrefix(t, "v") || strings.HasPrefix(t, "go") {
+			result = append(result, t)
+		}
+	}
+
+	return result
 }

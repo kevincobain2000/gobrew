@@ -6,7 +6,6 @@ require (
 	github.com/Masterminds/semver v1.5.0
 	github.com/c4milo/unpackit v0.1.0
 	github.com/fatih/color v1.10.0
-	github.com/google/go-github/v45 v45.2.0
 	github.com/schollz/progressbar/v3 v3.8.6
 	gotest.tools v2.2.0+incompatible
 )
@@ -14,7 +13,6 @@ require (
 require (
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
-	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/klauspost/compress v1.4.1 // indirect
 	github.com/klauspost/cpuid v1.2.0 // indirect
 	github.com/klauspost/pgzip v1.2.5 // indirect
