@@ -26,16 +26,23 @@ func DownloadWithProgress(url string, tarName string, destFolder string) (err er
 		return err
 	}
 
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(resp.Body)
 
 	f, _ := os.OpenFile(destTarPath, os.O_CREATE|os.O_WRONLY, 0644)
-	defer f.Close()
+	defer func(f *os.File) {
+		_ = f.Close()
+	}(f)
 
 	bar := progressbar.DefaultBytes(
 		resp.ContentLength,
 		"Downloading",
 	)
-	io.Copy(io.MultiWriter(f, bar), resp.Body)
+	_, err = io.Copy(io.MultiWriter(f, bar), resp.Body)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -51,4 +58,39 @@ func Find(slice []string, val string) bool {
 		}
 	}
 	return false
+}
+
+func Successf(format string, a ...interface{}) {
+	_, _ = ColorSuccess.Printf(format, a...)
+}
+
+func Infof(format string, a ...interface{}) {
+	_, _ = ColorInfo.Printf(format, a...)
+}
+
+func Errorf(format string, a ...interface{}) {
+	_, _ = ColorError.Printf(format, a...)
+}
+
+func Major(a ...interface{}) {
+	_, _ = ColorMajorVersion.Print(a...)
+}
+
+func Successln(a ...interface{}) {
+	_, _ = ColorSuccess.Println(a...)
+}
+
+func Infoln(a ...interface{}) {
+	_, _ = ColorInfo.Println(a...)
+}
+
+func Errorln(a ...interface{}) {
+	_, _ = ColorError.Println(a...)
+}
+
+func CheckError(err error, format string) {
+	if err != nil {
+		Errorf(format+": %s", err)
+		os.Exit(1)
+	}
 }

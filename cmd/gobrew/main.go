@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -10,7 +9,7 @@ import (
 	"github.com/kevincobain2000/gobrew"
 )
 
-var args = []string{}
+var args []string
 var actionArg = ""
 var versionArg = ""
 var version = "dev"
@@ -49,7 +48,7 @@ func main() {
 	case "h", "help":
 		log.Print(usage())
 	case "ls", "list":
-		gb.ListVersions()
+		_ = gb.ListVersions()
 	case "ls-remote":
 		gb.ListRemoteVersions(true)
 	case "install":
@@ -63,10 +62,7 @@ func main() {
 	case "uninstall":
 		gb.Uninstall(versionArg)
 	case "self-update":
-		fmt.Println("Please execute curl cmd for self update")
-		fmt.Print("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓\n\n")
-		fmt.Println("curl -sLk https://git.io/gobrew | sh -")
-		fmt.Print("\n↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑\n")
+		gb.Upgrade(version)
 	}
 }
 
