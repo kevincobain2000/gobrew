@@ -421,7 +421,7 @@ func (gb *GoBrew) Use(version string) {
 
 // Upgrade of GoBrew
 func (gb *GoBrew) Upgrade(currentVersion string) {
-	if currentVersion == gb.getLatestVersion() {
+	if "v"+currentVersion == gb.getLatestVersion() {
 		utils.Infoln("[INFO] your version is already newest")
 		return
 	}
