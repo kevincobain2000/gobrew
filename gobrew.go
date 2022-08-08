@@ -579,6 +579,9 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 	}
 
 	request.Header.Set("User-Agent", "gobrew")
+	if os.Getenv("GITHUB_TOKEN") != "" {
+		request.Header.Set("Authorization", "token "+os.Getenv("GITHUB_TOKEN"))
+	}
 
 	response, err := client.Do(request)
 	if err != nil {
@@ -602,7 +605,8 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 	var tags []Tag
 
 	if err := json.Unmarshal(data, &tags); err != nil {
-		utils.Errorf("[Error] Cannot unmarshal data: %s", err)
+		utils.Errorf("[Error] Rate limit exceed")
+		os.Exit(2)
 	}
 
 	for _, tag := range tags {
