@@ -64,6 +64,7 @@ type Helper interface {
 }
 
 var gb GoBrew
+var githubTags map[string][]string
 
 // NewGoBrew instance
 func NewGoBrew() GoBrew {
@@ -421,7 +422,7 @@ func (gb *GoBrew) Use(version string) {
 
 // Upgrade of GoBrew
 func (gb *GoBrew) Upgrade(currentVersion string) {
-	if currentVersion == gb.getLatestVersion() {
+	if "v"+currentVersion == gb.getLatestVersion() {
 		utils.Infoln("[INFO] your version is already newest")
 		return
 	}
@@ -557,22 +558,40 @@ func (gb *GoBrew) changeSymblinkGo(version string) {
 func (gb *GoBrew) getLatestVersion() string {
 	tags := gb.getGithubTags("kevincobain2000/gobrew")
 
+	if len(tags) == 0 {
+		return ""
+	}
+
 	return tags[len(tags)-1]
 }
 
 func (gb *GoBrew) getGithubTags(repo string) (result []string) {
+	if len(githubTags[repo]) > 0 {
+		return githubTags[repo]
+	}
+
+	githubTags = make(map[string][]string, 0)
+	client := &http.Client{}
 	request, err := http.NewRequest("GET", fmt.Sprintf("https://api.github.com/repos/%s/git/refs/tags", repo), nil)
 	if err != nil {
 		utils.Errorf("[Error] Cannot create request: %s", err)
 		return
 	}
 
-	client := http.Client{}
+	request.Header.Set("User-Agent", "gobrew")
+	if os.Getenv("GITHUB_TOKEN") != "" {
+		request.Header.Set("Authorization", "token "+os.Getenv("GITHUB_TOKEN"))
+	}
+
 	response, err := client.Do(request)
 	if err != nil {
 		utils.Errorf("[Error] Cannot get response: %s", err)
 		return
 	}
+
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
+	}(response.Body)
 
 	data, err := io.ReadAll(response.Body)
 	if err != nil {
@@ -586,7 +605,8 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 	var tags []Tag
 
 	if err := json.Unmarshal(data, &tags); err != nil {
-		utils.Errorf("[Error] Cannot unmarshal data: %s", err)
+		utils.Errorf("[Error] Rate limit exceed")
+		os.Exit(2)
 	}
 
 	for _, tag := range tags {
@@ -596,5 +616,6 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 		}
 	}
 
+	githubTags[repo] = result
 	return result
 }
