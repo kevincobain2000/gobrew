@@ -1,0 +1,30 @@
+on:
+  schedule:
+    # hourly
+    # This crontab is related to https://github.com/kevincobain2000/gobrew/issues/45
+    - cron: '0 * * * *'
+name: "Sync Go releases"
+
+jobs:
+  sync-tags:
+    name: sync
+    runs-on: ubuntu-latest
+    steps:
+      # curl to a tags to a fail
+      - name: curl latest tags
+        run: |
+         curl https://api.github.com/repos/golang/go/git/refs/tags > golang-tags.json
+
+      # use jq to validate the tags are correct and exit 1 upon failure
+      - name: Validate tags
+        uses: sergeysova/jq-action@v2
+        with:
+          cmd: cat golang-tags.json | jq -e --slurp '.[0][0].ref != null'
+
+      # Push (overwrite) golang-tags.json file to orphan branchname: json
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          publish_branch: json

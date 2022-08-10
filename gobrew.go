@@ -23,6 +23,7 @@ const (
 	goBrewDir           string = ".gobrew"
 	defaultRegistryPath string = "https://golang.org/dl/"
 	goBrewDownloadUrl   string = "https://github.com/kevincobain2000/gobrew/releases/latest/download/"
+	goBrewTagsApi       string = "https://raw.githubusercontent.com/kevincobain2000/gobrew/json/golang-tags.json"
 )
 
 // Command ...
@@ -572,7 +573,7 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 
 	githubTags = make(map[string][]string, 0)
 	client := &http.Client{}
-	request, err := http.NewRequest("GET", fmt.Sprintf("https://api.github.com/repos/%s/git/refs/tags", repo), nil)
+	request, err := http.NewRequest("GET", goBrewTagsApi, nil)
 	if err != nil {
 		utils.Errorf("[Error] Cannot create request: %s", err)
 		return
