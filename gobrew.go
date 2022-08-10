@@ -573,7 +573,7 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 
 	githubTags = make(map[string][]string, 0)
 	client := &http.Client{}
-	url := fmt.Sprintf("https://api.github.com/repos/%s/git/refs/tags", repo)
+	url := "https://api.github.com/repos/kevincobain2000/gobrew/git/refs/tags"
 	if repo == "golang/go" {
 		url = goBrewTagsApi
 	}
