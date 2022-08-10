@@ -573,16 +573,17 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 
 	githubTags = make(map[string][]string, 0)
 	client := &http.Client{}
-	request, err := http.NewRequest("GET", goBrewTagsApi, nil)
+	url := "https://api.github.com/repos/kevincobain2000/gobrew/git/refs/tags"
+	if repo == "golang/go" {
+		url = goBrewTagsApi
+	}
+	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		utils.Errorf("[Error] Cannot create request: %s", err)
 		return
 	}
 
 	request.Header.Set("User-Agent", "gobrew")
-	if os.Getenv("GITHUB_TOKEN") != "" {
-		request.Header.Set("Authorization", "token "+os.Getenv("GITHUB_TOKEN"))
-	}
 
 	response, err := client.Do(request)
 	if err != nil {
