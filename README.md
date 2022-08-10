@@ -271,3 +271,4 @@ jobs:
 - v1.6.2 - Using goreleaser #35 by @juev
 - v1.6.3 - Added latest and dev-latest
 - v1.6.4 - Github action publish
+- v1.6.7 - Fixes rate limit issue
