@@ -272,3 +272,4 @@ jobs:
 - v1.6.3 - Added latest and dev-latest
 - v1.6.4 - Github action publish
 - v1.6.7 - Fixes rate limit issue
+- v1.6.9 - Fixes #52, download error on status != 200

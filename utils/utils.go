@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -30,6 +31,10 @@ func DownloadWithProgress(url string, tarName string, destFolder string) (err er
 		_ = Body.Close()
 	}(resp.Body)
 
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("%s returned status code %d", url, resp.StatusCode)
+	}
+
 	f, _ := os.OpenFile(destTarPath, os.O_CREATE|os.O_WRONLY, 0644)
 	defer func(f *os.File) {
 		_ = f.Close()
@@ -43,6 +48,7 @@ func DownloadWithProgress(url string, tarName string, destFolder string) (err er
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
