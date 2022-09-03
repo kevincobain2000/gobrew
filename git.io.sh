@@ -37,13 +37,7 @@ case $THISOS in
       ;;
 esac
 
-if [ -z "$GOBREW_VERSION" ]
-then
-      GOBREW_VERSION=master
-      echo "Using gobrew version latest\n"
-else
-      echo "Using gobrew version $GOBREW_VERSION\n"
-fi
+echo "Installing gobrew...\n"
 
 curl -kLs https://github.com/kevincobain2000/gobrew/releases/latest/download/$GOBREW_ARCH_BIN -o $GOBREW_BIN_DIR/gobrew
 

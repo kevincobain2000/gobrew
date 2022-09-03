@@ -33,7 +33,7 @@
 Using curl
 
 ```curl
-curl -sLk https://git.io/gobrew | sh -
+curl -sLk https://git.io/gobrew | sh
 ```
 
 or install using go
