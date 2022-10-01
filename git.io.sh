@@ -18,10 +18,10 @@ case $THISOS in
           GOBREW_ARCH_BIN="gobrew-linux-arm64"
           ;;
         armv6l)
-          GOBREW_ARCH_BIN="gobrew-linux-arm_6"
+          GOBREW_ARCH_BIN="gobrew-linux-arm"
           ;;
         armv7l)
-          GOBREW_ARCH_BIN="gobrew-linux-arm_7"
+          GOBREW_ARCH_BIN="gobrew-linux-arm"
           ;;
         *)
           GOBREW_ARCH_BIN="gobrew-linux-amd64"
