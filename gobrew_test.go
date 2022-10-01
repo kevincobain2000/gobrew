@@ -30,19 +30,19 @@ func TestJudgeVersion(t *testing.T) {
 		},
 		{
 			version:     "1.18@latest",
-			wantVersion: "1.18.5",
+			wantVersion: "1.18.6",
 		},
 		{
 			version:     "1.18@dev-latest",
-			wantVersion: "1.18.5",
+			wantVersion: "1.18.6",
 		},
 		{
 			version:     "latest",
-			wantVersion: "1.19",
+			wantVersion: "1.19.1",
 		},
 		{
 			version:     "dev-latest",
-			wantVersion: "1.19",
+			wantVersion: "1.19.1",
 		},
 	}
 	for _, test := range tests {
