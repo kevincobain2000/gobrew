@@ -17,6 +17,12 @@ case $THISOS in
         aarch64)
           GOBREW_ARCH_BIN="gobrew-linux-arm64"
           ;;
+        armv6l)
+          GOBREW_ARCH_BIN="gobrew-linux-arm_6"
+          ;;
+        armv7l)
+          GOBREW_ARCH_BIN="gobrew-linux-arm_7"
+          ;;
         *)
           GOBREW_ARCH_BIN="gobrew-linux-amd64"
           ;;
