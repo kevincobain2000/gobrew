@@ -36,14 +36,16 @@ func TestJudgeVersion(t *testing.T) {
 			version:     "1.18@dev-latest",
 			wantVersion: "1.18.6",
 		},
-		{
-			version:     "latest",
-			wantVersion: "1.19.1",
-		},
-		{
-			version:     "dev-latest",
-			wantVersion: "1.19.1",
-		},
+		// // following 2 tests fail upon new version release
+		// // commenting out for now as the tool is stable
+		// {
+		// 	version:     "latest",
+		// 	wantVersion: "1.19.1",
+		// },
+		// {
+		// 	version:     "dev-latest",
+		// 	wantVersion: "1.19.1",
+		// },
 	}
 	for _, test := range tests {
 		t.Run(test.version, func(t *testing.T) {
