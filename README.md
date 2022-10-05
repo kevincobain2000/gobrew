@@ -46,6 +46,7 @@ Add `PATH` setting your shell config file (`.bashrc` or `.zshrc`).
 
  ```sh
 export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
+export GOROOT="$HOME/.gobrew/current/go"
 ```
 
 Reload config.
@@ -219,6 +220,7 @@ Examples:
 Installation Path:
     # Add gobrew to your ~/.bashrc or ~/.zshrc
     export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
+    export GOROOT="$HOME/.gobrew/current/go"
 ```
 
 # Uninstall gobrew
