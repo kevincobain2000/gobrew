@@ -235,6 +235,9 @@ func (gb *GoBrew) getGroupedVersion(versions []string, print bool) map[string][]
 			gb.print(gvSemantic.String()+"  ", print)
 		}
 
+		maxPerLine = 0
+		gb.print("\n\t", true)
+
 		// print rc and beta versions in the end
 		for _, rcVersion := range groupedVersions[lookupKey] {
 			r, _ := regexp.Compile("beta.*|rc.*")
