@@ -21,7 +21,7 @@ import (
 
 const (
 	goBrewDir           string = ".gobrew"
-	defaultRegistryPath string = "https://golang.org/dl/"
+	defaultRegistryPath string = "https://go.dev/dl/"
 	goBrewDownloadUrl   string = "https://github.com/kevincobain2000/gobrew/releases/latest/download/"
 	goBrewTagsApi       string = "https://raw.githubusercontent.com/kevincobain2000/gobrew/json/golang-tags.json"
 )
