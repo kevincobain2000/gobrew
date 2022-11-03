@@ -43,7 +43,8 @@ case $THISOS in
       ;;
 esac
 
-echo "Installing gobrew...\n"
+echo "Installing gobrew..."
+echo ""
 
 curl -kLs https://github.com/kevincobain2000/gobrew/releases/latest/download/$GOBREW_ARCH_BIN -o $GOBREW_BIN_DIR/gobrew
 
