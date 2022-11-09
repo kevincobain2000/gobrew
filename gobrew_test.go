@@ -30,11 +30,11 @@ func TestJudgeVersion(t *testing.T) {
 		},
 		{
 			version:     "1.18@latest",
-			wantVersion: "1.18.7",
+			wantVersion: "1.18.8",
 		},
 		{
 			version:     "1.18@dev-latest",
-			wantVersion: "1.18.7",
+			wantVersion: "1.18.8",
 		},
 		// // following 2 tests fail upon new version release
 		// // commenting out for now as the tool is stable
