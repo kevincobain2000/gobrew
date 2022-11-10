@@ -6,7 +6,7 @@
 <p align="center">
   Go version manager, written in Go<br>
   Update and switch Go versions easily<br>
-  Install Go on Linux or Mac or Mac with M1
+  Install Go on Linux or Mac (intel) or Mac with Apple chip (M1, M2 etc)
 </p>
 
 **Quick Setup:** One command to install Go and manage versions.
