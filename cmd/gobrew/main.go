@@ -23,6 +23,7 @@ var allowedArgs = []string{
 	"install",
 	"use",
 	"uninstall",
+	"prune",
 	"version",
 	"self-update",
 }
@@ -72,6 +73,8 @@ func main() {
 		gb.Use(versionArg)
 	case "uninstall":
 		gb.Uninstall(versionArg)
+	case "prune":
+		gb.Prune()
 	case "version":
 		gb.Version(version)
 	case "self-update":
@@ -123,6 +126,7 @@ Usage:
     gobrew uninstall <version>     Uninstall <version>
     gobrew list                    List installed versions
     gobrew self-update             Self update this tool
+    gobrew prune                   Uninstall all go versions except current version
     gobrew version                 Show gobrew version
     gobrew help                    Show this message
 
