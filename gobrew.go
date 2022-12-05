@@ -34,8 +34,8 @@ type Command interface {
 	Uninstall(version string)
 	Install(version string)
 	Use(version string)
-	Version()
-	Upgrade()
+	Version(version string)
+	Upgrade(version string)
 	Helper
 }
 
