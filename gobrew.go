@@ -34,6 +34,7 @@ type Command interface {
 	Uninstall(version string)
 	Install(version string)
 	Use(version string)
+	Version()
 	Upgrade()
 	Helper
 }
@@ -422,6 +423,15 @@ func (gb *GoBrew) Use(version string) {
 	gb.changeSymblinkGoBin(version)
 	gb.changeSymblinkGo(version)
 	utils.Successf("[Success] Changed go version to: %s\n", version)
+}
+
+// Version of GoBrew
+func (gb *GoBrew) Version(currentVersion string) {
+	utils.Infoln("[INFO] gobrew version is " + currentVersion)
+	if "v"+currentVersion != gb.getLatestVersion() {
+		utils.Infoln("[Info] gobrew version is outdated. Please update using: gobrew self-update")
+		return
+	}
 }
 
 // Upgrade of GoBrew
