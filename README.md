@@ -275,4 +275,4 @@ jobs:
 - v1.6.4 - Github action publish
 - v1.6.7 - Fixes rate limit issue
 - v1.6.9 - Fixes #52, download error on status != 200
-- v1.7.4 - Show `gobrew version`
+- v1.7.4 - Added 2 new options `gobrew version` and `gobrew prune`
