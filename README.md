@@ -201,6 +201,8 @@ Usage:
     gobrew uninstall <version>     Uninstall <version>
     gobrew list                    List installed versions
     gobrew self-update             Self update this tool
+    gobrew prune                   Uninstall all go versions except current version
+    gobrew version                 Show gobrew version
     gobrew help                    Show this message
 
 Examples:
@@ -239,7 +241,7 @@ name: CI
 jobs:
   test:
     strategy:
-      matrix:
+     0 matrix:
         go-version: [1.13, 1.14, 1.15, 1.16.7, 1.17, 1.18, 1.18@latest, 1.19beta1, 1.19@dev-latest, latest, dev-latest]
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
@@ -275,3 +277,4 @@ jobs:
 - v1.6.4 - Github action publish
 - v1.6.7 - Fixes rate limit issue
 - v1.6.9 - Fixes #52, download error on status != 200
+- v1.7.4 - Added 2 new options `gobrew version` and `gobrew prune`

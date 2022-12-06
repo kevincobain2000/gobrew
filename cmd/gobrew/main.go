@@ -14,7 +14,19 @@ var actionArg = ""
 var versionArg = ""
 var version = "dev"
 
-var allowedArgs = []string{"h", "help", "ls", "list", "ls-remote", "install", "use", "uninstall", "self-update"}
+var allowedArgs = []string{
+	"h",
+	"help",
+	"ls",
+	"list",
+	"ls-remote",
+	"install",
+	"use",
+	"uninstall",
+	"prune",
+	"version",
+	"self-update",
+}
 
 func init() {
 	log.SetFlags(0)
@@ -61,6 +73,10 @@ func main() {
 		gb.Use(versionArg)
 	case "uninstall":
 		gb.Uninstall(versionArg)
+	case "prune":
+		gb.Prune()
+	case "version":
+		gb.Version(version)
 	case "self-update":
 		gb.Upgrade(version)
 	}
@@ -110,6 +126,8 @@ Usage:
     gobrew uninstall <version>     Uninstall <version>
     gobrew list                    List installed versions
     gobrew self-update             Self update this tool
+    gobrew prune                   Uninstall all go versions except current version
+    gobrew version                 Show gobrew version
     gobrew help                    Show this message
 
 Examples:

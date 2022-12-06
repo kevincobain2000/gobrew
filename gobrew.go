@@ -34,7 +34,9 @@ type Command interface {
 	Uninstall(version string)
 	Install(version string)
 	Use(version string)
-	Upgrade()
+	Prune()
+	Version(currentVersion string)
+	Upgrade(currentVersion string)
 	Helper
 }
 
@@ -82,6 +84,31 @@ func NewGoBrew() GoBrew {
 
 func (gb *GoBrew) getArch() string {
 	return runtime.GOOS + "-" + runtime.GOARCH
+}
+
+// Prune removes all installed versions of go execept current version
+func (gb *GoBrew) Prune() error {
+	currentVersion := gb.CurrentVersion()
+	utils.Infof("[Info] Current version: %s \n", currentVersion)
+
+	entries, err := os.ReadDir(gb.versionsDir)
+	utils.CheckError(err, "[Error]: List versions failed")
+	files := make([]fs.FileInfo, 0, len(entries))
+	for _, entry := range entries {
+		info, err := entry.Info()
+		utils.CheckError(err, "[Error]: List versions failed")
+		files = append(files, info)
+	}
+
+	for _, f := range files {
+		if f.Name() != currentVersion {
+			version := f.Name()
+			utils.Infof("[Info] Uninstalling version: %s \n", version)
+			gb.Uninstall(version)
+			utils.Infof("[Info] Uninstalled version: %s \n", version)
+		}
+	}
+	return nil
 }
 
 // ListVersions that are installed by dir ls
@@ -422,6 +449,15 @@ func (gb *GoBrew) Use(version string) {
 	gb.changeSymblinkGoBin(version)
 	gb.changeSymblinkGo(version)
 	utils.Successf("[Success] Changed go version to: %s\n", version)
+}
+
+// Version of GoBrew
+func (gb *GoBrew) Version(currentVersion string) {
+	utils.Infoln("[INFO] gobrew version is " + currentVersion)
+	if "v"+currentVersion != gb.getLatestVersion() {
+		utils.Infoln("[Info] gobrew version is outdated. Please update using: gobrew self-update")
+		return
+	}
 }
 
 // Upgrade of GoBrew
