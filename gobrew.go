@@ -29,7 +29,7 @@ const (
 // Command ...
 type Command interface {
 	ListVersions()
-	ListRemoteVersions()
+	ListRemoteVersions(print bool)
 	CurrentVersion() string
 	Uninstall(version string)
 	Install(version string)
@@ -263,7 +263,7 @@ func (gb *GoBrew) getGroupedVersion(versions []string, print bool) map[string][]
 		}
 
 		maxPerLine = 0
-		gb.print("\n\t", true)
+		gb.print("\n\t", print)
 
 		// print rc and beta versions in the end
 		for _, rcVersion := range groupedVersions[lookupKey] {
