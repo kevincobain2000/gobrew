@@ -30,11 +30,11 @@ func TestJudgeVersion(t *testing.T) {
 		},
 		{
 			version:     "1.18@latest",
-			wantVersion: "1.18.8",
+			wantVersion: "1.18.9",
 		},
 		{
 			version:     "1.18@dev-latest",
-			wantVersion: "1.18.8",
+			wantVersion: "1.18.9",
 		},
 		// // following 2 tests fail upon new version release
 		// // commenting out for now as the tool is stable
@@ -69,14 +69,14 @@ func TestExistVersion(t *testing.T) {
 
 func TestInstallAndExistVersion(t *testing.T) {
 	gb := NewGoBrew()
-	gb.Install("1.8.4")
-	exists := gb.existsVersion("1.8.4")
+	gb.Install("1.19")
+	exists := gb.existsVersion("1.19")
 	assert.Equal(t, true, exists)
 }
 
 func TestUnInstallThenNotExistVersion(t *testing.T) {
 	gb := NewGoBrew()
-	gb.Uninstall("1.8.4")
-	exists := gb.existsVersion("1.8.4")
+	gb.Uninstall("1.19")
+	exists := gb.existsVersion("1.19")
 	assert.Equal(t, false, exists)
 }
