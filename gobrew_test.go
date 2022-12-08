@@ -30,7 +30,7 @@ func TestJudgeVersion(t *testing.T) {
 		},
 		{
 			version:     "1.18@latest",
-			wantVersion: "1.18.8",
+			wantVersion: "1.18.9",
 		},
 		{
 			version:     "1.18@dev-latest",
