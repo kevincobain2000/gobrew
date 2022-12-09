@@ -485,6 +485,10 @@ func (gb *GoBrew) Upgrade(currentVersion string) {
 	}(source)
 
 	goBrewFile := filepath.Join(gb.installDir, "/bin/gobrew")
+	if err = os.Remove(goBrewFile); err != nil {
+		utils.Errorf("[Error] Cannot remove binary file: %s", err.Error())
+		return
+	}
 	destination, err := os.Create(goBrewFile)
 	if err != nil {
 		utils.Errorf("[Error] Cannot open file: %s", err)
