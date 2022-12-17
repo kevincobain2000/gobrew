@@ -241,7 +241,7 @@ name: CI
 jobs:
   test:
     strategy:
-     0 matrix:
+      matrix:
         go-version: [1.13, 1.14, 1.15, 1.16.7, 1.17, 1.18, 1.18@latest, 1.19beta1, 1.19@dev-latest, latest, dev-latest]
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
