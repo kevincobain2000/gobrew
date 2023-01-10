@@ -26,6 +26,7 @@
 | :------ | :----------------------------------------------------------------------------------------- |
 | master  | ![Test](https://github.com/kevincobain2000/gobrew/workflows/Test/badge.svg?branch=master)  |
 | develop | ![Test](https://github.com/kevincobain2000/gobrew/workflows/Test/badge.svg?branch=develop) |
+| Coverage | [![codecov](https://codecov.io/gh/kevincobain2000/gobrew/branch/master/graph/badge.svg)](https://codecov.io/gh/kevincobain2000/gobrew) |
 
 
 ## Install or update
