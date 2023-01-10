@@ -176,7 +176,7 @@ func (gb *GoBrew) ListVersions() error {
 
 // ListRemoteVersions that are installed by dir ls
 func (gb *GoBrew) ListRemoteVersions(print bool) map[string][]string {
-	log.Println("[Info]: Fetching remote versions")
+	utils.Infof("[Info] Fetching remote versions\n\n")
 	tags := gb.getGithubTags("golang/go")
 
 	var versions []string
@@ -543,7 +543,7 @@ func (gb *GoBrew) downloadAndExtract(version string) {
 
 	if err != nil {
 		gb.cleanVersionDir(version)
-		utils.Infof("[Info]: Downloading version failed: %s \n", err)
+		utils.Infof("[Info] Downloading version failed: %s \n", err)
 		utils.Errorf("[Error]: Please check connectivity to url: %s\n", downloadURL)
 		os.Exit(1)
 	}
@@ -558,7 +558,7 @@ func (gb *GoBrew) downloadAndExtract(version string) {
 	if err != nil {
 		// clean up dir
 		gb.cleanVersionDir(version)
-		utils.Infof("[Info]: Untar failed: %s \n", err)
+		utils.Infof("[Info] Untar failed: %s \n", err)
 		utils.Errorf("[Error]: Please check if version exists from url: %s\n", downloadURL)
 		os.Exit(1)
 	}

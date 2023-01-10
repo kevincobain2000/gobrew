@@ -67,14 +67,17 @@ func Find(slice []string, val string) bool {
 }
 
 func Successf(format string, a ...interface{}) {
+	format = "==> " + format
 	_, _ = ColorSuccess.Printf(format, a...)
 }
 
 func Infof(format string, a ...interface{}) {
+	format = "==> " + format
 	_, _ = ColorInfo.Printf(format, a...)
 }
 
 func Errorf(format string, a ...interface{}) {
+	format = "==> " + format
 	_, _ = ColorError.Printf(format, a...)
 }
 
