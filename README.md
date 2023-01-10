@@ -279,4 +279,4 @@ jobs:
 - v1.6.9 - Fixes #52, download error on status != 200
 - v1.7.4 - Added 2 new options `gobrew version` and `gobrew prune`
 - v1.7.5 - Fixes strange output on `gobrew use latest`
-- v1.7.5 - Windows support?
+- v1.7.7 - Windows support?
