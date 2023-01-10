@@ -255,9 +255,18 @@ jobs:
         run: go version
 ```
 
+# Customization
+
+By default, gobrew is installed in `$HOME/.gobrew`. You can change this by setting the `GOBREW_ROOT` environment variable.
+
+```sh
+echo "export GOBREW_ROOT=/usr/local/share" >> ~/.bashrc # or ~/.zshrc
+curl -sLk https://git.io/gobrew | sh
+```
+
 # Limitations
 
-- Windows OS is not supported
+- Windows OS limited support
 
 # Change Log
 
