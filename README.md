@@ -108,7 +108,7 @@ List available versions
 
 ```sh
 ╰─$ gobrew ls-remote
-[Info]: Fetching remote versions
+[Info] Fetching remote versions
 1	1.0.1  1.0.2  1.0.3
 
 1.1	1.1.0  1.1.1  1.1.2  1.1rc2  1.1rc3
