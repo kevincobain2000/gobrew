@@ -310,9 +310,9 @@ func (gb *GoBrew) CurrentVersion() string {
 		return ""
 	}
 
-	version := strings.ReplaceAll(fp, "/go/bin", "")
+	version := strings.ReplaceAll(fp, strings.Join([]string{"go", "bin"}, string(os.PathSeparator)), "")
 	version = strings.ReplaceAll(version, gb.versionsDir, "")
-	version = strings.ReplaceAll(version, "/", "")
+	version = strings.ReplaceAll(version, string(os.PathSeparator), "")
 	return version
 }
 
@@ -528,7 +528,13 @@ func (gb *GoBrew) getVersionDir(version string) string {
 	return filepath.Join(gb.versionsDir, version)
 }
 func (gb *GoBrew) downloadAndExtract(version string) {
-	tarName := "go" + version + "." + gb.getArch() + ".tar.gz"
+	tarName := "go" + version + "." + gb.getArch()
+
+	if runtime.GOOS == "windows" {
+		tarName = tarName + ".zip"
+	} else {
+		tarName = tarName + ".tar.gz"
+	}
 
 	registryPath := defaultRegistryPath
 	if p := os.Getenv("GOBREW_REGISTRY"); p != "" {
