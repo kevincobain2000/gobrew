@@ -72,6 +72,10 @@ var githubTags map[string][]string
 // NewGoBrew instance
 func NewGoBrew() GoBrew {
 	gb.homeDir = os.Getenv("HOME")
+	if os.Getenv("GOBREW_ROOT") != "" {
+		gb.homeDir = os.Getenv("GOBREW_ROOT")
+	}
+
 	gb.installDir = filepath.Join(gb.homeDir, goBrewDir)
 	gb.versionsDir = filepath.Join(gb.installDir, "versions")
 	gb.currentDir = filepath.Join(gb.installDir, "current")

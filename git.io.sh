@@ -1,6 +1,13 @@
 #!/bin/sh
 
+
 GOBREW_BIN_DIR=$HOME/.gobrew/bin
+
+# check if env GOBREW_ROOT is set
+if [ -n "$GOBREW_ROOT" ]; then
+  GOBREW_BIN_DIR=$GOBREW_ROOT/.gobrew/bin
+fi
+
 mkdir -p $GOBREW_BIN_DIR
 
 GOBREW_ARCH_BIN=''
