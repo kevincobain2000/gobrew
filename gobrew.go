@@ -71,7 +71,12 @@ var githubTags map[string][]string
 
 // NewGoBrew instance
 func NewGoBrew() GoBrew {
-	gb.homeDir = os.Getenv("HOME")
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		homeDir = os.Getenv("HOME")
+	}
+
+	gb.homeDir = homeDir
 	if os.Getenv("GOBREW_ROOT") != "" {
 		gb.homeDir = os.Getenv("GOBREW_ROOT")
 	}
