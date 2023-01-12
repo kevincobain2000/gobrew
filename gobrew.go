@@ -157,7 +157,7 @@ func (gb *GoBrew) ListVersions() error {
 			version = cv + "*"
 			utils.Successln(version)
 		} else {
-			log.Println(version)
+			fmt.Println(version)
 		}
 	}
 
@@ -171,14 +171,14 @@ func (gb *GoBrew) ListVersions() error {
 				rcVersion = cv + "*"
 				utils.Successln(rcVersion)
 			} else {
-				log.Println(rcVersion)
+				fmt.Println(rcVersion)
 			}
 		}
 	}
 
 	if cv != "" {
-		log.Println()
-		log.Printf("current: %s", cv)
+		fmt.Println()
+		fmt.Printf("current: %s", cv)
 	}
 	return nil
 }
