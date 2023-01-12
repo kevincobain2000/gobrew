@@ -291,3 +291,4 @@ curl -sLk https://git.io/gobrew | sh
 - v1.7.4 - Added 2 new options `gobrew version` and `gobrew prune`
 - v1.7.5 - Fixes strange output on `gobrew use latest`
 - v1.7.7 - Windows support?
+- v1.7.8 - Windows support, self-update fixes
