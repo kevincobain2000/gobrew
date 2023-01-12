@@ -471,10 +471,15 @@ func (gb *GoBrew) Upgrade(currentVersion string) {
 		return
 	}
 
+	fileExt := ""
+	if runtime.GOOS == "windows" {
+		fileExt = ".exe"
+	}
+
 	mkdirTemp, _ := os.MkdirTemp("", "gobrew")
-	tmpFile := filepath.Join(mkdirTemp, "gobrew")
-	url := goBrewDownloadUrl + "gobrew-" + gb.getArch()
-	if err := utils.DownloadWithProgress(url, "gobrew", mkdirTemp); err != nil {
+	tmpFile := filepath.Join(mkdirTemp, "gobrew"+fileExt)
+	url := goBrewDownloadUrl + "gobrew-" + gb.getArch() + fileExt
+	if err := utils.DownloadWithProgress(url, "gobrew"+fileExt, mkdirTemp); err != nil {
 		utils.Errorln("[Error] Download GoBrew failed:", err)
 		return
 	}
@@ -486,9 +491,13 @@ func (gb *GoBrew) Upgrade(currentVersion string) {
 	}
 	defer func(source *os.File) {
 		_ = source.Close()
+		if err := os.Remove(source.Name()); err != nil {
+			utils.Errorf("[Error] Cannot remove tmp file: %s", err)
+			return
+		}
 	}(source)
 
-	goBrewFile := filepath.Join(gb.installDir, "/bin/gobrew")
+	goBrewFile := filepath.Join(gb.installDir, "bin", "gobrew"+fileExt)
 	if err = os.Remove(goBrewFile); err != nil {
 		utils.Errorf("[Error] Cannot remove binary file: %s", err.Error())
 		return
@@ -509,11 +518,6 @@ func (gb *GoBrew) Upgrade(currentVersion string) {
 
 	if err = os.Chmod(goBrewFile, 0755); err != nil {
 		utils.Errorf("[Error] Cannot set file as executable: %s", err)
-		return
-	}
-
-	if err = os.Remove(tmpFile); err != nil {
-		utils.Errorf("[Error] Cannot remove tmp file: %s", err)
 		return
 	}
 

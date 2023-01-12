@@ -268,6 +268,7 @@ curl -sLk https://git.io/gobrew | sh
 # Limitations
 
 - Windows OS limited support
+  - Because gobrew uses symbolic links it is recomended to enable [Developer Mode](https://learn.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development) on Windows.
 
 # Change Log
 
