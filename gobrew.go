@@ -178,7 +178,7 @@ func (gb *GoBrew) ListVersions() error {
 
 	if cv != "" {
 		fmt.Println()
-		fmt.Printf("current: %s", cv)
+		fmt.Printf("current: %s\n", cv)
 	}
 	return nil
 }
