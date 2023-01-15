@@ -33,8 +33,10 @@
 
 Using curl
 
-```curl
+```sh
 curl -sLk https://git.io/gobrew | sh
+# or
+curl -sLk https://raw.githubusercontent.com/kevincobain2000/gobrew/master/git.io.sh | sh
 ```
 
 or install using go
@@ -258,11 +260,20 @@ jobs:
 
 # Customization
 
-By default, gobrew is installed in `$HOME/.gobrew`. You can change this by setting the `GOBREW_ROOT` environment variable.
+By default, gobrew is installed in `$HOME` as `$HOME/.gobrew`. 
+
+You can change this by setting the `GOBREW_ROOT` environment variable.
 
 ```sh
-echo "export GOBREW_ROOT=/usr/local/share" >> ~/.bashrc # or ~/.zshrc
+echo "export GOBREW_ROOT=/usr/local/share" >> ~/.bashrc
+# or
+echo "export GOBREW_ROOT=/usr/local/share" >> ~/.zshrc
+
+
+#then
 curl -sLk https://git.io/gobrew | sh
+#or
+curl -sLk https://raw.githubusercontent.com/kevincobain2000/gobrew/master/git.io.sh | sh
 ```
 
 Using bash completions
