@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"os"
+	"runtime"
 	"strings"
 
 	"github.com/kevincobain2000/gobrew"
@@ -145,10 +146,23 @@ Examples:
     gobrew use dev-latest          # use go version latest avalable, including rc and beta
 
 Installation Path:
+`
+
+	if runtime.GOOS == "windows" {
+		msg = msg + `
+    # Add gobrew to your environment variables
+    PATH="%USERPROFILE%\.gobrew\current\bin;%USERPROFILE%\.gobrew\bin;%PATH%"
+    GOROOT="%USERPROFILE%\.gobrew\current\go"
+
+`
+	} else {
+		msg = msg + `
     # Add gobrew to your ~/.bashrc or ~/.zshrc
     export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
     export GOROOT="$HOME/.gobrew/current/go"
 
 `
+	}
+
 	return msg
 }

@@ -1,10 +1,60 @@
 package gobrew
 
 import (
+	"os"
+	"runtime"
 	"testing"
 
 	"gotest.tools/assert"
 )
+
+func TestNewGobrewHomeDirUsesUserHomeDir(t *testing.T) {
+	homeDir, err := os.UserHomeDir()
+
+	if err != nil {
+		t.FailNow()
+	}
+
+	gobrew := NewGoBrew()
+
+	assert.Equal(t, homeDir, gobrew.homeDir)
+}
+
+func TestNewGobrewHomeDirDefaultsToHome(t *testing.T) {
+	var envName string
+
+	if runtime.GOOS == "windows" {
+		envName = "USERPROFILE"
+	} else if runtime.GOOS == "plan9" {
+		envName = "home"
+	} else {
+		envName = "HOME"
+	}
+
+	oldEnvValue := os.Getenv(envName)
+	defer func() {
+		os.Setenv(envName, oldEnvValue)
+	}()
+
+	os.Unsetenv(envName)
+
+	gobrew := NewGoBrew()
+
+	assert.Equal(t, os.Getenv("HOME"), gobrew.homeDir)
+}
+
+func TestNewGobrewHomeDirUsesGoBrewRoot(t *testing.T) {
+	oldEnvValue := os.Getenv("GOBREW_ROOT")
+	defer func() {
+		os.Setenv("GOBREW_ROOT", oldEnvValue)
+	}()
+
+	os.Setenv("GOBREW_ROOT", "some_fancy_value")
+
+	gobrew := NewGoBrew()
+
+	assert.Equal(t, "some_fancy_value", gobrew.homeDir)
+}
 
 func TestJudgeVersion(t *testing.T) {
 	tests := []struct {
