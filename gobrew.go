@@ -124,7 +124,10 @@ func (gb *GoBrew) Prune() error {
 // highlight the version that is currently symbolic linked
 func (gb *GoBrew) ListVersions() error {
 	entries, err := os.ReadDir(gb.versionsDir)
-	utils.CheckError(err, "[Error]: List versions failed")
+	if err != nil && os.IsNotExist(err) {
+		utils.Infof("[Info] Nothing installed yet. Run `gobrew use latest` to install a latest version of Go.\n")
+	}
+
 	files := make([]fs.FileInfo, 0, len(entries))
 	for _, entry := range entries {
 		info, err := entry.Info()
