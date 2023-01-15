@@ -2,12 +2,13 @@ package main
 
 import (
 	"flag"
-	"log"
+	"fmt"
 	"os"
 	"runtime"
 	"strings"
 
 	"github.com/kevincobain2000/gobrew"
+	"github.com/kevincobain2000/gobrew/utils"
 )
 
 var args []string
@@ -30,18 +31,17 @@ var allowedArgs = []string{
 }
 
 func init() {
-	log.SetFlags(0)
 
 	if !isArgAllowed() {
-		log.Println("[Info] Invalid usage")
-		log.Print(usage())
+		utils.Infof("[Info] Invalid usage")
+		fmt.Println(usage())
 		return
 	}
 
 	flag.Parse()
 	args = flag.Args()
 	if len(args) == 0 {
-		log.Print(usage())
+		fmt.Println(usage())
 		return
 	}
 
@@ -59,7 +59,7 @@ func main() {
 	gb := gobrew.NewGoBrew()
 	switch actionArg {
 	case "h", "help":
-		log.Print(usage())
+		fmt.Println(usage())
 	case "ls", "list":
 		_ = gb.ListVersions()
 	case "ls-remote":

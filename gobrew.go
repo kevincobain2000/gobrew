@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -331,7 +330,8 @@ func (gb *GoBrew) CurrentVersion() string {
 // Uninstall the given version of go
 func (gb *GoBrew) Uninstall(version string) {
 	if version == "" {
-		log.Fatal("[Error] No version provided")
+		utils.Errorln("[Error] No version provided")
+		os.Exit(1)
 	}
 	if gb.CurrentVersion() == version {
 		utils.Errorf("[Error] Version: %s you are trying to remove is your current version. Please use a different version first before uninstalling the current version\n", version)
@@ -356,7 +356,8 @@ func (gb *GoBrew) cleanDownloadsDir() {
 // Install the given version of go
 func (gb *GoBrew) Install(version string) {
 	if version == "" {
-		log.Fatal("[Error] No version provided")
+		utils.Errorln("[Error] No version provided")
+		os.Exit(1)
 	}
 	version = gb.judgeVersion(version)
 	gb.mkdirs(version)
