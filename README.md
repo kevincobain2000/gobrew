@@ -265,6 +265,16 @@ echo "export GOBREW_ROOT=/usr/local/share" >> ~/.bashrc # or ~/.zshrc
 curl -sLk https://git.io/gobrew | sh
 ```
 
+Using bash completions
+
+```sh
+curl https://raw.githubusercontent.com/kevincobain2000/gobrew/master/completions/bash/gobrew-completion > /usr/local/etc/bash_completion.d/gobrew
+# or
+curl https://raw.githubusercontent.com/kevincobain2000/gobrew/master/completions/bash/gobrew-completion > ~/.zshrc
+# or
+curl https://raw.githubusercontent.com/kevincobain2000/gobrew/master/completions/bash/gobrew-completion > ~/.bashrc
+```
+
 # Limitations
 
 - Windows OS limited support
@@ -292,3 +302,4 @@ curl -sLk https://git.io/gobrew | sh
 - v1.7.5 - Fixes strange output on `gobrew use latest`
 - v1.7.7 - Windows support?
 - v1.7.8 - Windows support, self-update fixes
+- v1.7.9 - Windows fix ups and bash-completions

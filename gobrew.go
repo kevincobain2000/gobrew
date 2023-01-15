@@ -124,7 +124,10 @@ func (gb *GoBrew) Prune() error {
 // highlight the version that is currently symbolic linked
 func (gb *GoBrew) ListVersions() error {
 	entries, err := os.ReadDir(gb.versionsDir)
-	utils.CheckError(err, "[Error]: List versions failed")
+	if err != nil && os.IsNotExist(err) {
+		utils.Infof("[Info] Nothing installed yet. Run `gobrew use latest` to install a latest version of Go.\n")
+	}
+
 	files := make([]fs.FileInfo, 0, len(entries))
 	for _, entry := range entries {
 		info, err := entry.Info()
@@ -157,7 +160,7 @@ func (gb *GoBrew) ListVersions() error {
 			version = cv + "*"
 			utils.Successln(version)
 		} else {
-			log.Println(version)
+			fmt.Println(version)
 		}
 	}
 
@@ -171,14 +174,14 @@ func (gb *GoBrew) ListVersions() error {
 				rcVersion = cv + "*"
 				utils.Successln(rcVersion)
 			} else {
-				log.Println(rcVersion)
+				fmt.Println(rcVersion)
 			}
 		}
 	}
 
 	if cv != "" {
-		log.Println()
-		log.Printf("current: %s", cv)
+		fmt.Println()
+		fmt.Printf("current: %s\n", cv)
 	}
 	return nil
 }
