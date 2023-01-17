@@ -1,19 +1,19 @@
-# on: [push, pull_request]
-# name: CI
-# jobs:
-#   test:
-#     strategy:
-#       matrix:
-#         go-version: [dev-latest]
-#         os: [ubuntu-latest, macos-latest]
-#     runs-on: ${{ matrix.os }}
-#     steps:
-#       - uses: actions/checkout@v2
-#       - uses: kevincobain2000/action-gobrew@v1
-#         with:
-#           version: ${{ matrix.go-version }}
+on: [push, pull_request]
+name: CI
+jobs:
+  test:
+    strategy:
+      matrix:
+        go-version: [dev-latest]
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: kevincobain2000/action-gobrew@v1
+        with:
+          version: ${{ matrix.go-version }}
 
-#       - name: Test
-#         run: go test -race -v ./... -count=1 -coverprofile=coverage.txt -covermode=atomic
-#       - name: Upload coverage to Codecov
-#         uses: codecov/codecov-action@v3
+      - name: Test
+        run: go test -race -v ./... -count=1 -coverprofile=coverage.txt -covermode=atomic
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
