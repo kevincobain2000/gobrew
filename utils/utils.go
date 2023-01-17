@@ -97,6 +97,28 @@ func Errorln(a ...interface{}) {
 	_, _ = ColorError.Println(a...)
 }
 
+func Println(a ...interface{}) {
+	_, _ = ColorInfo.Println(a...)
+}
+
+func Printf(format string, a ...interface{}) {
+	_, _ = ColorInfo.Printf(format, a...)
+}
+
+func Print(a ...interface{}) {
+	_, _ = ColorInfo.Print(a...)
+}
+
+func Fatal(a ...interface{}) {
+	_, _ = ColorInfo.Print(a...)
+	os.Exit(1)
+}
+
+func Fatalf(format string, a ...interface{}) {
+	_, _ = ColorInfo.Printf(format, a...)
+	os.Exit(1)
+}
+
 func CheckError(err error, format string) {
 	if err != nil {
 		Errorf(format+": %s", err)

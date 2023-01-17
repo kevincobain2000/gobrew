@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -160,7 +159,7 @@ func (gb *GoBrew) ListVersions() error {
 			version = cv + "*"
 			utils.Successln(version)
 		} else {
-			fmt.Println(version)
+			utils.Println(version)
 		}
 	}
 
@@ -174,14 +173,14 @@ func (gb *GoBrew) ListVersions() error {
 				rcVersion = cv + "*"
 				utils.Successln(rcVersion)
 			} else {
-				fmt.Println(rcVersion)
+				utils.Println(rcVersion)
 			}
 		}
 	}
 
 	if cv != "" {
-		fmt.Println()
-		fmt.Printf("current: %s\n", cv)
+		utils.Println()
+		utils.Printf("current: %s\n", cv)
 	}
 	return nil
 }
@@ -298,7 +297,7 @@ func (gb *GoBrew) getGroupedVersion(versions []string, print bool) map[string][]
 
 func (gb *GoBrew) print(message string, shouldPrint bool) {
 	if shouldPrint {
-		fmt.Print(message)
+		utils.Print(message)
 	}
 }
 
@@ -331,15 +330,13 @@ func (gb *GoBrew) CurrentVersion() string {
 // Uninstall the given version of go
 func (gb *GoBrew) Uninstall(version string) {
 	if version == "" {
-		log.Fatal("[Error] No version provided")
+		utils.Fatal("[Error] No version provided")
 	}
 	if gb.CurrentVersion() == version {
-		utils.Errorf("[Error] Version: %s you are trying to remove is your current version. Please use a different version first before uninstalling the current version\n", version)
-		os.Exit(1)
+		utils.Fatalf("[Error] Version: %s you are trying to remove is your current version. Please use a different version first before uninstalling the current version\n", version)
 	}
 	if !gb.existsVersion(version) {
-		utils.Errorf("[Error] Version: %s you are trying to remove is not installed\n", version)
-		os.Exit(1)
+		utils.Fatalf("[Error] Version: %s you are trying to remove is not installed\n", version)
 	}
 	gb.cleanVersionDir(version)
 	utils.Successf("[Success] Version: %s uninstalled\n", version)
@@ -356,7 +353,7 @@ func (gb *GoBrew) cleanDownloadsDir() {
 // Install the given version of go
 func (gb *GoBrew) Install(version string) {
 	if version == "" {
-		log.Fatal("[Error] No version provided")
+		utils.Fatal("[Error] No version provided")
 	}
 	version = gb.judgeVersion(version)
 	gb.mkdirs(version)
