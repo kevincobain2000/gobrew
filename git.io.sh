@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 GOBREW_BIN_DIR=$HOME/.gobrew/bin
 
 # check if env GOBREW_ROOT is set
@@ -11,6 +10,7 @@ fi
 mkdir -p $GOBREW_BIN_DIR
 
 GOBREW_ARCH_BIN=''
+GOBREW_BIN='gobrew'
 
 THISOS=$(uname -s)
 ARCH=$(uname -m)
@@ -45,26 +45,26 @@ case $THISOS in
           ;;
       esac
       ;;
-   Windows*)
+   Windows|MINGW64_NT*)
       GOBREW_ARCH_BIN="gobrew-windows-amd64.exe"
+      GOBREW_BIN="gobrew.exe"
       ;;
 esac
 
-echo "Installing gobrew..."
+if [ -z "$GOBREW_ARCH_BIN" ]; then
+   echo "This script is not supported on $THISOS and $ARCH"
+   exit 1
+fi
+
+echo "Installing gobrew from: https://github.com/kevincobain2000/gobrew/releases/latest/download/$GOBREW_ARCH_BIN ..."
 echo ""
 
-curl -kLs https://github.com/kevincobain2000/gobrew/releases/latest/download/$GOBREW_ARCH_BIN -o $GOBREW_BIN_DIR/gobrew
+curl -kLs https://github.com/kevincobain2000/gobrew/releases/latest/download/$GOBREW_ARCH_BIN -o $GOBREW_BIN_DIR/$GOBREW_BIN
 
-chmod +x $GOBREW_BIN_DIR/gobrew
+chmod +x $GOBREW_BIN_DIR/$GOBREW_BIN
 
-echo "Installed successfully to: $GOBREW_BIN_DIR/gobrew"
+echo "Installed successfully to: $GOBREW_BIN_DIR/$GOBREW_BIN"
 
 echo "============================"
-$GOBREW_BIN_DIR/gobrew help
+$GOBREW_BIN_DIR/$GOBREW_BIN help
 echo "============================"
-
-echo
-echo "***Please add PATH below to your ~/.bashrc manually***"
-echo
-echo 'export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"'
-echo
