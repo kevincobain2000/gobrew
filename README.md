@@ -6,14 +6,14 @@
 <p align="center">
   Go version manager, written in Go<br>
   Update and switch Go versions easily<br>
-  Install Go on Linux or Mac (intel) or Mac with Apple chip (M1, M2 etc)
+  Install Go on Linux or Mac (intel) or Mac with Apple chip (M1, M2 etc) or Windows
 </p>
 
 **Quick Setup:** One command to install Go and manage versions.
 
 **Hassle Free:** Doesn't require root or sudo, or shell re-hash.
 
-**Platform:** Supports (arm64, arch64, Mac, Mac M1, and Ubuntu).
+**Platform:** Supports (arm64, arch64, Mac, Mac M1, Ubuntu and Windows).
 
 **Flexible:** Manage multiple Go versions including beta and rc.
 
