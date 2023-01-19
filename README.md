@@ -314,3 +314,4 @@ curl https://raw.githubusercontent.com/kevincobain2000/gobrew/master/completions
 - v1.7.7 - Windows support?
 - v1.7.8 - Windows support, self-update fixes
 - v1.7.9 - Windows fix ups and bash-completions
+- v1.8.9 - Windows support, including actions

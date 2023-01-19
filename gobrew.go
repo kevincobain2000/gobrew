@@ -463,10 +463,6 @@ func (gb *GoBrew) Use(version string) {
 // Version of GoBrew
 func (gb *GoBrew) Version(currentVersion string) {
 	utils.Infoln("[INFO] gobrew version is " + currentVersion)
-	if "v"+currentVersion != gb.getLatestVersion() {
-		utils.Infoln("[Info] gobrew version is outdated. Please update using: gobrew self-update")
-		return
-	}
 }
 
 // Upgrade of GoBrew
