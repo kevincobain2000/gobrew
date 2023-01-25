@@ -506,7 +506,6 @@ func (gb *GoBrew) Upgrade(currentVersion string) {
 	goBrewFile := filepath.Join(gb.installDir, "bin", "gobrew"+fileExt)
 	if runtime.GOOS == "windows" {
 		goBrewOldFile := goBrewFile + ".old"
-		_ = os.Remove(goBrewOldFile)
 		if err = os.Rename(goBrewFile, goBrewOldFile); err != nil {
 			utils.Errorf("[Error] Cannot rename binary file: %s", err.Error())
 			return
