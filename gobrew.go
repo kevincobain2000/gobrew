@@ -75,10 +75,15 @@ func NewGoBrew() GoBrew {
 		homeDir = os.Getenv("HOME")
 	}
 
-	gb.homeDir = homeDir
 	if os.Getenv("GOBREW_ROOT") != "" {
-		gb.homeDir = os.Getenv("GOBREW_ROOT")
+		homeDir = os.Getenv("GOBREW_ROOT")
 	}
+
+	return NewGoBrewDirectory(homeDir)
+}
+
+func NewGoBrewDirectory(homeDir string) GoBrew {
+	gb.homeDir = homeDir
 
 	gb.installDir = filepath.Join(gb.homeDir, goBrewDir)
 	gb.versionsDir = filepath.Join(gb.installDir, "versions")
@@ -499,9 +504,16 @@ func (gb *GoBrew) Upgrade(currentVersion string) {
 	}(source)
 
 	goBrewFile := filepath.Join(gb.installDir, "bin", "gobrew"+fileExt)
-	if err = os.Remove(goBrewFile); err != nil {
-		utils.Errorf("[Error] Cannot remove binary file: %s", err.Error())
-		return
+	if runtime.GOOS == "windows" {
+		goBrewOldFile := goBrewFile + ".old"
+		// do not check for errors as the file will be recreated
+		_ = os.Remove(goBrewOldFile)
+		_ = os.Rename(goBrewFile, goBrewOldFile)
+	} else {
+		if err = os.Remove(goBrewFile); err != nil {
+			utils.Errorf("[Error] Cannot remove binary file: %s", err.Error())
+			return
+		}
 	}
 	destination, err := os.Create(goBrewFile)
 	if err != nil {
