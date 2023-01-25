@@ -182,14 +182,21 @@ func TestUpgrade(t *testing.T) {
 
 	binaryDir := filepath.Join(gb.installDir, "bin")
 	_ = os.MkdirAll(binaryDir, os.ModePerm)
-	goBrewFile := "gobrew"
+
+	baseName := "gobrew"
 	if runtime.GOOS == "windows" {
-		goBrewFile = goBrewFile + ".exe"
+		baseName = baseName + ".exe"
+	}
+	binaryFile := filepath.Join(binaryDir, baseName)
+
+	if oldFile, err := os.Create(binaryFile); err == nil {
+		// on tests we have to close the file to avoid an error on os.Rename
+		oldFile.Close()
 	}
 
 	gb.Upgrade("0.0.0")
 
-	if _, err := os.Stat(filepath.Join(binaryDir, goBrewFile)); err != nil {
-		t.Errorf("could not find updated executable")
+	if _, err := os.Stat(binaryFile); err != nil {
+		t.Errorf("updated executable does not exist")
 	}
 }
