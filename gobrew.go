@@ -626,7 +626,7 @@ func (gb *GoBrew) ExtractTarGz(srcTar string, dstDir string) error {
 	if err != nil {
 		return err
 	}
-	_, err = unpackit.Unpack(file, dstDir)
+	err = unpackit.Unpack(file, dstDir)
 	if err != nil {
 		return err
 	}
