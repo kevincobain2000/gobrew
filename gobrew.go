@@ -341,9 +341,6 @@ func (gb *GoBrew) Uninstall(version string) {
 	if gb.CurrentVersion() == version {
 		utils.Fatalf("[Error] Version: %s you are trying to remove is your current version. Please use a different version first before uninstalling the current version\n", version)
 	}
-	if !gb.existsVersion(version) {
-		utils.Fatalf("[Error] Version: %s you are trying to remove is not installed\n", version)
-	}
 	gb.cleanVersionDir(version)
 	utils.Successf("[Success] Version: %s uninstalled\n", version)
 }
