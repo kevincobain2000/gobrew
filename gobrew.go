@@ -1,6 +1,7 @@
 package gobrew
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -394,6 +395,10 @@ func (gb *GoBrew) judgeVersion(version string) string {
 		rcBetaOk = true
 	}
 
+	if version == "mod" {
+		// get version by reading the mod file of Go
+		judgedVersion = gb.getModVersion()
+	}
 	if version == "latest" || version == "dev-latest" {
 		groupedVersions := gb.ListRemoteVersions(false) // donot print
 		groupedVersionKeys := make([]string, 0, len(groupedVersions))
@@ -450,6 +455,31 @@ func (gb *GoBrew) judgeVersion(version string) string {
 	}
 
 	return version
+}
+
+// read go.mod file and extract version
+// Do not use go to get the version as go list -m -f '{{.GoVersion}}'
+// Because go might not be installed
+func (gb *GoBrew) getModVersion() string {
+	modFilePath := filepath.Join("go.mod")
+	modFile, err := os.Open(modFilePath)
+	if err != nil {
+		utils.Fatal(err)
+	}
+	defer modFile.Close()
+
+	scanner := bufio.NewScanner(modFile)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if strings.HasPrefix(line, "go ") {
+			return strings.TrimPrefix(line, "go ")
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		utils.Fatal(err)
+	}
+	return ""
 }
 
 // Use a version

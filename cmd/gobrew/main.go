@@ -141,8 +141,8 @@ Examples:
     gobrew use 1.16@dev-latest     # use go version latest of 1.16, including rc and beta
                                    # Note: rc and beta become no longer latest upon major release
 
+    gobrew use mod                 # use go version listed in the go.mod file
     gobrew use latest              # use go version latest available
-
     gobrew use dev-latest          # use go version latest avalable, including rc and beta
 
 Installation Path:
