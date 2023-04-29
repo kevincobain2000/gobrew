@@ -271,8 +271,6 @@ echo "export GOBREW_ROOT=/usr/local/share" >> ~/.zshrc
 
 
 #then
-curl -sLk https://git.io/gobrew | sh
-#or
 curl -sLk https://raw.githubusercontent.com/kevincobain2000/gobrew/master/git.io.sh | sh
 ```
 
@@ -286,10 +284,11 @@ curl https://raw.githubusercontent.com/kevincobain2000/gobrew/master/completions
 curl https://raw.githubusercontent.com/kevincobain2000/gobrew/master/completions/bash/gobrew-completion >> ~/.bashrc
 ```
 
-# Limitations
+Auto Setting go version by `go.mod`
 
-- Windows OS limited support
-  - Because gobrew uses symbolic links it is recomended to enable [Developer Mode](https://learn.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development) on Windows.
+```sh
+alias cd='builtin cd "$@" && ls go.mod 2> /dev/null && gobrew use mod'
+```
 
 # Change Log
 
@@ -315,3 +314,4 @@ curl https://raw.githubusercontent.com/kevincobain2000/gobrew/master/completions
 - v1.7.8 - Windows support, self-update fixes
 - v1.7.9 - Windows fix ups and bash-completions
 - v1.8.0 - Windows support, including actions
+- v1.8.2 - Prune old go versions, bug fix and `go.mod` auto detection
