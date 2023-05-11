@@ -8,6 +8,7 @@ import (
 	"path"
 
 	"github.com/fatih/color"
+	"github.com/muesli/termenv"
 	"github.com/schollz/progressbar/v3"
 )
 
@@ -15,6 +16,16 @@ var ColorMajorVersion = color.New(color.FgHiYellow)
 var ColorSuccess = color.New(color.FgHiGreen)
 var ColorInfo = color.New(color.FgHiYellow)
 var ColorError = color.New(color.FgHiRed)
+
+func init() {
+	output := termenv.NewOutput(os.Stdout)
+	if !output.HasDarkBackground() {
+		ColorMajorVersion = color.New(color.FgRed)
+		ColorSuccess = color.New(color.FgGreen)
+		ColorInfo = color.New(color.FgBlack)
+		ColorError = color.New(color.FgRed)
+	}
+}
 
 func DownloadWithProgress(url string, tarName string, destFolder string) (err error) {
 	destTarPath := path.Join(destFolder, tarName)
