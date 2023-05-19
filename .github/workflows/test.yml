@@ -12,7 +12,6 @@ jobs:
       - uses: kevincobain2000/action-gobrew@v2
         with:
           version: ${{ matrix.go-version }}
-
       - name: Test
         run: go test -race -v ./... -count=1 -coverprofile=coverage.txt -covermode=atomic
       - name: Upload coverage to Codecov
