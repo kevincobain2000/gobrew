@@ -21,7 +21,7 @@ import (
 
 const (
 	goBrewDir           string = ".gobrew"
-	goTagsCachePath     string = "/tmp/go_tags"
+	goTagsCacheDir      string = "/tmp/"
 	defaultRegistryPath string = "https://go.dev/dl/"
 	goBrewDownloadUrl   string = "https://github.com/kevincobain2000/gobrew/releases/latest/download/"
 	goBrewTagsApi       string = "https://raw.githubusercontent.com/kevincobain2000/gobrew/json/golang-tags.json"
@@ -677,9 +677,11 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 		url = goBrewTagsApi
 	}
 
+	cachePath := goTagsCacheDir + strings.Replace(repo, "/", "_", -1) // replace / with _
+
 	// read from local cache in /tmp/go_tags
 	// skip error as it may have no cache
-	cachedData, _ := os.ReadFile(goTagsCachePath)
+	cachedData, _ := os.ReadFile(cachePath)
 
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -718,10 +720,11 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 			os.Exit(2)
 		}
 	} else {
+		utils.Infoln("[Info] Github tags retrieved, caching it")
 		// save data to local cache in /tmp
-		err = os.WriteFile(goTagsCachePath, data, 0644)
+		err = os.WriteFile(cachePath, data, 0644)
 		if err != nil {
-			utils.Errorf("[Error] Cannot write to %s: %s", goTagsCachePath, err)
+			utils.Errorf("[Error] Cannot write to %s: %s", cachePath, err)
 			// no need to exit if caching fails, there is still request
 		}
 	}
