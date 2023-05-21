@@ -21,7 +21,6 @@ import (
 
 const (
 	goBrewDir           string = ".gobrew"
-	goTagsCacheDir      string = "/tmp/"
 	defaultRegistryPath string = "https://go.dev/dl/"
 	goBrewDownloadUrl   string = "https://github.com/kevincobain2000/gobrew/releases/latest/download/"
 	goBrewTagsApi       string = "https://raw.githubusercontent.com/kevincobain2000/gobrew/json/golang-tags.json"
@@ -677,6 +676,7 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 		url = goBrewTagsApi
 	}
 
+	goTagsCacheDir := os.TempDir()
 	cachePath := goTagsCacheDir + strings.Replace(repo, "/", "_", -1) // replace / with _
 
 	// read from local cache in /tmp/go_tags
