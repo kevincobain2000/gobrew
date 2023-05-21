@@ -196,13 +196,13 @@ func TestDoNotUpgradeLatestVersion(t *testing.T) {
 	}
 	binaryFile := filepath.Join(binaryDir, baseName)
 
-	currentVersion := gb.getLatestVersion()
+	currentVersion := gb.getGobrewLatestVersion()
 
 	if currentVersion == "" {
 		t.Skip("could not determine the current version")
 	}
 
-	gb.Upgrade(currentVersion[1:])
+	gb.UpgradeGobrew(currentVersion[1:])
 
 	if _, err := os.Stat(binaryFile); err == nil {
 		t.Errorf("unexpected upgrade of latest version")
