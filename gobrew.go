@@ -704,12 +704,6 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 		utils.Errorf("[Error] Cannot read response: %s", err)
 		return
 	}
-	// save data to local cache in /tmp
-	err = os.WriteFile(goTagsCachePath, data, 0644)
-	if err != nil {
-		utils.Errorf("[Error] Cannot write to %s: %s", goTagsCachePath, err)
-		// no need to exit if caching fails, there is still request
-	}
 
 	type Tag struct {
 		Ref string
@@ -722,6 +716,13 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 		if err := json.Unmarshal(cachedData, &tags); err != nil {
 			utils.Errorf("[Error] Cannot unmarshal cached data or it was never cached: %s\n", err)
 			os.Exit(2)
+		}
+	} else {
+		// save data to local cache in /tmp
+		err = os.WriteFile(goTagsCachePath, data, 0644)
+		if err != nil {
+			utils.Errorf("[Error] Cannot write to %s: %s", goTagsCachePath, err)
+			// no need to exit if caching fails, there is still request
 		}
 	}
 
