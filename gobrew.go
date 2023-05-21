@@ -21,6 +21,7 @@ import (
 
 const (
 	goBrewDir           string = ".gobrew"
+	goTagsCachePath     string = "/tmp/go_tags"
 	defaultRegistryPath string = "https://go.dev/dl/"
 	goBrewDownloadUrl   string = "https://github.com/kevincobain2000/gobrew/releases/latest/download/"
 	goBrewTagsApi       string = "https://raw.githubusercontent.com/kevincobain2000/gobrew/json/golang-tags.json"
@@ -36,7 +37,7 @@ type Command interface {
 	Use(version string)
 	Prune()
 	Version(currentVersion string)
-	Upgrade(currentVersion string)
+	UpgradeGobrew(currentVersion string)
 	Helper
 }
 
@@ -62,7 +63,7 @@ type Helper interface {
 	downloadAndExtract(version string)
 	changeSymblinkGoBin(version string)
 	changeSymblinkGo(version string)
-	getLatestVersion() string
+	getGobrewLatestVersion() string
 	getGithubTags(repo string) (result []string)
 }
 
@@ -497,9 +498,9 @@ func (gb *GoBrew) Version(currentVersion string) {
 	utils.Infoln("[INFO] gobrew version is " + currentVersion)
 }
 
-// Upgrade of GoBrew
-func (gb *GoBrew) Upgrade(currentVersion string) {
-	if "v"+currentVersion == gb.getLatestVersion() {
+// UpgradeGobrew of GoBrew
+func (gb *GoBrew) UpgradeGobrew(currentVersion string) {
+	if "v"+currentVersion == gb.getGobrewLatestVersion() {
 		utils.Infoln("[INFO] your version is already newest")
 		return
 	}
@@ -654,7 +655,7 @@ func (gb *GoBrew) changeSymblinkGo(version string) {
 	}
 }
 
-func (gb *GoBrew) getLatestVersion() string {
+func (gb *GoBrew) getGobrewLatestVersion() string {
 	tags := gb.getGithubTags("kevincobain2000/gobrew")
 
 	if len(tags) == 0 {
@@ -675,6 +676,11 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 	if repo == "golang/go" {
 		url = goBrewTagsApi
 	}
+
+	// read from local cache in /tmp/go_tags
+	// skip error as it may have no cache
+	cachedData, _ := os.ReadFile(goTagsCachePath)
+
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		utils.Errorf("[Error] Cannot create request: %s", err)
@@ -698,6 +704,12 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 		utils.Errorf("[Error] Cannot read response: %s", err)
 		return
 	}
+	// save data to local cache in /tmp
+	err = os.WriteFile(goTagsCachePath, data, 0644)
+	if err != nil {
+		utils.Errorf("[Error] Cannot write to %s: %s", goTagsCachePath, err)
+		// no need to exit if caching fails, there is still request
+	}
 
 	type Tag struct {
 		Ref string
@@ -705,8 +717,12 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 	var tags []Tag
 
 	if err := json.Unmarshal(data, &tags); err != nil {
-		utils.Errorf("[Error] Rate limit exceed")
-		os.Exit(2)
+		utils.Errorln("[Error] Github tags Rate limit exceeded")
+		utils.Infoln("[Info] Trying with local cache")
+		if err := json.Unmarshal(cachedData, &tags); err != nil {
+			utils.Errorf("[Error] Cannot unmarshal cached data or it was never cached: %s\n", err)
+			os.Exit(2)
+		}
 	}
 
 	for _, tag := range tags {

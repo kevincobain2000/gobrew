@@ -79,7 +79,7 @@ func main() {
 	case "version":
 		gb.Version(version)
 	case "self-update":
-		gb.Upgrade(version)
+		gb.UpgradeGobrew(version)
 	}
 }
 
