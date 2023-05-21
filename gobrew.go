@@ -707,16 +707,17 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 	goTagsCacheDir := os.TempDir()
 	cachePath := goTagsCacheDir + strings.Replace(repo, "/", "_", -1) // replace / with _
 
-	// read from local cache
-	// skip error as it may have no cache
-	cachedData, _ := os.ReadFile(cachePath)
 	if response.StatusCode == http.StatusForbidden { // same as 403 rate limit exceeded
-		utils.Errorln("[Error] Github tags Rate limit exceeded")
-		utils.Infoln("[Info] Trying with local cache")
-		if err := json.Unmarshal(cachedData, &tags); err != nil {
-			utils.Errorf("[Error] Cannot unmarshal cached data or it was never cached in %s: %s\n", cachePath, err)
-			os.Exit(2)
+		cachedData, err := os.ReadFile(cachePath)
+		if err != nil {
+			utils.Errorln("[Error] Github tags Rate limit exceeded")
+			utils.Infoln("[Info] Trying with local cache")
+			if err := json.Unmarshal(cachedData, &tags); err != nil {
+				utils.Errorf("[Error] Cannot unmarshal cached data or it was never cached in %s: %s\n", cachePath, err)
+				os.Exit(2)
+			}
 		}
+
 	} else {
 		data, err = io.ReadAll(response.Body)
 		if err != nil {
