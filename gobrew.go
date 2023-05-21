@@ -24,6 +24,7 @@ const (
 	defaultRegistryPath string = "https://go.dev/dl/"
 	goBrewDownloadUrl   string = "https://github.com/kevincobain2000/gobrew/releases/latest/download/"
 	goBrewTagsApi       string = "https://raw.githubusercontent.com/kevincobain2000/gobrew/json/golang-tags.json"
+	goTagsApi           string = "https://api.github.com/repos/kevincobain2000/gobrew/git/refs/tags"
 )
 
 // Command ...
@@ -671,17 +672,10 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 
 	githubTags = make(map[string][]string, 0)
 	client := &http.Client{}
-	url := "https://api.github.com/repos/kevincobain2000/gobrew/git/refs/tags"
+	url := goTagsApi
 	if repo == "golang/go" {
 		url = goBrewTagsApi
 	}
-
-	goTagsCacheDir := os.TempDir()
-	cachePath := goTagsCacheDir + strings.Replace(repo, "/", "_", -1) // replace / with _
-
-	// read from local cache in /tmp/go_tags
-	// skip error as it may have no cache
-	cachedData, _ := os.ReadFile(cachePath)
 
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -696,37 +690,46 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 		utils.Errorf("[Error] Cannot get response: %s", err)
 		return
 	}
-
 	defer func(Body io.ReadCloser) {
 		_ = Body.Close()
 	}(response.Body)
-
-	data, err := io.ReadAll(response.Body)
-	if err != nil {
-		utils.Errorf("[Error] Cannot read response: %s", err)
-		return
-	}
 
 	type Tag struct {
 		Ref string
 	}
 	var tags []Tag
+	var data []byte
 
-	if err := json.Unmarshal(data, &tags); err != nil {
+	goTagsCacheDir := os.TempDir()
+	cachePath := goTagsCacheDir + strings.Replace(repo, "/", "_", -1) // replace / with _
+
+	// read from local cache
+	// skip error as it may have no cache
+	cachedData, _ := os.ReadFile(cachePath)
+	if response.StatusCode == http.StatusForbidden { // same as 403 rate limit exceeded
 		utils.Errorln("[Error] Github tags Rate limit exceeded")
 		utils.Infoln("[Info] Trying with local cache")
 		if err := json.Unmarshal(cachedData, &tags); err != nil {
-			utils.Errorf("[Error] Cannot unmarshal cached data or it was never cached: %s\n", err)
+			utils.Errorf("[Error] Cannot unmarshal cached data or it was never cached in %s: %s\n", cachePath, err)
 			os.Exit(2)
 		}
 	} else {
-		utils.Infoln("[Info] Github tags retrieved, caching it")
-		// save data to local cache in /tmp
-		err = os.WriteFile(cachePath, data, 0644)
+		data, err = io.ReadAll(response.Body)
 		if err != nil {
-			utils.Errorf("[Error] Cannot write to %s: %s", cachePath, err)
-			// no need to exit if caching fails, there is still request
+			utils.Errorf("[Error] Cannot read response: %s", err)
+			os.Exit(2)
 		}
+		if err := json.Unmarshal(data, &tags); err != nil {
+			utils.Errorf("[Error] Github tags data not in json format for file %s: %s\n", cachePath, err)
+			os.Exit(2)
+		}
+	}
+
+	// save data to local cache in /tmp
+	err = os.WriteFile(cachePath, data, 0644)
+	if err != nil {
+		utils.Errorf("[Error] Cannot write to %s: %s", cachePath, err)
+		// no need to exit if caching fails, there is still request
 	}
 
 	for _, tag := range tags {
