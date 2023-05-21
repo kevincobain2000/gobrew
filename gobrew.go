@@ -23,8 +23,12 @@ const (
 	goBrewDir           string = ".gobrew"
 	defaultRegistryPath string = "https://go.dev/dl/"
 	goBrewDownloadUrl   string = "https://github.com/kevincobain2000/gobrew/releases/latest/download/"
-	goBrewTagsApi       string = "https://raw.githubusercontent.com/kevincobain2000/gobrew/json/golang-tags.json"
-	goTagsApi           string = "https://api.github.com/repos/kevincobain2000/gobrew/git/refs/tags"
+	// rate limit not effected
+	goBrewTagsApi string = "https://raw.githubusercontent.com/kevincobain2000/gobrew/json/golang-tags.json"
+	// rate limit effected
+	goTagsApi  string = "https://api.github.com/repos/kevincobain2000/gobrew/git/refs/tags"
+	gobrewRepo string = "kevincobain2000/gobrew"
+	golangRepo string = "golang/go"
 )
 
 // Command ...
@@ -195,7 +199,7 @@ func (gb *GoBrew) ListVersions() error {
 // ListRemoteVersions that are installed by dir ls
 func (gb *GoBrew) ListRemoteVersions(print bool) map[string][]string {
 	utils.Infof("[Info] Fetching remote versions\n\n")
-	tags := gb.getGithubTags("golang/go")
+	tags := gb.getGithubTags(golangRepo)
 
 	var versions []string
 	for _, tag := range tags {
@@ -656,7 +660,7 @@ func (gb *GoBrew) changeSymblinkGo(version string) {
 }
 
 func (gb *GoBrew) getGobrewLatestVersion() string {
-	tags := gb.getGithubTags("kevincobain2000/gobrew")
+	tags := gb.getGithubTags(gobrewRepo)
 
 	if len(tags) == 0 {
 		return ""
@@ -673,7 +677,7 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 	githubTags = make(map[string][]string, 0)
 	client := &http.Client{}
 	url := goTagsApi
-	if repo == "golang/go" {
+	if repo == golangRepo {
 		url = goBrewTagsApi
 	}
 
@@ -683,7 +687,7 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 		return
 	}
 
-	request.Header.Set("User-Agent", "gobrew")
+	request.Header.Set("User-Agent", gobrewRepo)
 
 	response, err := client.Do(request)
 	if err != nil {
