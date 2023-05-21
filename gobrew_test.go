@@ -175,7 +175,7 @@ func TestUpgrade(t *testing.T) {
 		oldFile.Close()
 	}
 
-	gb.Upgrade("0.0.0")
+	gb.UpgradeGobrew("0.0.0")
 
 	if _, err := os.Stat(binaryFile); err != nil {
 		t.Errorf("updated executable does not exist")
