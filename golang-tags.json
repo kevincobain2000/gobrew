@@ -2760,6 +2760,16 @@
     }
   },
   {
+    "ref": "refs/tags/go1.21rc3",
+    "node_id": "MDM6UmVmMjMwOTY5NTk6cmVmcy90YWdzL2dvMS4yMXJjMw==",
+    "url": "https://api.github.com/repos/golang/go/git/refs/tags/go1.21rc3",
+    "object": {
+      "sha": "4aeac326b5cb41a24d6e48c01008abf2f0fda7ff",
+      "type": "commit",
+      "url": "https://api.github.com/repos/golang/go/git/commits/4aeac326b5cb41a24d6e48c01008abf2f0fda7ff"
+    }
+  },
+  {
     "ref": "refs/tags/release.r56",
     "node_id": "MDM6UmVmMjMwOTY5NTk6cmVmcy90YWdzL3JlbGVhc2UucjU2",
     "url": "https://api.github.com/repos/golang/go/git/refs/tags/release.r56",
