@@ -51,8 +51,7 @@ func init() {
 		versionArg = args[1]
 		versionArgSlice := strings.Split(versionArg, ".")
 		if len(versionArgSlice) == 3 {
-			majorVersionNum, err := strconv.Atoi(versionArgSlice[1])
-			_ = err //ignore, because - reasons
+			majorVersionNum, _ := strconv.Atoi(versionArgSlice[1])
 			// Comply with: https://github.com/kevincobain2000/gobrew/issues/113
 			if versionArgSlice[2] == "0" && majorVersionNum < 21 {
 				// Keep complying with https://github.com/kevincobain2000/gobrew/pull/24
