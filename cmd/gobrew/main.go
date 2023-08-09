@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"runtime"
+	"strconv"
 	"strings"
 
 	"github.com/kevincobain2000/gobrew"
@@ -49,8 +50,14 @@ func init() {
 	if len(args) == 2 {
 		versionArg = args[1]
 		versionArgSlice := strings.Split(versionArg, ".")
-		if len(versionArgSlice) == 3 && versionArgSlice[2] == "0" {
-			versionArg = versionArgSlice[0] + "." + versionArgSlice[1]
+		if len(versionArgSlice) == 3 {
+			majorVersionNum, err := strconv.Atoi(versionArgSlice[1])
+			_ = err //ignore, because - reasons
+			// Comply with: https://github.com/kevincobain2000/gobrew/issues/113
+			if versionArgSlice[2] == "0" && majorVersionNum < 21 {
+				// Keep complying with https://github.com/kevincobain2000/gobrew/pull/24
+				versionArg = versionArgSlice[0] + "." + versionArgSlice[1]
+			}
 		}
 	}
 }
