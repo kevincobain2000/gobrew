@@ -314,3 +314,4 @@ alias cd='builtin cd "$@" && ls go.mod 2> /dev/null && gobrew use mod'
 - v1.8.0 - Windows support, including actions
 - v1.8.2 - Prune old go versions, bug fix and `go.mod` auto detection
 - v1.8.4 - Light background terminal support
+- v1.8.6 - Fixes where 1.20.0 was detected as 1.20
