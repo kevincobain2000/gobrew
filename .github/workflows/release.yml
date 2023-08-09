@@ -19,7 +19,7 @@ jobs:
           version: 'mod'
       -
         name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v3
+        uses: goreleaser/goreleaser-action@v4.3
         with:
           distribution: goreleaser
           version: latest
