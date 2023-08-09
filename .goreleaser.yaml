@@ -32,8 +32,6 @@ archives:
   -
     format: binary
     name_template: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
-    replacements:
-      amd64: amd64
 snapshot:
   name_template: "{{ incpatch .Version }}-next"
 changelog:
