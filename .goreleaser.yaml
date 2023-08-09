@@ -2,8 +2,10 @@ before:
   hooks:
     - go mod tidy
 builds:
-  - 
+  -
     main: ./cmd/gobrew
+    ldflags:
+      - -s -w
     env:
       - CGO_ENABLED=0
     goos:
@@ -27,7 +29,7 @@ builds:
       - goos: darwin
         goarch: arm
 archives:
-  - 
+  -
     format: binary
     name_template: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
     replacements:
