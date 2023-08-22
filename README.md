@@ -22,11 +22,13 @@
 
 # Build Status
 
-| Branch  | Status                                                                                     |
-| :------ | :----------------------------------------------------------------------------------------- |
-| master  | ![Test](https://github.com/kevincobain2000/gobrew/workflows/Test/badge.svg?branch=master)  |
-| develop | ![Test](https://github.com/kevincobain2000/gobrew/workflows/Test/badge.svg?branch=develop) |
-| Coverage | [![codecov](https://codecov.io/gh/kevincobain2000/gobrew/branch/master/graph/badge.svg)](https://codecov.io/gh/kevincobain2000/gobrew) |
+| Branch          | Status                                                                                                                                                            |
+|:----------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| master          | ![Test](https://github.com/kevincobain2000/gobrew/workflows/Test/badge.svg?branch=master)                                                                         |
+| Coverage        | [![coveritup](https://coveritup.app/embed?org=kevincobain2000&repo=gobrew&branch=master&type=coverage)](https://coveritup.app/kevincobain2000/gobrew)             |
+| Binary Size     | [![coveritup](https://coveritup.app/embed?org=kevincobain2000&repo=gobrew&branch=master&type=go-binary-size)](https://coveritup.app/kevincobain2000/gobrew)       |
+| Mod Dependecies | [![coveritup](https://coveritup.app/embed?org=kevincobain2000&repo=gobrew&branch=master&type=go-mod-depdendencies)](https://coveritup.app/kevincobain2000/gobrew) |
+
 
 
 ## Install or update
@@ -248,7 +250,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
-      - uses: kevincobain2000/action-gobrew@v2.1
+      - uses: kevincobain2000/action-gobrew@v2.2
         with:
           version: ${{ matrix.go-version }}
 
