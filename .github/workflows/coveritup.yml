@@ -4,7 +4,7 @@ jobs:
   coveritup:
     strategy:
       matrix:
-        go-version: [dev-latest]
+        go-version: [latest]
         os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
