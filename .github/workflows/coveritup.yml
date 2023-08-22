@@ -15,6 +15,7 @@ jobs:
 
       - name: Install Tools
         run: |
+          go install github.com/securego/gosec/v2/cmd/gosec@latest
           go install github.com/axw/gocov/gocov@latest
           go install github.com/AlekSi/gocov-xml@latest
       - name: Test
@@ -52,6 +53,14 @@ jobs:
       - uses: kevincobain2000/action-coveritup@v1
         with:
           type: go-mod-dependencies
+
+      - name: Number of GO Sec issues
+        run: |
+          echo SCORE=`gosec -no-fail --quiet ./...|grep Issues | tail -1 |awk '{print $3}'` >> "$GITHUB_ENV"
+
+      - uses: kevincobain2000/action-coveritup@v1
+        with:
+          type: go-sec-issues
 
       - uses: kevincobain2000/action-coveritup@v1
         with:
