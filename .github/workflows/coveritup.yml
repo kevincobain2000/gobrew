@@ -53,6 +53,14 @@ jobs:
         with:
           type: go-mod-dependencies
 
+      - name: Number of GO Sec issues
+        run: |
+          echo SCORE=`gosec -no-fail --quiet ./...|grep Issues | tail -1 |awk '{print $3}'` >> "$GITHUB_ENV"
+
+      - uses: kevincobain2000/action-coveritup@v1
+        with:
+          type: go-sec-issues
+
       - uses: kevincobain2000/action-coveritup@v1
         with:
           pr_comment: true

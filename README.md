@@ -22,12 +22,12 @@
 
 # Build Status
 
-| Branch          | Status                                                                                                                                                            |
-|:----------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| master          | ![Test](https://github.com/kevincobain2000/gobrew/workflows/Test/badge.svg?branch=master)                                                                         |
-| Coverage        | [![coveritup](https://coveritup.app/embed?org=kevincobain2000&repo=gobrew&branch=master&type=coverage)](https://coveritup.app/kevincobain2000/gobrew)             |
-| Binary Size     | [![coveritup](https://coveritup.app/embed?org=kevincobain2000&repo=gobrew&branch=master&type=go-binary-size)](https://coveritup.app/kevincobain2000/gobrew)       |
-| Mod Dependecies | [![coveritup](https://coveritup.app/embed?org=kevincobain2000&repo=gobrew&branch=master&type=go-mod-depdendencies)](https://coveritup.app/kevincobain2000/gobrew) |
+| Branch          | Status                                                                                                                                                           |
+|:----------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| master          | ![Test](https://github.com/kevincobain2000/gobrew/workflows/Test/badge.svg?branch=master)                                                                        |
+| Coverage        | [![coveritup](https://coveritup.app/embed?org=kevincobain2000&repo=gobrew&branch=master&type=coverage)](https://coveritup.app/kevincobain2000/gobrew)            |
+| Binary Size     | [![coveritup](https://coveritup.app/embed?org=kevincobain2000&repo=gobrew&branch=master&type=go-binary-size)](https://coveritup.app/kevincobain2000/gobrew)      |
+| Mod Dependecies | [![coveritup](https://coveritup.app/embed?org=kevincobain2000&repo=gobrew&branch=master&type=go-mod-dependencies)](https://coveritup.app/kevincobain2000/gobrew) |
 
 
 
