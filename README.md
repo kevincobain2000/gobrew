@@ -250,7 +250,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
-      - uses: kevincobain2000/action-gobrew@v2.1
+      - uses: kevincobain2000/action-gobrew@v2.2
         with:
           version: ${{ matrix.go-version }}
 

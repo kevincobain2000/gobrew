@@ -1,7 +1,7 @@
 on: [push, pull_request]
-name: CoverItUp
+name: Cover It Up
 jobs:
-  CoverItUp:
+  coveritup:
     strategy:
       matrix:
         go-version: [dev-latest]
@@ -9,9 +9,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
-      - uses: kevincobain2000/action-gobrew@v2
+      - uses: kevincobain2000/action-gobrew@v2.2
         with:
           version: ${{ matrix.go-version }}
+
+      - name: Install Tools
+        run: |
+          go install github.com/axw/gocov/gocov@latest
+          go install github.com/AlekSi/gocov-xml@latest
       - name: Test
         run: go test -race -v ./... -count=1 -coverprofile=coverage.out
 
