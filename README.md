@@ -48,7 +48,7 @@ go install github.com/kevincobain2000/gobrew/cmd/gobrew@latest
 Add `PATH` setting your shell config file (`.bashrc` or `.zshrc`).
 
  ```sh
-export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
+export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$HOME/go/bin:$PATH"
 export GOROOT="$HOME/.gobrew/current/go"
 ```
 

@@ -164,7 +164,7 @@ Installation Path:
 	} else {
 		msg = msg + `
     # Add gobrew to your ~/.bashrc or ~/.zshrc
-    export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
+    export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$HOME/go/bin:$PATH"
     export GOROOT="$HOME/.gobrew/current/go"
 
 `
