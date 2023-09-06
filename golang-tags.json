@@ -2654,9 +2654,9 @@
     "node_id": "MDM6UmVmMjMwOTY5NTk6cmVmcy90YWdzL2dvMS4xOS4xMw==",
     "url": "https://api.github.com/repos/golang/go/git/refs/tags/go1.19.13",
     "object": {
-      "sha": "caca5f126b95276259c5c20ac1a01091ae9bf931",
+      "sha": "619b8fd7d2c94af12933f409e962b99aa9263555",
       "type": "commit",
-      "url": "https://api.github.com/repos/golang/go/git/commits/caca5f126b95276259c5c20ac1a01091ae9bf931"
+      "url": "https://api.github.com/repos/golang/go/git/commits/619b8fd7d2c94af12933f409e962b99aa9263555"
     }
   },
   {
