@@ -107,13 +107,12 @@ func TestJudgeVersion(t *testing.T) {
 		})
 	}
 }
+
 func TestListVersions(t *testing.T) {
 	tempDir := t.TempDir()
 	gb := NewGoBrewDirectory(tempDir)
 
-	err := gb.ListVersions()
-
-	assert.NilError(t, err)
+	gb.ListVersions()
 }
 
 func TestExistVersion(t *testing.T) {
