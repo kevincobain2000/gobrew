@@ -183,7 +183,7 @@ func (gb *GoBrew) ListVersions() {
 
 // ListRemoteVersions that are installed by dir ls
 func (gb *GoBrew) ListRemoteVersions(print bool) map[string][]string {
-	color.Infof("==> [Info] Fetching remote versions\n\n")
+	color.Infoln("==> [Info] Fetching remote versions\n")
 	tags := gb.getGithubTags("golang/go")
 
 	var versions []string
@@ -354,14 +354,14 @@ func (gb *GoBrew) Install(version string) {
 	version = gb.judgeVersion(version)
 	gb.mkDirs(version)
 	if gb.existsVersion(version) {
-		color.Infof("==> [Info] Version: %s exists \n", version)
+		color.Infof("==> [Info] Version: %s exists\n", version)
 		return
 	}
 
-	color.Infof("==> [Info] Downloading version: %s \n", version)
+	color.Infof("==> [Info] Downloading version: %s\n", version)
 	gb.downloadAndExtract(version)
 	gb.cleanDownloadsDir()
-	color.Success.Printf("==> [Success] Downloaded version: %s\n", version)
+	color.Successf("==> [Success] Downloaded version: %s\n", version)
 }
 
 func (gb *GoBrew) judgeVersion(version string) string {
@@ -509,56 +509,33 @@ func (gb *GoBrew) Upgrade(currentVersion string) {
 	mkdirTemp, _ := os.MkdirTemp("", "gobrew")
 	tmpFile := filepath.Join(mkdirTemp, "gobrew"+fileExt)
 	url := goBrewDownloadUrl + "gobrew-" + gb.getArch() + fileExt
-	if err := utils.DownloadWithProgress(url, "gobrew"+fileExt, mkdirTemp); err != nil {
-		color.Errorln("[Error] Download GoBrew failed:", err)
-		return
-	}
+	utils.CheckError(
+		utils.DownloadWithProgress(url, "gobrew"+fileExt, mkdirTemp),
+		"[Error] Download GoBrew failed")
 
 	source, err := os.Open(tmpFile)
-	if err != nil {
-		color.Errorln("[Error] Cannot open file:", err)
-		return
-	}
+	utils.CheckError(err, "[Error] Cannot open file")
 	defer func(source *os.File) {
 		_ = source.Close()
-		if err = os.Remove(source.Name()); err != nil {
-			color.Errorln("==> [Error] Cannot remove tmp file:", err)
-			return
-		}
+		utils.CheckError(os.Remove(source.Name()), "==> [Error] Cannot remove tmp file:")
 	}(source)
 
 	goBrewFile := filepath.Join(gb.installDir, "bin", "gobrew"+fileExt)
 	if runtime.GOOS == "windows" {
 		goBrewOldFile := goBrewFile + ".old"
-		if err = os.Rename(goBrewFile, goBrewOldFile); err != nil {
-			color.Errorln("==> [Error] Cannot rename binary file:", err.Error())
-			return
-		}
+		utils.CheckError(os.Rename(goBrewFile, goBrewOldFile), "==> [Error] Cannot rename binary file")
 	} else {
-		if err = os.Remove(goBrewFile); err != nil {
-			color.Errorln("==> [Error] Cannot remove binary file:", err.Error())
-			return
-		}
+		utils.CheckError(os.Remove(goBrewFile), "==> [Error] Cannot remove binary file")
 	}
 	destination, err := os.Create(goBrewFile)
-	if err != nil {
-		color.Errorln("==> [Error] Cannot open file:", err)
-		return
-	}
+	utils.CheckError(err, "==> [Error] Cannot open file")
 	defer func(destination *os.File) {
 		_ = destination.Close()
 	}(destination)
 
-	if _, err = io.Copy(destination, source); err != nil {
-		color.Errorln("==> [Error] Cannot copy file:", err)
-		return
-	}
-
-	if err = os.Chmod(goBrewFile, 0755); err != nil {
-		color.Errorln("==> [Error] Cannot set file as executable:", err)
-		return
-	}
-
+	_, err = io.Copy(destination, source)
+	utils.CheckError(err, "==> [Error] Cannot copy file")
+	utils.CheckError(os.Chmod(goBrewFile, 0755), "==> [Error] Cannot set file as executable")
 	color.Infoln("Upgrade successful")
 }
 
@@ -606,18 +583,18 @@ func (gb *GoBrew) downloadAndExtract(version string) {
 	color.Infoln("==> [Info] Extracting from:", srcTar)
 	color.Infoln("==> [Info] Extracting to:", dstDir)
 
-	err = gb.ExtractTarGz(srcTar, dstDir)
+	err = gb.Extract(srcTar, dstDir)
 	if err != nil {
 		// clean up dir
 		gb.cleanVersionDir(version)
-		color.Infoln("==> [Info] Untar failed:", err)
+		color.Infoln("==> [Info] Extract failed:", err)
 		color.Errorln("==> [Error]: Please check if version exists from url:", downloadURL)
 		os.Exit(1)
 	}
-	color.Infoln("[Success] Untar to ", gb.getVersionDir(version))
+	color.Infoln("[Success] Extract to", gb.getVersionDir(version))
 }
 
-func (gb *GoBrew) ExtractTarGz(srcTar string, dstDir string) error {
+func (gb *GoBrew) Extract(srcTar string, dstDir string) error {
 	//#nosec G304
 	file, err := os.Open(srcTar)
 	if err != nil {
@@ -634,21 +611,13 @@ func (gb *GoBrew) ExtractTarGz(srcTar string, dstDir string) error {
 func (gb *GoBrew) changeSymblinkGoBin(version string) {
 	goBinDst := filepath.Join(gb.versionsDir, version, "/go/bin")
 	_ = os.RemoveAll(gb.currentBinDir)
-
-	if err := os.Symlink(goBinDst, gb.currentBinDir); err != nil {
-		color.Errorln("==> [Error]: symbolic link failed:", err)
-		os.Exit(1)
-	}
+	utils.CheckError(os.Symlink(goBinDst, gb.currentBinDir), "==> [Error]: symbolic link failed")
 }
 
 func (gb *GoBrew) changeSymblinkGo(version string) {
 	_ = os.RemoveAll(gb.currentGoDir)
 	versionGoDir := filepath.Join(gb.versionsDir, version, "go")
-
-	if err := os.Symlink(versionGoDir, gb.currentGoDir); err != nil {
-		color.Errorln("==> [Error]: symbolic link failed:", err)
-		os.Exit(1)
-	}
+	utils.CheckError(os.Symlink(versionGoDir, gb.currentGoDir), "==> [Error]: symbolic link failed")
 }
 
 func (gb *GoBrew) getLatestVersion() string {
@@ -700,11 +669,7 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 		Ref string
 	}
 	var tags []Tag
-
-	if err = json.Unmarshal(data, &tags); err != nil {
-		color.Errorln("==> [Error] Rate limit exceed")
-		os.Exit(2)
-	}
+	utils.CheckError(json.Unmarshal(data, &tags), "==> [Error]")
 
 	for _, tag := range tags {
 		t := strings.ReplaceAll(tag.Ref, "refs/tags/", "")
