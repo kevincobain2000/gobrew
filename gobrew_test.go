@@ -34,10 +34,10 @@ func TestNewGobrewHomeDirDefaultsToHome(t *testing.T) {
 
 	oldEnvValue := os.Getenv(envName)
 	defer func() {
-		os.Setenv(envName, oldEnvValue)
+		_ = os.Setenv(envName, oldEnvValue)
 	}()
 
-	os.Unsetenv(envName)
+	_ = os.Unsetenv(envName)
 
 	gobrew := NewGoBrew()
 
@@ -47,10 +47,10 @@ func TestNewGobrewHomeDirDefaultsToHome(t *testing.T) {
 func TestNewGobrewHomeDirUsesGoBrewRoot(t *testing.T) {
 	oldEnvValue := os.Getenv("GOBREW_ROOT")
 	defer func() {
-		os.Setenv("GOBREW_ROOT", oldEnvValue)
+		_ = os.Setenv("GOBREW_ROOT", oldEnvValue)
 	}()
 
-	os.Setenv("GOBREW_ROOT", "some_fancy_value")
+	_ = os.Setenv("GOBREW_ROOT", "some_fancy_value")
 
 	gobrew := NewGoBrew()
 
@@ -107,13 +107,12 @@ func TestJudgeVersion(t *testing.T) {
 		})
 	}
 }
+
 func TestListVersions(t *testing.T) {
 	tempDir := t.TempDir()
 	gb := NewGoBrewDirectory(tempDir)
 
-	err := gb.ListVersions()
-
-	assert.NilError(t, err)
+	gb.ListVersions()
 }
 
 func TestExistVersion(t *testing.T) {
@@ -147,7 +146,7 @@ func TestUnInstallThenNotExistVersion(t *testing.T) {
 		return
 	}
 	defer func() {
-		os.RemoveAll(tempDir)
+		_ = os.RemoveAll(tempDir)
 	}()
 
 	gb := NewGoBrewDirectory(tempDir)
@@ -172,7 +171,7 @@ func TestUpgrade(t *testing.T) {
 
 	if oldFile, err := os.Create(binaryFile); err == nil {
 		// on tests we have to close the file to avoid an error on os.Rename
-		oldFile.Close()
+		_ = oldFile.Close()
 	}
 
 	gb.Upgrade("0.0.0")

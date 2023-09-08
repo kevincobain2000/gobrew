@@ -7,25 +7,9 @@ import (
 	"os"
 	"path"
 
-	"github.com/fatih/color"
-	"github.com/muesli/termenv"
+	"github.com/gookit/color"
 	"github.com/schollz/progressbar/v3"
 )
-
-var ColorMajorVersion = color.New(color.FgHiYellow)
-var ColorSuccess = color.New(color.FgHiGreen)
-var ColorInfo = color.New(color.FgHiYellow)
-var ColorError = color.New(color.FgHiRed)
-
-func init() {
-	output := termenv.NewOutput(os.Stdout)
-	if !output.HasDarkBackground() {
-		ColorMajorVersion = color.New(color.FgRed)
-		ColorSuccess = color.New(color.FgGreen)
-		ColorInfo = color.New(color.FgBlack)
-		ColorError = color.New(color.FgRed)
-	}
-}
 
 func DownloadWithProgress(url string, tarName string, destFolder string) (err error) {
 	destTarPath := path.Join(destFolder, tarName)
@@ -38,8 +22,8 @@ func DownloadWithProgress(url string, tarName string, destFolder string) (err er
 		return err
 	}
 
-	defer func(Body io.ReadCloser) {
-		_ = Body.Close()
+	defer func(body io.ReadCloser) {
+		_ = body.Close()
 	}(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
@@ -63,76 +47,9 @@ func DownloadWithProgress(url string, tarName string, destFolder string) (err er
 	return nil
 }
 
-func BytesToString(data []byte) string {
-	return string(data[:])
-}
-
-// Find takes a slice and looks for an element in it.
-func Find(slice []string, val string) bool {
-	for _, item := range slice {
-		if item == val {
-			return true
-		}
-	}
-	return false
-}
-
-func Successf(format string, a ...interface{}) {
-	format = "==> " + format
-	_, _ = ColorSuccess.Printf(format, a...)
-}
-
-func Infof(format string, a ...interface{}) {
-	format = "==> " + format
-	_, _ = ColorInfo.Printf(format, a...)
-}
-
-func Errorf(format string, a ...interface{}) {
-	format = "==> " + format
-	_, _ = ColorError.Printf(format, a...)
-}
-
-func Major(a ...interface{}) {
-	_, _ = ColorMajorVersion.Print(a...)
-}
-
-func Successln(a ...interface{}) {
-	_, _ = ColorSuccess.Println(a...)
-}
-
-func Infoln(a ...interface{}) {
-	_, _ = ColorInfo.Println(a...)
-}
-
-func Errorln(a ...interface{}) {
-	_, _ = ColorError.Println(a...)
-}
-
-func Println(a ...interface{}) {
-	_, _ = ColorInfo.Println(a...)
-}
-
-func Printf(format string, a ...interface{}) {
-	_, _ = ColorInfo.Printf(format, a...)
-}
-
-func Print(a ...interface{}) {
-	_, _ = ColorInfo.Print(a...)
-}
-
-func Fatal(a ...interface{}) {
-	_, _ = ColorInfo.Print(a...)
-	os.Exit(1)
-}
-
-func Fatalf(format string, a ...interface{}) {
-	_, _ = ColorInfo.Printf(format, a...)
-	os.Exit(1)
-}
-
 func CheckError(err error, format string) {
 	if err != nil {
-		Errorf(format+": %s", err)
+		color.Errorf(format+": %s", err)
 		os.Exit(1)
 	}
 }

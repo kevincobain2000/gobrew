@@ -67,7 +67,7 @@ func main() {
 	case "h", "help":
 		log.Print(usage())
 	case "ls", "list":
-		_ = gb.ListVersions()
+		gb.ListVersions()
 	case "ls-remote":
 		gb.ListRemoteVersions(true)
 	case "install":
