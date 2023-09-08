@@ -491,7 +491,7 @@ func (gb *GoBrew) Use(version string) {
 
 // Version of GoBrew
 func (gb *GoBrew) Version(currentVersion string) {
-	color.Infoln("[INFO] gobrew version is" + currentVersion)
+	color.Infoln("[INFO] gobrew version is", currentVersion)
 }
 
 // Upgrade of GoBrew
