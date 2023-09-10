@@ -146,10 +146,12 @@ func (gb *GoBrew) ListVersions() {
 		version := versionSemantic.String()
 		// 1.8.0 -> 1.8, if version < 1.21.0
 		reMajorVersion := regexp.MustCompile("([0-9]+).([0-9]+).0")
-		vv, _ := strconv.Atoi(reMajorVersion.FindStringSubmatch(version)[2])
-		if vv < 21 {
-			if reMajorVersion.MatchString(version) {
-				version = strings.Split(version, ".")[0] + "." + strings.Split(version, ".")[1]
+		if len(reMajorVersion.FindStringSubmatch(version)) > 1 {
+			vv, _ := strconv.Atoi(reMajorVersion.FindStringSubmatch(version)[2])
+			if vv < 21 {
+				if reMajorVersion.MatchString(version) {
+					version = strings.Split(version, ".")[0] + "." + strings.Split(version, ".")[1]
+				}
 			}
 		}
 		if version == cv {
