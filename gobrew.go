@@ -651,15 +651,29 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 
 	request.Header.Set("User-Agent", "gobrew")
 
+	if token, ok := os.LookupEnv("GITHUB_TOKEN"); ok {
+		request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+	}
+
 	response, err := client.Do(request)
 	if err != nil {
 		color.Errorf("==> [Error] Cannot get response: %s", err)
 		return
 	}
 
-	defer func(Body io.ReadCloser) {
-		_ = Body.Close()
+	defer func(body io.ReadCloser) {
+		_ = body.Close()
 	}(response.Body)
+
+	if response.StatusCode == http.StatusTooManyRequests {
+		color.Errorf("==> [Error] Rate limit exhausted")
+		return
+	}
+
+	if response.StatusCode != http.StatusOK {
+		color.Errorf("==> [Error] Cannot read response: %s", response.Status)
+		return
+	}
 
 	data, err := io.ReadAll(response.Body)
 	if err != nil {
