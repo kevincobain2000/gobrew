@@ -207,7 +207,9 @@ func (gb *GoBrew) getGroupedVersion(versions []string, print bool) map[string][]
 			if len(matches) == 1 {
 				majorVersion = strings.Split(version, matches[0])[0]
 			}
-			groupedVersions[majorVersion] = append(groupedVersions[majorVersion], version)
+			if !isBlackListed(majorVersion) {
+				groupedVersions[majorVersion] = append(groupedVersions[majorVersion], version)
+			}
 		}
 	}
 
@@ -291,6 +293,16 @@ func (gb *GoBrew) getGroupedVersion(versions []string, print bool) map[string][]
 		gb.print("\n", print)
 	}
 	return groupedVersions
+}
+
+func isBlackListed(version string) bool {
+	blackListVersions := []string{"1.0", "1.1", "1.2", "1.3", "1.4"}
+	for _, v := range blackListVersions {
+		if version == v {
+			return true
+		}
+	}
+	return false
 }
 
 func (gb *GoBrew) print(message string, shouldPrint bool) {
