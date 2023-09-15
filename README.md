@@ -49,7 +49,11 @@ Add `PATH` setting your shell config file (`.bashrc` or `.zshrc`).
 
  ```sh
 export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
+
+# optionally set
 export GOROOT="$HOME/.gobrew/current/go"
+# or
+export GOPATH="$HOME/.gobrew/current/go"
 ```
 
 Reload config.
@@ -317,3 +321,5 @@ alias cd='builtin cd "$@" && ls go.mod 2> /dev/null && gobrew use mod'
 - v1.8.2 - Prune old go versions, bug fix and `go.mod` auto detection
 - v1.8.4 - Light background terminal support
 - v1.8.6 - Fixes where 1.20.0 was detected as 1.20
+- v1.9.0 - v1.8.6 ~ v1.9.0, updates colors packages, fixes UT issues for Github status codes
+- v1.9.1 - Minor logging fixes
