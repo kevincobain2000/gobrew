@@ -108,7 +108,6 @@ func (gb *GoBrew) Prune() {
 			version := f.Name()
 			color.Infoln("==> [Info] Uninstalling version:", version)
 			gb.Uninstall(version)
-			color.Infoln("==> [Info] Uninstalled version:", version)
 		}
 	}
 }
