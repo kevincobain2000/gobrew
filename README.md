@@ -23,11 +23,13 @@
 # Build Status
 
 | Branch          | Status                                                                                                                                                  |
-|:----------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | master          | ![Test](https://github.com/kevincobain2000/gobrew/workflows/Test/badge.svg?branch=master)                                                               |
 | Coverage        | [![coveritup](https://coveritup.app/embed/kevincobain2000/gobrew?branch=master&type=coverage)](https://coveritup.app/kevincobain2000/gobrew)            |
 | Binary Size     | [![coveritup](https://coveritup.app/embed/kevincobain2000/gobrew?branch=master&type=go-binary-size)](https://coveritup.app/kevincobain2000/gobrew)      |
 | Mod Dependecies | [![coveritup](https://coveritup.app/embed/kevincobain2000/gobrew?branch=master&type=go-mod-dependencies)](https://coveritup.app/kevincobain2000/gobrew) |
+| Unit Test Time  | [![coveritup](https://coveritup.app/embed/kevincobain2000/gobrew?branch=master&type=unit-test-run-time)](https://coveritup.app/kevincobain2000/gobrew)  |
+| Average PR Days | [![coveritup](https://coveritup.app/embed/kevincobain2000/gobrew?branch=master&type=average-pr-days)](https://coveritup.app/kevincobain2000/gobrew)     |
 
 
 
