@@ -78,3 +78,5 @@ jobs:
       - uses: kevincobain2000/action-coveritup@v1
         with:
           pr_comment: true
+
+      - uses: kevincobain2000/action-camo-purge@v1
