@@ -56,7 +56,6 @@ type GoBrew struct {
 }
 
 var gb GoBrew
-var githubTags map[string][]string
 
 // NewGoBrew instance
 func NewGoBrew() GoBrew {
@@ -185,7 +184,7 @@ func (gb *GoBrew) ListVersions() {
 // ListRemoteVersions that are installed by dir ls
 func (gb *GoBrew) ListRemoteVersions(print bool) map[string][]string {
 	color.Infoln("==> [Info] Fetching remote versions\n")
-	tags := gb.getGithubTags("golang/go")
+	tags := gb.getGolangVersions()
 
 	var versions []string
 	for _, tag := range tags {
@@ -414,6 +413,9 @@ func (gb *GoBrew) judgeVersion(version string) string {
 				versionsSemantic = append(versionsSemantic, v)
 			}
 		}
+		if len(versionsSemantic) == 0 {
+			return ""
+		}
 
 		// sort semantic versions
 		sort.Sort(semver.Collection(versionsSemantic))
@@ -422,6 +424,9 @@ func (gb *GoBrew) judgeVersion(version string) string {
 			judgedVersions := groupedVersions[versionsSemantic[i].Original()]
 			// get last element
 			if version == "dev-latest" {
+				if len(judgedVersions) == 0 {
+					return ""
+				}
 				return judgedVersions[len(judgedVersions)-1]
 			}
 
@@ -634,41 +639,56 @@ func (gb *GoBrew) changeSymblinkGo(version string) {
 }
 
 func (gb *GoBrew) getLatestVersion() string {
-	tags := gb.getGithubTags("kevincobain2000/gobrew")
-
-	if len(tags) == 0 {
+	url := "https://api.github.com/repos/kevincobain2000/gobrew/releases/latest"
+	data := doRequest(url)
+	if len(data) == 0 {
 		return ""
 	}
 
-	return tags[len(tags)-1]
+	type Tag struct {
+		TagName string `json:"tag_name"`
+	}
+	var tag Tag
+	utils.CheckError(json.Unmarshal(data, &tag), "==> [Error]")
+
+	return tag.TagName
 }
 
-func (gb *GoBrew) getGithubTags(repo string) (result []string) {
-	if len(githubTags[repo]) > 0 {
-		return githubTags[repo]
+func (gb *GoBrew) getGolangVersions() (result []string) {
+	data := doRequest(goBrewTagsApi)
+	if len(data) == 0 {
+		return
 	}
 
-	githubTags = make(map[string][]string)
-	client := &http.Client{}
-	url := "https://api.github.com/repos/kevincobain2000/gobrew/git/refs/tags"
-	if repo == "golang/go" {
-		url = goBrewTagsApi
+	type Tag struct {
+		Ref string `json:"ref"`
 	}
+	var tags []Tag
+	utils.CheckError(json.Unmarshal(data, &tags), "==> [Error]")
+
+	for _, tag := range tags {
+		t := strings.ReplaceAll(tag.Ref, "refs/tags/", "")
+		if strings.HasPrefix(t, "go") {
+			result = append(result, t)
+		}
+	}
+
+	return
+}
+
+func doRequest(url string) (data []byte) {
+	client := &http.Client{}
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		color.Errorf("==> [Error] Cannot create request: %s", err)
+		color.Errorln("==> [Error] Cannot create request:", err.Error())
 		return
 	}
 
 	request.Header.Set("User-Agent", "gobrew")
 
-	if token, ok := os.LookupEnv("GITHUB_TOKEN"); ok {
-		request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
-	}
-
 	response, err := client.Do(request)
 	if err != nil {
-		color.Errorf("==> [Error] Cannot get response: %s", err)
+		color.Errorln("==> [Error] Cannot get response:", err.Error())
 		return
 	}
 
@@ -677,34 +697,20 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 	}(response.Body)
 
 	if response.StatusCode == http.StatusTooManyRequests {
-		color.Errorf("==> [Error] Rate limit exhausted")
+		color.Errorln("==> [Error] Rate limit exhausted")
 		return
 	}
 
 	if response.StatusCode != http.StatusOK {
-		color.Errorf("==> [Error] Cannot read response: %s", response.Status)
+		color.Errorln("==> [Error] Cannot read response:", response.Status)
 		return
 	}
 
-	data, err := io.ReadAll(response.Body)
+	data, err = io.ReadAll(response.Body)
 	if err != nil {
-		color.Errorf("==> [Error] Cannot read response: %s", err)
+		color.Errorln("==> [Error] Cannot read response Body:", err.Error())
 		return
 	}
 
-	type Tag struct {
-		Ref string
-	}
-	var tags []Tag
-	utils.CheckError(json.Unmarshal(data, &tags), "==> [Error]")
-
-	for _, tag := range tags {
-		t := strings.ReplaceAll(tag.Ref, "refs/tags/", "")
-		if strings.HasPrefix(t, "v") || strings.HasPrefix(t, "go") {
-			result = append(result, t)
-		}
-	}
-
-	githubTags[repo] = result
-	return result
+	return
 }
