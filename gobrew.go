@@ -56,7 +56,6 @@ type GoBrew struct {
 }
 
 var gb GoBrew
-var githubTags map[string][]string
 
 // NewGoBrew instance
 func NewGoBrew() GoBrew {
@@ -185,7 +184,7 @@ func (gb *GoBrew) ListVersions() {
 // ListRemoteVersions that are installed by dir ls
 func (gb *GoBrew) ListRemoteVersions(print bool) map[string][]string {
 	color.Infoln("==> [Info] Fetching remote versions\n")
-	tags := gb.getGithubTags("golang/go")
+	tags := gb.getGolangVersions()
 
 	var versions []string
 	for _, tag := range tags {
@@ -640,53 +639,44 @@ func (gb *GoBrew) changeSymblinkGo(version string) {
 }
 
 func (gb *GoBrew) getLatestVersion() string {
-	tags := gb.getGithubTags("kevincobain2000/gobrew")
-
-	if len(tags) == 0 {
+	url := "https://api.github.com/repos/kevincobain2000/gobrew/releases/latest"
+	data := doRequest(url)
+	if len(data) == 0 {
 		return ""
 	}
 
-	return tags[len(tags)-1]
+	type Tag struct {
+		TagName string `json:"tag_name"`
+	}
+	var tag Tag
+	utils.CheckError(json.Unmarshal(data, &tag), "==> [Error]")
+
+	return tag.TagName
 }
 
-func (gb *GoBrew) getGithubTags(repo string) (result []string) {
-	if len(githubTags[repo]) > 0 {
-		return githubTags[repo]
-	}
-
-	githubTags = make(map[string][]string)
-	url := "https://api.github.com/repos/kevincobain2000/gobrew/git/refs/tags"
-	if repo == "golang/go" {
-		url = goBrewTagsApi
-	}
-
-	data := doRequest(url, os.Getenv("GITHUB_TOKEN"))
-	if len(data) == 0 && os.Getenv("GITHUB_TOKEN") != "" {
-		color.Warnln("[WARNING] invalid token we are trying a request without a token")
-		data = doRequest(url, "")
-	}
+func (gb *GoBrew) getGolangVersions() (result []string) {
+	data := doRequest(goBrewTagsApi)
 	if len(data) == 0 {
 		return
 	}
 
 	type Tag struct {
-		Ref string
+		Ref string `json:"ref"`
 	}
 	var tags []Tag
 	utils.CheckError(json.Unmarshal(data, &tags), "==> [Error]")
 
 	for _, tag := range tags {
 		t := strings.ReplaceAll(tag.Ref, "refs/tags/", "")
-		if strings.HasPrefix(t, "v") || strings.HasPrefix(t, "go") {
+		if strings.HasPrefix(t, "go") {
 			result = append(result, t)
 		}
 	}
 
-	githubTags[repo] = result
 	return
 }
 
-func doRequest(url string, token string) (data []byte) {
+func doRequest(url string) (data []byte) {
 	client := &http.Client{}
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -695,10 +685,6 @@ func doRequest(url string, token string) (data []byte) {
 	}
 
 	request.Header.Set("User-Agent", "gobrew")
-
-	if token != "" {
-		request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
-	}
 
 	response, err := client.Do(request)
 	if err != nil {
