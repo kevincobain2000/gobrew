@@ -687,30 +687,25 @@ func doRequest(url string) (data []byte) {
 	request.Header.Set("User-Agent", "gobrew")
 
 	response, err := client.Do(request)
-	if err != nil {
-		color.Errorln("==> [Error] Cannot get response:", err.Error())
-		return
-	}
+	utils.CheckError(err, "==> [Error] Cannot get response")
 
 	defer func(body io.ReadCloser) {
 		_ = body.Close()
 	}(response.Body)
 
-	if response.StatusCode == http.StatusTooManyRequests {
+	if response.StatusCode == http.StatusTooManyRequests ||
+		response.StatusCode == http.StatusForbidden {
 		color.Errorln("==> [Error] Rate limit exhausted")
-		return
+		os.Exit(1)
 	}
 
 	if response.StatusCode != http.StatusOK {
 		color.Errorln("==> [Error] Cannot read response:", response.Status)
-		return
+		os.Exit(1)
 	}
 
 	data, err = io.ReadAll(response.Body)
-	if err != nil {
-		color.Errorln("==> [Error] Cannot read response Body:", err.Error())
-		return
-	}
+	utils.CheckError(err, "==> [Error] Cannot read response Body:")
 
 	return
 }
