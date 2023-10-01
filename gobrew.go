@@ -690,7 +690,7 @@ func doRequest(url string, token string) (data []byte) {
 	client := &http.Client{}
 	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		color.Errorln(fmt.Sprintf("==> [Error] Cannot create request: %s", err))
+		color.Errorln("==> [Error] Cannot create request:", err.Error())
 		return
 	}
 
@@ -702,7 +702,7 @@ func doRequest(url string, token string) (data []byte) {
 
 	response, err := client.Do(request)
 	if err != nil {
-		color.Errorln(fmt.Sprintf("==> [Error] Cannot get response: %s", err))
+		color.Errorln("==> [Error] Cannot get response:", err.Error())
 		return
 	}
 
@@ -716,13 +716,13 @@ func doRequest(url string, token string) (data []byte) {
 	}
 
 	if response.StatusCode != http.StatusOK {
-		color.Errorln(fmt.Sprintf("==> [Error] Cannot read response: %s", response.Status))
+		color.Errorln("==> [Error] Cannot read response:", response.Status)
 		return
 	}
 
 	data, err = io.ReadAll(response.Body)
 	if err != nil {
-		color.Errorln(fmt.Sprintf("==> [Error] Cannot read response Body: %s", err))
+		color.Errorln("==> [Error] Cannot read response Body:", err.Error())
 		return
 	}
 
