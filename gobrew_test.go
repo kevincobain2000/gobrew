@@ -100,6 +100,7 @@ func TestJudgeVersion(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.version, func(t *testing.T) {
+			os.Unsetenv("GITHUB_TOKEN")
 			gb := NewGoBrew()
 			version := gb.judgeVersion(test.version)
 			assert.Equal(t, test.wantVersion, version)
