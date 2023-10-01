@@ -20,3 +20,5 @@ dist/
 bin/
 build/
 gobrew
+
+.vscode/
