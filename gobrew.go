@@ -365,6 +365,10 @@ func (gb *GoBrew) Install(version string) {
 		os.Exit(1)
 	}
 	version = gb.judgeVersion(version)
+	if version == "" {
+		color.Errorln("[Error] Can not judge version")
+		os.Exit(1)
+	}
 	gb.mkDirs(version)
 	if gb.existsVersion(version) {
 		color.Infof("==> [Info] Version: %s exists\n", version)
@@ -432,6 +436,10 @@ func (gb *GoBrew) judgeVersion(version string) string {
 					return judgedVersions[j]
 				}
 			}
+		}
+
+		if len(versionsSemantic) == 0 {
+			return ""
 		}
 
 		latest := versionsSemantic[len(versionsSemantic)-1].String()
