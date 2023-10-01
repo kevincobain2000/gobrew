@@ -414,6 +414,9 @@ func (gb *GoBrew) judgeVersion(version string) string {
 				versionsSemantic = append(versionsSemantic, v)
 			}
 		}
+		if len(versionsSemantic) == 0 {
+			return ""
+		}
 
 		// sort semantic versions
 		sort.Sort(semver.Collection(versionsSemantic))
@@ -422,6 +425,9 @@ func (gb *GoBrew) judgeVersion(version string) string {
 			judgedVersions := groupedVersions[versionsSemantic[i].Original()]
 			// get last element
 			if version == "dev-latest" {
+				if len(judgedVersions) == 0 {
+					return ""
+				}
 				return judgedVersions[len(judgedVersions)-1]
 			}
 
@@ -649,46 +655,17 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 	}
 
 	githubTags = make(map[string][]string)
-	client := &http.Client{}
 	url := "https://api.github.com/repos/kevincobain2000/gobrew/git/refs/tags"
 	if repo == "golang/go" {
 		url = goBrewTagsApi
 	}
-	request, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		color.Errorf("==> [Error] Cannot create request: %s", err)
-		return
+
+	data := doRequest(url, os.Getenv("GITHUB_TOKEN"))
+	if len(data) == 0 && os.Getenv("GITHUB_TOKEN") != "" {
+		color.Warnln("[WARNING] invalid token we are trying a request without a token")
+		data = doRequest(url, "")
 	}
-
-	request.Header.Set("User-Agent", "gobrew")
-
-	if token, ok := os.LookupEnv("GITHUB_TOKEN"); ok {
-		request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
-	}
-
-	response, err := client.Do(request)
-	if err != nil {
-		color.Errorf("==> [Error] Cannot get response: %s", err)
-		return
-	}
-
-	defer func(body io.ReadCloser) {
-		_ = body.Close()
-	}(response.Body)
-
-	if response.StatusCode == http.StatusTooManyRequests {
-		color.Errorf("==> [Error] Rate limit exhausted")
-		return
-	}
-
-	if response.StatusCode != http.StatusOK {
-		color.Errorf("==> [Error] Cannot read response: %s", response.Status)
-		return
-	}
-
-	data, err := io.ReadAll(response.Body)
-	if err != nil {
-		color.Errorf("==> [Error] Cannot read response: %s", err)
+	if len(data) == 0 {
 		return
 	}
 
@@ -706,5 +683,48 @@ func (gb *GoBrew) getGithubTags(repo string) (result []string) {
 	}
 
 	githubTags[repo] = result
-	return result
+	return
+}
+
+func doRequest(url string, token string) (data []byte) {
+	client := &http.Client{}
+	request, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		color.Errorln(fmt.Sprintf("==> [Error] Cannot create request: %s", err))
+		return
+	}
+
+	request.Header.Set("User-Agent", "gobrew")
+
+	if token != "" {
+		request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+	}
+
+	response, err := client.Do(request)
+	if err != nil {
+		color.Errorln(fmt.Sprintf("==> [Error] Cannot get response: %s", err))
+		return
+	}
+
+	defer func(body io.ReadCloser) {
+		_ = body.Close()
+	}(response.Body)
+
+	if response.StatusCode == http.StatusTooManyRequests {
+		color.Errorln("==> [Error] Rate limit exhausted")
+		return
+	}
+
+	if response.StatusCode != http.StatusOK {
+		color.Errorln(fmt.Sprintf("==> [Error] Cannot read response: %s", response.Status))
+		return
+	}
+
+	data, err = io.ReadAll(response.Body)
+	if err != nil {
+		color.Errorln(fmt.Sprintf("==> [Error] Cannot read response Body: %s", err))
+		return
+	}
+
+	return
 }
