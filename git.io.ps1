@@ -202,4 +202,5 @@ foreach ($key in $AddEnvVars.Keys) {
   }
   Set-Item "Env:$key" -Value $value
 }
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/lincolnthalles/gobrew/powershell-install-script/git.io.ps1'))
+
+Exit 0
