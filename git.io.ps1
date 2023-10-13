@@ -202,5 +202,3 @@ foreach ($key in $AddEnvVars.Keys) {
   }
   Set-Item "Env:$key" -Value $value
 }
-
-Exit 0
