@@ -120,7 +120,9 @@ if ($null -eq $?) {
   Exit 1
 }
 
-Unblock-File -Path $GoBrewDownloadPath -ErrorAction SilentlyContinue
+if ($IsWindows) {
+  Unblock-File -Path $GoBrewDownloadPath -ErrorAction SilentlyContinue
+}
 
 if (![IO.File]::Exists($GoBrewDownloadPath)) {
   Write-Host "Failed to download gobrew to: $GoBrewBinPath" -f Red
@@ -148,6 +150,27 @@ else {
     Write-Host "Failed to install gobrew to: $GoBrewBinPath" -f Red
     Exit 1
   }
+}
+
+if (!$IsWindows) {
+  Write-Host "Setting executable permissions for: $GoBrewBinPath" -f Cyan
+  Set-ItemProperty -Path $GoBrewBinPath -Name IsReadOnly -Value $false -ErrorAction SilentlyContinue
+  &chmod +x $GoBrewBinPath
+
+  Write-Host "For a better experience, you should set the following environment variables in your shell profile:" -f Yellow
+  foreach ($key in $AddEnvVars.Keys) {
+    $value = $AddEnvVars[$key]
+    Write-Host "$key=$value" -f Yellow
+    Set-Item "Env:$key" -Value $value
+  }
+
+  Write-Host "You should add the following paths to your PATH:" -f Yellow
+  foreach ($path in $AddUserPaths) {
+    Write-Host "$path" -f Yellow
+  }
+
+  $env:PATH += ";$HOME/go/bin;$HOME/.gobrew/bin;$HOME/.gobrew/current/bin"
+  Exit 0
 }
 
 # Add paths to user PATH
@@ -179,3 +202,4 @@ foreach ($key in $AddEnvVars.Keys) {
   }
   Set-Item "Env:$key" -Value $value
 }
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/lincolnthalles/gobrew/powershell-install-script/git.io.ps1'))
