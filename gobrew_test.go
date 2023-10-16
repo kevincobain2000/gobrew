@@ -182,7 +182,6 @@ func TestUpgrade(t *testing.T) {
 }
 
 func TestDoNotUpgradeLatestVersion(t *testing.T) {
-	// skip this test
 	t.Skip("skipping test...needs to rewrite")
 	tempDir := t.TempDir()
 
