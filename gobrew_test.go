@@ -186,8 +186,7 @@ func TestDoNotUpgradeLatestVersion(t *testing.T) {
 
 	gb := NewGoBrewDirectory(tempDir)
 
-	binaryDir := filepath.Join(gb.installDir, "bin", "gobrew")
-
+	binaryDir := filepath.Join(gb.installDir, "bin")
 	_ = os.MkdirAll(binaryDir, os.ModePerm)
 
 	baseName := "gobrew"

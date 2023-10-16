@@ -554,7 +554,7 @@ func (gb *GoBrew) Upgrade(currentVersion string) {
 	_, err = io.Copy(destination, source)
 	utils.CheckError(err, "==> [Error] Cannot copy file")
 	utils.CheckError(os.Chmod(goBrewFile, 0755), "==> [Error] Cannot set file as executable")
-	color.Infoln("==> [Success] Upgrade successful")
+	color.Infoln("Upgrade successful")
 }
 
 func (gb *GoBrew) mkDirs(version string) {
