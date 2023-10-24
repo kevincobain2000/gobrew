@@ -24,7 +24,7 @@
 
 | Branch          | Status                                                                                                                                                  |
 | :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| master          | ![Test](https://github.com/kevincobain2000/gobrew/workflows/Test/badge.svg?branch=master)                                                               |
+| master          | ![CI](https://github.com/kevincobain2000/gobrew/actions/workflows/build.yml/badge.svg)                                                                  |
 | Coverage        | [![coveritup](https://coveritup.app/embed/kevincobain2000/gobrew?branch=master&type=coverage)](https://coveritup.app/kevincobain2000/gobrew)            |
 | Binary Size     | [![coveritup](https://coveritup.app/embed/kevincobain2000/gobrew?branch=master&type=go-binary-size)](https://coveritup.app/kevincobain2000/gobrew)      |
 | Mod Dependecies | [![coveritup](https://coveritup.app/embed/kevincobain2000/gobrew?branch=master&type=go-mod-dependencies)](https://coveritup.app/kevincobain2000/gobrew) |
