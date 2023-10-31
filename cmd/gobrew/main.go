@@ -25,6 +25,8 @@ var allowedArgs = []string{
 	"install",
 	"use",
 	"uninstall",
+	"interactive",
+	"noninteractive",
 	"prune",
 	"version",
 	"self-update",
@@ -42,11 +44,11 @@ func init() {
 	flag.Parse()
 	args = flag.Args()
 	if len(args) == 0 {
-		log.Print(usage())
-		return
+		actionArg = "interactive"
+	} else {
+		actionArg = args[0]
 	}
 
-	actionArg = args[0]
 	if len(args) == 2 {
 		versionArg = args[1]
 		versionArgSlice := strings.Split(versionArg, ".")
@@ -64,6 +66,10 @@ func init() {
 func main() {
 	gb := gobrew.NewGoBrew()
 	switch actionArg {
+	case "interactive", "info":
+		gb.Interactive(true)
+	case "noninteractive":
+		gb.Interactive(false)
 	case "h", "help":
 		log.Print(usage())
 	case "ls", "list":

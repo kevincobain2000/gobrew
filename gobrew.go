@@ -84,6 +84,95 @@ func NewGoBrewDirectory(homeDir string) GoBrew {
 	return gb
 }
 
+func (gb *GoBrew) Interactive(ask bool) {
+	currentVersion := gb.CurrentVersion()
+	currentMajorVersion := ExtractMajorVersion(currentVersion)
+
+	latestVersion := gb.getLatestVersion()
+	latestMajorVersion := ExtractMajorVersion(latestVersion)
+
+	modVersion := gb.getModVersion()
+
+	if modVersion == "" {
+		modVersion = "None"
+	}
+
+	fmt.Println()
+
+	if currentVersion == "" {
+		currentVersion = "None"
+		color.Warnln("GO Installed Version", ".......", currentVersion)
+	} else {
+		labels := []string{}
+		if currentMajorVersion != modVersion && modVersion != "None" {
+			labels = append(labels, "not same as go.mod")
+		}
+		if currentVersion != latestVersion {
+			labels = append(labels, "not latest")
+		}
+		label := ""
+		if len(labels) > 0 {
+			label = "(" + strings.Join(labels, ", ") + ")"
+		}
+		if label != "" {
+			label = " " + color.FgRed.Render(label)
+		}
+		color.Successln("GO Installed Version", ".......", currentVersion+label)
+	}
+
+	if latestMajorVersion != modVersion {
+		label := " " + color.FgYellow.Render("(not latest)")
+		color.Successln("GO go.mod Version", "   .......", modVersion+label)
+	} else {
+		color.Successln("GO go.mod Version", "   .......", modVersion)
+	}
+
+	color.Successln("GO Latest Version", "   .......", latestVersion)
+	fmt.Println()
+
+	// do not implement this yet. gobrew should not tinker with someone's project and edit their go.mod files
+	// if latestMajorVersion != modVersion {
+	// 	color.Yellowf("GO Installed Major Version (%s) and GO Latest Version (%s) are different.\n", currentMajorVersion, latestMajorVersion)
+	// // do you want to install latest and update go.mod file
+	// }
+
+	if currentMajorVersion != modVersion {
+		color.Warnf("GO Installed Version (%s) and go.mod Version (%s) are different.\n", currentMajorVersion, modVersion)
+		c := true
+		if ask {
+			c = AskForConfirmation("Do you want to use GO version same as go.mod version (" + modVersion + "@latest)?")
+		}
+		if c {
+			gb.Use(modVersion + "@latest")
+		}
+		return
+	}
+
+	if currentVersion != latestVersion {
+		color.Warnf("GO Installed Version (%s) and GO Latest Version (%s) are different.\n", currentVersion, latestVersion)
+		c := true
+		if ask {
+			c = AskForConfirmation("Do you want to update GO to latest version (" + latestVersion + ")?")
+		}
+		if c {
+			gb.Use(latestVersion)
+		}
+		return
+	}
+}
+
+func (gb *GoBrew) getLatestVersion() string {
+	getGolangVersions := gb.getGolangVersions()
+	// loop through reverse and ignore beta and rc versions to get latest version
+	for i := len(getGolangVersions) - 1; i >= 0; i-- {
+		r := regexp.MustCompile("beta.*|rc.*")
+		matches := r.FindAllString(getGolangVersions[i], -1)
+		if len(matches) == 0 {
+			return strings.ReplaceAll(getGolangVersions[i], "go", "")
+		}
+	}
+	return ""
+}
 func (gb *GoBrew) getArch() string {
 	return runtime.GOOS + "-" + runtime.GOARCH
 }
@@ -514,7 +603,7 @@ func (gb *GoBrew) Version(currentVersion string) {
 
 // Upgrade of GoBrew
 func (gb *GoBrew) Upgrade(currentVersion string) {
-	if "v"+currentVersion == gb.getLatestVersion() {
+	if "v"+currentVersion == gb.getGobrewVersion() {
 		color.Infoln("[INFO] your version is already newest")
 		return
 	}
@@ -532,7 +621,7 @@ func (gb *GoBrew) Upgrade(currentVersion string) {
 		"[Error] Download GoBrew failed")
 
 	source, err := os.Open(tmpFile)
-	utils.CheckError(err, "[Error] Cannot open file")
+	utils.CheckError(err, "==> [Error] Cannot open file")
 	defer func(source *os.File) {
 		_ = source.Close()
 		utils.CheckError(os.Remove(source.Name()), "==> [Error] Cannot remove tmp file:")
@@ -638,7 +727,7 @@ func (gb *GoBrew) changeSymblinkGo(version string) {
 	utils.CheckError(os.Symlink(versionGoDir, gb.currentGoDir), "==> [Error]: symbolic link failed")
 }
 
-func (gb *GoBrew) getLatestVersion() string {
+func (gb *GoBrew) getGobrewVersion() string {
 	url := "https://api.github.com/repos/kevincobain2000/gobrew/releases/latest"
 	data := doRequest(url)
 	if len(data) == 0 {

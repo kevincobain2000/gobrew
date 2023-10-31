@@ -196,7 +196,7 @@ func TestDoNotUpgradeLatestVersion(t *testing.T) {
 	}
 	binaryFile := filepath.Join(binaryDir, baseName)
 
-	currentVersion := gb.getLatestVersion()
+	currentVersion := gb.getGobrewVersion()
 
 	if currentVersion == "" {
 		t.Skip("could not determine the current version")
