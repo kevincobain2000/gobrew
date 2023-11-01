@@ -12,6 +12,9 @@ import (
 
 func ExtractMajorVersion(version string) string {
 	parts := strings.Split(version, ".")
+	if len(parts) < 2 {
+		return ""
+	}
 
 	// Take the first two parts and join them back with a period to create the new version.
 	majorVersion := strings.Join(parts[:2], ".")

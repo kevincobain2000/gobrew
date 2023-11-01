@@ -104,7 +104,7 @@ func (gb *GoBrew) Interactive(ask bool) {
 		color.Warnln("GO Installed Version", ".......", currentVersion)
 	} else {
 		labels := []string{}
-		if currentMajorVersion != modVersion && modVersion != "None" {
+		if modVersion != "None" && currentMajorVersion != modVersion {
 			labels = append(labels, "not same as go.mod")
 		}
 		if currentVersion != latestVersion {
@@ -130,11 +130,18 @@ func (gb *GoBrew) Interactive(ask bool) {
 	color.Successln("GO Latest Version", "   .......", latestVersion)
 	fmt.Println()
 
-	// do not implement this yet. gobrew should not tinker with someone's project and edit their go.mod files
-	// if latestMajorVersion != modVersion {
-	// 	color.Yellowf("GO Installed Major Version (%s) and GO Latest Version (%s) are different.\n", currentMajorVersion, latestMajorVersion)
-	// // do you want to install latest and update go.mod file
-	// }
+	if currentVersion == "None" {
+		color.Warnln("GO is not installed.")
+		c := true
+		if ask {
+			c = AskForConfirmation("Do you want to use latest GO version (" + latestVersion + ")?")
+		}
+		if c {
+			gb.Install(latestVersion)
+			gb.Use(latestVersion)
+		}
+		return
+	}
 
 	if currentMajorVersion != modVersion {
 		color.Warnf("GO Installed Version (%s) and go.mod Version (%s) are different.\n", currentMajorVersion, modVersion)
@@ -143,6 +150,7 @@ func (gb *GoBrew) Interactive(ask bool) {
 			c = AskForConfirmation("Do you want to use GO version same as go.mod version (" + modVersion + "@latest)?")
 		}
 		if c {
+			gb.Install(modVersion + "@latest")
 			gb.Use(modVersion + "@latest")
 		}
 		return
@@ -155,6 +163,7 @@ func (gb *GoBrew) Interactive(ask bool) {
 			c = AskForConfirmation("Do you want to update GO to latest version (" + latestVersion + ")?")
 		}
 		if c {
+			gb.Install(latestVersion)
 			gb.Use(latestVersion)
 		}
 		return
@@ -621,7 +630,7 @@ func (gb *GoBrew) Upgrade(currentVersion string) {
 		"[Error] Download GoBrew failed")
 
 	source, err := os.Open(tmpFile)
-	utils.CheckError(err, "==> [Error] Cannot open file")
+	utils.CheckError(err, "[Error] Cannot open file")
 	defer func(source *os.File) {
 		_ = source.Close()
 		utils.CheckError(os.Remove(source.Name()), "==> [Error] Cannot remove tmp file:")
