@@ -71,7 +71,7 @@ Reload config.
 
 ### Quick Usage
 
-Just use command `gobrew` from any dir.
+Just use command `gobrew` from any dir. It will auto detect if Go version is set, or not latest, or not same as `go.mod` file.
 
 <p align="center">
   <a href="https://github.com/kevincobain2000/gobrew">
