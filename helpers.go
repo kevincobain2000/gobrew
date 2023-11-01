@@ -15,6 +15,9 @@ func ExtractMajorVersion(version string) string {
 	if len(parts) < 2 {
 		return ""
 	}
+	// remove rc and beta
+	parts[1] = strings.Split(parts[1], "rc")[0]
+	parts[1] = strings.Split(parts[1], "beta")[0]
 
 	// Take the first two parts and join them back with a period to create the new version.
 	majorVersion := strings.Join(parts[:2], ".")
