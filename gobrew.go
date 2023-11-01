@@ -84,6 +84,107 @@ func NewGoBrewDirectory(homeDir string) GoBrew {
 	return gb
 }
 
+func (gb *GoBrew) Interactive(ask bool) {
+	currentVersion := gb.CurrentVersion()
+	currentMajorVersion := ExtractMajorVersion(currentVersion)
+
+	latestVersion := gb.getLatestVersion()
+	latestMajorVersion := ExtractMajorVersion(latestVersion)
+
+	modVersion := ""
+	if gb.hasModFile() {
+		modVersion = gb.getModVersion()
+	}
+
+	if modVersion == "" {
+		modVersion = "None"
+	}
+
+	fmt.Println()
+
+	if currentVersion == "" {
+		currentVersion = "None"
+		color.Warnln("GO Installed Version", ".......", currentVersion)
+	} else {
+		labels := []string{}
+		if modVersion != "None" && currentMajorVersion != modVersion {
+			labels = append(labels, "not same as go.mod")
+		}
+		if currentVersion != latestVersion {
+			labels = append(labels, "not latest")
+		}
+		label := ""
+		if len(labels) > 0 {
+			label = "(" + strings.Join(labels, ", ") + ")"
+		}
+		if label != "" {
+			label = " " + color.FgRed.Render(label)
+		}
+		color.Successln("GO Installed Version", ".......", currentVersion+label)
+	}
+
+	if modVersion != "None" && latestMajorVersion != modVersion {
+		label := " " + color.FgYellow.Render("(not latest)")
+		color.Successln("GO go.mod Version", "   .......", modVersion+label)
+	} else {
+		color.Successln("GO go.mod Version", "   .......", modVersion)
+	}
+
+	color.Successln("GO Latest Version", "   .......", latestVersion)
+	fmt.Println()
+
+	if currentVersion == "None" {
+		color.Warnln("GO is not installed.")
+		c := true
+		if ask {
+			c = AskForConfirmation("Do you want to use latest GO version (" + latestVersion + ")?")
+		}
+		if c {
+			gb.Install(latestVersion)
+			gb.Use(latestVersion)
+		}
+		return
+	}
+
+	if currentMajorVersion != modVersion {
+		color.Warnf("GO Installed Version (%s) and go.mod Version (%s) are different.\n", currentMajorVersion, modVersion)
+		c := true
+		if ask {
+			c = AskForConfirmation("Do you want to use GO version same as go.mod version (" + modVersion + "@latest)?")
+		}
+		if c {
+			gb.Install(modVersion + "@latest")
+			gb.Use(modVersion + "@latest")
+		}
+		return
+	}
+
+	if currentVersion != latestVersion {
+		color.Warnf("GO Installed Version (%s) and GO Latest Version (%s) are different.\n", currentVersion, latestVersion)
+		c := true
+		if ask {
+			c = AskForConfirmation("Do you want to update GO to latest version (" + latestVersion + ")?")
+		}
+		if c {
+			gb.Install(latestVersion)
+			gb.Use(latestVersion)
+		}
+		return
+	}
+}
+
+func (gb *GoBrew) getLatestVersion() string {
+	getGolangVersions := gb.getGolangVersions()
+	// loop through reverse and ignore beta and rc versions to get latest version
+	for i := len(getGolangVersions) - 1; i >= 0; i-- {
+		r := regexp.MustCompile("beta.*|rc.*")
+		matches := r.FindAllString(getGolangVersions[i], -1)
+		if len(matches) == 0 {
+			return strings.ReplaceAll(getGolangVersions[i], "go", "")
+		}
+	}
+	return ""
+}
 func (gb *GoBrew) getArch() string {
 	return runtime.GOOS + "-" + runtime.GOARCH
 }
@@ -247,7 +348,7 @@ func (gb *GoBrew) getGroupedVersion(versions []string, print bool) map[string][]
 			gb.print("\t", print)
 		} else {
 			if print {
-				color.Infop(lookupKey)
+				color.Successp(lookupKey)
 			}
 			gb.print("\t", print)
 		}
@@ -465,6 +566,18 @@ func (gb *GoBrew) judgeVersion(version string) string {
 	return version
 }
 
+func (gb *GoBrew) hasModFile() bool {
+	modFilePath := filepath.Join("go.mod")
+	_, err := os.Stat(modFilePath)
+	if err == nil {
+		return true
+	}
+	if os.IsNotExist(err) {
+		return false
+	}
+	return false
+}
+
 // read go.mod file and extract version
 // Do not use go to get the version as go list -m -f '{{.GoVersion}}'
 // Because go might not be installed
@@ -514,7 +627,7 @@ func (gb *GoBrew) Version(currentVersion string) {
 
 // Upgrade of GoBrew
 func (gb *GoBrew) Upgrade(currentVersion string) {
-	if "v"+currentVersion == gb.getLatestVersion() {
+	if "v"+currentVersion == gb.getGobrewVersion() {
 		color.Infoln("[INFO] your version is already newest")
 		return
 	}
@@ -638,7 +751,7 @@ func (gb *GoBrew) changeSymblinkGo(version string) {
 	utils.CheckError(os.Symlink(versionGoDir, gb.currentGoDir), "==> [Error]: symbolic link failed")
 }
 
-func (gb *GoBrew) getLatestVersion() string {
+func (gb *GoBrew) getGobrewVersion() string {
 	url := "https://api.github.com/repos/kevincobain2000/gobrew/releases/latest"
 	data := doRequest(url)
 	if len(data) == 0 {

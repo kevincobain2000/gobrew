@@ -69,13 +69,18 @@ Reload config.
 
 **All DONE!**
 
-### Confirm
+### Quick Usage
 
-```sh
-gobrew help
-```
+Just use command `gobrew` from any dir.
 
-### Usage
+<p align="center">
+  <a href="https://github.com/kevincobain2000/gobrew">
+    <img alt="gobrew command" src="https://imgur.com/X6P3r8L.png">
+  </a>
+</p>
+
+
+### Full Usage
 
 Will install and set Go
 
@@ -333,3 +338,4 @@ alias cd='builtin cd "$@" && ls go.mod 2> /dev/null && gobrew use mod'
 - v1.9.0 - v1.8.6 ~ v1.9.0, updates colors packages, fixes UT issues for Github status codes
 - v1.9.1 - Minor logging fixes
 - v1.9.2 - Minor log message updated
+- v1.9.4 - `gobrew` interactive
