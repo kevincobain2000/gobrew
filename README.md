@@ -339,3 +339,4 @@ alias cd='builtin cd "$@" && ls go.mod 2> /dev/null && gobrew use mod'
 - v1.9.1 - Minor logging fixes
 - v1.9.2 - Minor log message updated
 - v1.9.4 - `gobrew` interactive
+- v1.9.5 - bug
