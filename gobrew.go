@@ -91,7 +91,10 @@ func (gb *GoBrew) Interactive(ask bool) {
 	latestVersion := gb.getLatestVersion()
 	latestMajorVersion := ExtractMajorVersion(latestVersion)
 
-	modVersion := gb.getModVersion()
+	modVersion := ""
+	if gb.hasModFile() {
+		modVersion = gb.getModVersion()
+	}
 
 	if modVersion == "" {
 		modVersion = "None"
@@ -120,7 +123,7 @@ func (gb *GoBrew) Interactive(ask bool) {
 		color.Successln("GO Installed Version", ".......", currentVersion+label)
 	}
 
-	if latestMajorVersion != modVersion {
+	if modVersion != "None" && latestMajorVersion != modVersion {
 		label := " " + color.FgYellow.Render("(not latest)")
 		color.Successln("GO go.mod Version", "   .......", modVersion+label)
 	} else {
@@ -345,7 +348,7 @@ func (gb *GoBrew) getGroupedVersion(versions []string, print bool) map[string][]
 			gb.print("\t", print)
 		} else {
 			if print {
-				color.Infop(lookupKey)
+				color.Successp(lookupKey)
 			}
 			gb.print("\t", print)
 		}
@@ -561,6 +564,18 @@ func (gb *GoBrew) judgeVersion(version string) string {
 	}
 
 	return version
+}
+
+func (gb *GoBrew) hasModFile() bool {
+	modFilePath := filepath.Join("go.mod")
+	_, err := os.Stat(modFilePath)
+	if err == nil {
+		return true
+	}
+	if os.IsNotExist(err) {
+		return false
+	}
+	return false
 }
 
 // read go.mod file and extract version
