@@ -82,6 +82,13 @@ Just use command `gobrew` from any dir. It will auto detect if Go version is set
 
 ### Full Usage
 
+
+Smart and interactive command
+
+```sh
+gobrew
+```
+
 Will install and set Go
 
 ```sh
