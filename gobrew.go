@@ -146,7 +146,7 @@ func (gb *GoBrew) Interactive(ask bool) {
 		return
 	}
 
-	if currentMajorVersion != modVersion {
+	if modVersion != "None" && currentMajorVersion != modVersion {
 		color.Warnf("GO Installed Version (%s) and go.mod Version (%s) are different.\n", currentMajorVersion, modVersion)
 		c := true
 		if ask {
