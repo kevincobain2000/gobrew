@@ -69,19 +69,16 @@ Reload config.
 
 **All DONE!**
 
-### Confirm
-
-```sh
-gobrew
-```
-
 ### Quick Usage
 
-Just use command `gobrew`
+Just use command `gobrew` from any dir.
 
-```sh
-gobrew
-```
+<p align="center">
+  <a href="https://github.com/kevincobain2000/gobrew">
+    <img alt="gobrew command" src="https://imgur.com/X6P3r8L.png">
+  </a>
+</p>
+
 
 ### Full Usage
 
