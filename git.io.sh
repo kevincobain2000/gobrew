@@ -59,7 +59,7 @@ fi
 echo "Installing gobrew from: https://github.com/kevincobain2000/gobrew/releases/latest/download/$GOBREW_ARCH_BIN ..."
 echo ""
 
-curl -kLs https://github.com/kevincobain2000/gobrew/releases/latest/download/$GOBREW_ARCH_BIN -o $GOBREW_BIN_DIR/$GOBREW_BIN
+curl -kL --progress-bar https://github.com/kevincobain2000/gobrew/releases/latest/download/$GOBREW_ARCH_BIN -o $GOBREW_BIN_DIR/$GOBREW_BIN
 
 chmod +x $GOBREW_BIN_DIR/$GOBREW_BIN
 
