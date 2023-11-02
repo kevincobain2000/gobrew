@@ -1,4 +1,10 @@
-on: [push, pull_request]
+on:
+  pull_request:
+    paths:
+      - '**/*.go'
+      - '**/*.mod'
+      - '**/*.sum'
+      - '**/*.yaml'
 name: Cover It Up
 jobs:
   coveritup:

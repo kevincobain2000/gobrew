@@ -1,4 +1,10 @@
-on: [pull_request]
+on:
+  pull_request:
+    paths:
+      - '**/*.go'
+      - '**/*.mod'
+      - '**/*.sum'
+      - '**/*.yaml'
 name: CI
 jobs:
   test:
