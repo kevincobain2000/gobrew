@@ -5,6 +5,12 @@ on:
       - '**/*.mod'
       - '**/*.sum'
       - '**/*.yaml'
+  push:
+    paths:
+      - '**/*.go'
+      - '**/*.mod'
+      - '**/*.sum'
+      - '**/*.yaml'
 name: Cover It Up
 jobs:
   coveritup:
