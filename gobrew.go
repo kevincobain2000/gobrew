@@ -94,6 +94,7 @@ func (gb *GoBrew) Interactive(ask bool) {
 	modVersion := ""
 	if gb.hasModFile() {
 		modVersion = gb.getModVersion()
+		modVersion = ExtractMajorVersion(modVersion)
 	}
 
 	if modVersion == "" {
