@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/kevincobain2000/gobrew">
-    <img alt="gobrew" src="https://imgur.com/09fGpKY.png" width="360">
+    <img alt="gobrew" src="https://imgur.com/WkKYQPI.png" width="360">
   </a>
 </p>
 <p align="center">
