@@ -501,7 +501,12 @@ func (gb *GoBrew) judgeVersion(version string) string {
 
 	if version == "mod" {
 		// get version by reading the mod file of Go
-		return gb.getModVersion()
+		modVersion := gb.getModVersion()
+		// if modVersion is like 1.19, 1.20, 1.21 then appened @latest to it
+		if strings.Count(modVersion, ".") == 1 {
+			modVersion = modVersion + "@latest"
+		}
+		return modVersion
 	}
 	if version == "latest" || version == "dev-latest" {
 		groupedVersions := gb.ListRemoteVersions(false) // donot print
