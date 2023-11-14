@@ -347,3 +347,4 @@ alias cd='builtin cd "$@" && ls go.mod 2> /dev/null && gobrew use mod'
 - v1.9.2 - Minor log message updated
 - v1.9.4 - `gobrew` interactive
 - v1.9.5 - bug
+- v1.9.8 - bug fix where 1.21 is not detected as 1.21.0
