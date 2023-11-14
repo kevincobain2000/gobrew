@@ -506,7 +506,7 @@ func (gb *GoBrew) judgeVersion(version string) string {
 		if strings.Count(modVersion, ".") == 1 {
 			modVersion = modVersion + "@latest"
 		}
-		return modVersion
+		return gb.judgeVersion(modVersion)
 	}
 	if version == "latest" || version == "dev-latest" {
 		groupedVersions := gb.ListRemoteVersions(false) // donot print
