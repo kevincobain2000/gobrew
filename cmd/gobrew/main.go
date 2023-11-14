@@ -60,6 +60,16 @@ func init() {
 				versionArg = versionArgSlice[0] + "." + versionArgSlice[1]
 			}
 		}
+		if len(versionArgSlice) == 2 {
+			majorVersionNum, _ := strconv.Atoi(versionArgSlice[0])
+			minorVersionNum, _ := strconv.Atoi(versionArgSlice[1])
+			// Comply with: https://github.com/kevincobain2000/gobrew/issues/156
+			// Check if the major version is 1 and the minor version is 21 or greater
+			if majorVersionNum == 1 && minorVersionNum >= 21 {
+				// Modify the versionArg to include ".0"
+				versionArg = versionArg + ".0"
+			}
+		}
 	}
 }
 
