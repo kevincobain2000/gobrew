@@ -39,3 +39,4 @@ changelog:
       - '^docs:'
       - '^test:'
       - '^bin'
+      - '^Merge pull'
