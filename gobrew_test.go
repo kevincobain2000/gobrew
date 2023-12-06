@@ -63,7 +63,7 @@ func TestNewGobrewHomeDirUsesGoBrewRoot(t *testing.T) {
 }
 
 func TestJudgeVersion(t *testing.T) {
-	t.Parallel()
+	//t.Parallel()
 	tests := []struct {
 		version     string
 		wantVersion string
@@ -107,7 +107,7 @@ func TestJudgeVersion(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.version, func(t *testing.T) {
-			t.Parallel()
+			//t.Parallel()
 			gb := NewGoBrew()
 			version := gb.judgeVersion(test.version)
 			assert.Equal(t, test.wantVersion, version)
@@ -180,7 +180,7 @@ func TestUpgrade(t *testing.T) {
 }
 
 func TestDoNotUpgradeLatestVersion(t *testing.T) {
-	t.Parallel()
+	//t.Parallel()
 	t.Skip("skipping test...needs to rewrite")
 	tempDir := t.TempDir()
 
@@ -238,4 +238,26 @@ func TestInteractive(t *testing.T) {
 	currentVersion = gb.CurrentVersion()
 	currentVersion = strings.Replace(currentVersion, "private", "", -1)
 	assert.Equal(t, currentVersion, latestVersion)
+}
+
+func TestPrune(t *testing.T) {
+	t.Parallel()
+	tempDir := t.TempDir()
+	gb := NewGoBrewDirectory(tempDir)
+	gb.Install("1.20")
+	gb.Install("1.19")
+	gb.Use("1.19")
+	gb.Prune()
+	assert.Equal(t, false, gb.existsVersion("1.20"))
+	assert.Equal(t, true, gb.existsVersion("1.19"))
+}
+
+func TestGoBrew_CurrentVersion(t *testing.T) {
+	t.Parallel()
+	tempDir := t.TempDir()
+	gb := NewGoBrewDirectory(tempDir)
+	assert.Equal(t, true, gb.CurrentVersion() == "")
+	gb.Install("1.19")
+	gb.Use("1.19")
+	assert.Equal(t, true, gb.CurrentVersion() == "1.19")
 }

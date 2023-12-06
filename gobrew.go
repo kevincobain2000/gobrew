@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -431,9 +432,14 @@ func (gb *GoBrew) CurrentVersion() string {
 		return ""
 	}
 
-	version := strings.ReplaceAll(fp, strings.Join([]string{"go", "bin"}, string(os.PathSeparator)), "")
-	version = strings.ReplaceAll(version, gb.versionsDir, "")
-	version = strings.ReplaceAll(version, string(os.PathSeparator), "")
+	version := strings.TrimSuffix(fp, strings.Join([]string{"go", "bin"}, string(os.PathSeparator)))
+	paths := strings.Split(version, string(os.PathSeparator))
+	slices.Reverse(paths)
+	for _, version = range paths {
+		if version != "" {
+			break
+		}
+	}
 	return version
 }
 
