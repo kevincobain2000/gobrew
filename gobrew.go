@@ -798,10 +798,7 @@ func (gb *GoBrew) getGolangVersions() (result []string) {
 func doRequest(url string) (data []byte) {
 	client := &http.Client{}
 	request, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		color.Errorln("==> [Error] Cannot create request:", err.Error())
-		return
-	}
+	utils.CheckError(err, "==> [Error] Cannot create request")
 
 	request.Header.Set("User-Agent", "gobrew")
 

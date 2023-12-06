@@ -11,6 +11,7 @@ import (
 )
 
 func TestNewGobrewHomeDirUsesUserHomeDir(t *testing.T) {
+	t.Parallel()
 	homeDir, err := os.UserHomeDir()
 
 	if err != nil {
@@ -23,13 +24,15 @@ func TestNewGobrewHomeDirUsesUserHomeDir(t *testing.T) {
 }
 
 func TestNewGobrewHomeDirDefaultsToHome(t *testing.T) {
+	t.Parallel()
 	var envName string
 
-	if runtime.GOOS == "windows" {
+	switch runtime.GOOS {
+	case "windows":
 		envName = "USERPROFILE"
-	} else if runtime.GOOS == "plan9" {
+	case "plan9":
 		envName = "home"
-	} else {
+	default:
 		envName = "HOME"
 	}
 
@@ -46,6 +49,7 @@ func TestNewGobrewHomeDirDefaultsToHome(t *testing.T) {
 }
 
 func TestNewGobrewHomeDirUsesGoBrewRoot(t *testing.T) {
+	t.Parallel()
 	oldEnvValue := os.Getenv("GOBREW_ROOT")
 	defer func() {
 		_ = os.Setenv("GOBREW_ROOT", oldEnvValue)
@@ -59,6 +63,7 @@ func TestNewGobrewHomeDirUsesGoBrewRoot(t *testing.T) {
 }
 
 func TestJudgeVersion(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		version     string
 		wantVersion string
@@ -88,8 +93,8 @@ func TestJudgeVersion(t *testing.T) {
 			version:     "1.18@dev-latest",
 			wantVersion: "1.18.10",
 		},
-		// // following 2 tests fail upon new version release
-		// // commenting out for now as the tool is stable
+		// following 2 tests fail upon new version release
+		// commenting out for now as the tool is stable
 		// {
 		// 	version:     "latest",
 		// 	wantVersion: "1.19.1",
@@ -100,7 +105,9 @@ func TestJudgeVersion(t *testing.T) {
 		// },
 	}
 	for _, test := range tests {
+		test := test
 		t.Run(test.version, func(t *testing.T) {
+			t.Parallel()
 			gb := NewGoBrew()
 			version := gb.judgeVersion(test.version)
 			assert.Equal(t, test.wantVersion, version)
@@ -110,6 +117,7 @@ func TestJudgeVersion(t *testing.T) {
 }
 
 func TestListVersions(t *testing.T) {
+	t.Parallel()
 	tempDir := t.TempDir()
 	gb := NewGoBrewDirectory(tempDir)
 
@@ -117,6 +125,7 @@ func TestListVersions(t *testing.T) {
 }
 
 func TestExistVersion(t *testing.T) {
+	t.Parallel()
 	tempDir := t.TempDir()
 	gb := NewGoBrewDirectory(tempDir)
 
@@ -126,13 +135,8 @@ func TestExistVersion(t *testing.T) {
 }
 
 func TestInstallAndExistVersion(t *testing.T) {
-	tempDir := filepath.Join(os.TempDir(), "gobrew-test-install-uninstall")
-	err := os.MkdirAll(tempDir, os.ModePerm)
-	if err != nil {
-		t.Skip("could not create directory for gobrew update:", err)
-		return
-	}
-
+	t.Parallel()
+	tempDir := t.TempDir()
 	gb := NewGoBrewDirectory(tempDir)
 	gb.Install("1.19")
 	exists := gb.existsVersion("1.19")
@@ -140,16 +144,8 @@ func TestInstallAndExistVersion(t *testing.T) {
 }
 
 func TestUnInstallThenNotExistVersion(t *testing.T) {
-	tempDir := filepath.Join(os.TempDir(), "gobrew-test-install-uninstall")
-	err := os.MkdirAll(tempDir, os.ModePerm)
-	if err != nil {
-		t.Skip("could not create directory for gobrew update:", err)
-		return
-	}
-	defer func() {
-		_ = os.RemoveAll(tempDir)
-	}()
-
+	t.Parallel()
+	tempDir := t.TempDir()
 	gb := NewGoBrewDirectory(tempDir)
 	gb.Uninstall("1.19")
 	exists := gb.existsVersion("1.19")
@@ -157,6 +153,7 @@ func TestUnInstallThenNotExistVersion(t *testing.T) {
 }
 
 func TestUpgrade(t *testing.T) {
+	t.Parallel()
 	tempDir := t.TempDir()
 
 	gb := NewGoBrewDirectory(tempDir)
@@ -183,6 +180,7 @@ func TestUpgrade(t *testing.T) {
 }
 
 func TestDoNotUpgradeLatestVersion(t *testing.T) {
+	t.Parallel()
 	t.Skip("skipping test...needs to rewrite")
 	tempDir := t.TempDir()
 
@@ -211,16 +209,8 @@ func TestDoNotUpgradeLatestVersion(t *testing.T) {
 }
 
 func TestInteractive(t *testing.T) {
-	tempDir := filepath.Join(os.TempDir(), "gobrew-test-interactive")
-	err := os.MkdirAll(tempDir, os.ModePerm)
-	if err != nil {
-		t.Skip("could not create directory for gobrew update:", err)
-		return
-	}
-
-	defer func() {
-		_ = os.RemoveAll(tempDir)
-	}()
+	t.Parallel()
+	tempDir := t.TempDir()
 
 	gb := NewGoBrewDirectory(tempDir)
 	currentVersion := gb.CurrentVersion()
