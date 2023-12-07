@@ -20,6 +20,7 @@ func TestNewGobrewHomeDirUsesUserHomeDir(t *testing.T) {
 	gobrew := NewGoBrew()
 
 	assert.Equal(t, homeDir, gobrew.homeDir)
+	t.Log("test finished")
 }
 
 func TestNewGobrewHomeDirDefaultsToHome(t *testing.T) {
@@ -44,6 +45,7 @@ func TestNewGobrewHomeDirDefaultsToHome(t *testing.T) {
 	gobrew := NewGoBrew()
 
 	assert.Equal(t, os.Getenv("HOME"), gobrew.homeDir)
+	t.Log("test finished")
 }
 
 func TestNewGobrewHomeDirUsesGoBrewRoot(t *testing.T) {
@@ -57,6 +59,7 @@ func TestNewGobrewHomeDirUsesGoBrewRoot(t *testing.T) {
 	gobrew := NewGoBrew()
 
 	assert.Equal(t, "some_fancy_value", gobrew.homeDir)
+	t.Log("test finished")
 }
 
 func TestJudgeVersion(t *testing.T) {
@@ -109,6 +112,7 @@ func TestJudgeVersion(t *testing.T) {
 
 		})
 	}
+	t.Log("test finished")
 }
 
 func TestListVersions(t *testing.T) {
@@ -116,6 +120,7 @@ func TestListVersions(t *testing.T) {
 	gb := NewGoBrewDirectory(tempDir)
 
 	gb.ListVersions()
+	t.Log("test finished")
 }
 
 func TestExistVersion(t *testing.T) {
@@ -125,6 +130,7 @@ func TestExistVersion(t *testing.T) {
 	exists := gb.existsVersion("1.19")
 
 	assert.Equal(t, false, exists)
+	t.Log("test finished")
 }
 
 func TestInstallAndExistVersion(t *testing.T) {
@@ -133,6 +139,7 @@ func TestInstallAndExistVersion(t *testing.T) {
 	gb.Install("1.19")
 	exists := gb.existsVersion("1.19")
 	assert.Equal(t, true, exists)
+	t.Log("test finished")
 }
 
 func TestUnInstallThenNotExistVersion(t *testing.T) {
@@ -141,6 +148,7 @@ func TestUnInstallThenNotExistVersion(t *testing.T) {
 	gb.Uninstall("1.19")
 	exists := gb.existsVersion("1.19")
 	assert.Equal(t, false, exists)
+	t.Log("test finished")
 }
 
 func TestUpgrade(t *testing.T) {
@@ -167,6 +175,7 @@ func TestUpgrade(t *testing.T) {
 	if _, err := os.Stat(binaryFile); err != nil {
 		t.Errorf("updated executable does not exist")
 	}
+	t.Log("test finished")
 }
 
 func TestDoNotUpgradeLatestVersion(t *testing.T) {
@@ -195,6 +204,7 @@ func TestDoNotUpgradeLatestVersion(t *testing.T) {
 	if _, err := os.Stat(binaryFile); err == nil {
 		t.Errorf("unexpected upgrade of latest version")
 	}
+	t.Log("test finished")
 }
 
 func TestInteractive(t *testing.T) {
@@ -226,6 +236,7 @@ func TestInteractive(t *testing.T) {
 	currentVersion = gb.CurrentVersion()
 	currentVersion = strings.Replace(currentVersion, "private", "", -1)
 	assert.Equal(t, currentVersion, latestVersion)
+	t.Log("test finished")
 }
 
 func TestPrune(t *testing.T) {
@@ -237,6 +248,7 @@ func TestPrune(t *testing.T) {
 	gb.Prune()
 	assert.Equal(t, false, gb.existsVersion("1.20"))
 	assert.Equal(t, true, gb.existsVersion("1.19"))
+	t.Log("test finished")
 }
 
 func TestGoBrew_CurrentVersion(t *testing.T) {
@@ -246,4 +258,5 @@ func TestGoBrew_CurrentVersion(t *testing.T) {
 	gb.Install("1.19")
 	gb.Use("1.19")
 	assert.Equal(t, true, gb.CurrentVersion() == "1.19")
+	t.Log("test finished")
 }

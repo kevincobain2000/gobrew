@@ -688,6 +688,7 @@ func (gb *GoBrew) mkDirs(version string) {
 func (gb *GoBrew) getVersionDir(version string) string {
 	return filepath.Join(gb.versionsDir, version)
 }
+
 func (gb *GoBrew) downloadAndExtract(version string) {
 	tarName := "go" + version + "." + gb.getArch()
 
