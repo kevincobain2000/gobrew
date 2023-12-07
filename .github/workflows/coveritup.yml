@@ -11,7 +11,8 @@ on:
       - '**/*.mod'
       - '**/*.sum'
       - '**/*.yaml'
-name: Cover It Up
+
+name: "Cover It Up"
 jobs:
   coveritup:
     strategy:

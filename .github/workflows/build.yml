@@ -4,7 +4,8 @@ on:
       - '**/*.go'
       - '**/*.mod'
       - '**/*.sum'
-name: CI
+
+name: "Build"
 jobs:
   build:
     strategy:

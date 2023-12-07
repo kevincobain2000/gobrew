@@ -1,10 +1,9 @@
-name: goreleaser
-
 on:
   push:
     tags:
       - '*'
 
+name: "Create release"
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
