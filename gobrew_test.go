@@ -159,10 +159,7 @@ func TestUpgrade(t *testing.T) {
 	binaryDir := filepath.Join(gb.installDir, "bin")
 	_ = os.MkdirAll(binaryDir, os.ModePerm)
 
-	baseName := "gobrew"
-	if runtime.GOOS == "windows" {
-		baseName = baseName + ".exe"
-	}
+	baseName := "gobrew" + fileExt
 	binaryFile := filepath.Join(binaryDir, baseName)
 
 	if oldFile, err := os.Create(binaryFile); err == nil {
@@ -187,10 +184,7 @@ func TestDoNotUpgradeLatestVersion(t *testing.T) {
 	binaryDir := filepath.Join(gb.installDir, "bin")
 	_ = os.MkdirAll(binaryDir, os.ModePerm)
 
-	baseName := "gobrew"
-	if runtime.GOOS == "windows" {
-		baseName = baseName + ".exe"
-	}
+	baseName := "gobrew" + fileExt
 	binaryFile := filepath.Join(binaryDir, baseName)
 
 	currentVersion := gb.getGobrewVersion()
