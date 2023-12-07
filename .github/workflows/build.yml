@@ -20,5 +20,7 @@ jobs:
 
       - name: Go version
         run: go version
+        shell: bash
       - name: Build
         run: go build cmd/gobrew/main.go
+        shell: bash
