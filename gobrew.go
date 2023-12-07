@@ -425,19 +425,15 @@ func (gb *GoBrew) existsVersion(version string) bool {
 
 // CurrentVersion get current version from symb link
 func (gb *GoBrew) CurrentVersion() string {
-
 	fp, err := filepath.EvalSymlinks(gb.currentBinDir)
 	if err != nil {
 		return ""
 	}
 
-	version := strings.TrimSuffix(fp, strings.Join([]string{"go", "bin"}, string(os.PathSeparator)))
-	paths := strings.Split(version, string(os.PathSeparator))
-	for i := len(paths) - 1; i >= 0; i-- {
-		version = paths[i]
-		if version != "" {
-			break
-		}
+	version := strings.TrimSuffix(fp, filepath.Join("go", "bin"))
+	version = filepath.Base(version)
+	if version == "." {
+		return ""
 	}
 	return version
 }
