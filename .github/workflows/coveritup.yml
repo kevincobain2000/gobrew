@@ -11,6 +11,7 @@ on:
       - '**/*.mod'
       - '**/*.sum'
       - '**/*.yaml'
+  workflow_dispatch:
 
 name: "Cover It Up"
 jobs:
