@@ -49,7 +49,7 @@ jobs:
       - name: Build
         run: |
           BUILD_START=$SECONDS
-          go build -ldflags '-s -w' -o main cmd/gobrew
+          go build -ldflags '-s -w' -o main ./cmd/gobrew
           echo SCORE=$(($SECONDS-BUILD_START)) >> "$GITHUB_ENV"
         shell: bash
 
