@@ -208,7 +208,7 @@ func TestInteractive(t *testing.T) {
 	currentVersion := gb.CurrentVersion()
 	latestVersion := gb.getLatestVersion()
 	// modVersion := gb.getModVersion()
-	assert.Equal(t, "", currentVersion)
+	assert.Equal(t, "None", currentVersion)
 	assert.NotEqual(t, currentVersion, latestVersion)
 
 	ask := false
@@ -248,7 +248,7 @@ func TestPrune(t *testing.T) {
 func TestGoBrew_CurrentVersion(t *testing.T) {
 	tempDir := t.TempDir()
 	gb := NewGoBrewDirectory(tempDir)
-	assert.Equal(t, true, gb.CurrentVersion() == "")
+	assert.Equal(t, true, gb.CurrentVersion() == "None")
 	gb.Install("1.19")
 	gb.Use("1.19")
 	assert.Equal(t, true, gb.CurrentVersion() == "1.19")
