@@ -25,7 +25,6 @@ func TestNewGobrewHomeDirUsesUserHomeDir(t *testing.T) {
 }
 
 func TestNewGobrewHomeDirDefaultsToHome(t *testing.T) {
-	t.Parallel()
 	var envName string
 
 	switch runtime.GOOS {
@@ -51,7 +50,6 @@ func TestNewGobrewHomeDirDefaultsToHome(t *testing.T) {
 }
 
 func TestNewGobrewHomeDirUsesGoBrewRoot(t *testing.T) {
-	t.Parallel()
 	oldEnvValue := os.Getenv("GOBREW_ROOT")
 	defer func() {
 		_ = os.Setenv("GOBREW_ROOT", oldEnvValue)
