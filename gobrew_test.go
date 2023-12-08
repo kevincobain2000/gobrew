@@ -211,8 +211,7 @@ func TestInteractive(t *testing.T) {
 	assert.Equal(t, "None", currentVersion)
 	assert.NotEqual(t, currentVersion, latestVersion)
 
-	ask := false
-	gb.Interactive(ask)
+	gb.Interactive(false)
 
 	currentVersion = gb.CurrentVersion()
 	// remove string private from currentVersion (for macOS) due to /private/var symlink issue
@@ -226,7 +225,7 @@ func TestInteractive(t *testing.T) {
 	assert.Equal(t, "1.16.5", currentVersion)
 	assert.NotEqual(t, currentVersion, latestVersion)
 
-	gb.Interactive(ask)
+	gb.Interactive(false)
 	currentVersion = gb.CurrentVersion()
 	currentVersion = strings.Replace(currentVersion, "private", "", -1)
 	assert.Equal(t, currentVersion, latestVersion)
