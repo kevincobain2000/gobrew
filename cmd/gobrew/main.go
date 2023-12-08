@@ -88,11 +88,10 @@ func main() {
 		gb.ListRemoteVersions(true)
 	case "install":
 		gb.Install(versionArg)
-		if gb.CurrentVersion() == "" {
+		if gb.CurrentVersion() == "None" {
 			gb.Use(versionArg)
 		}
 	case "use":
-		gb.Install(versionArg)
 		gb.Use(versionArg)
 	case "uninstall":
 		gb.Uninstall(versionArg)

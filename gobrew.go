@@ -37,7 +37,7 @@ type Command interface {
 	ListRemoteVersions(print bool) map[string][]string
 	CurrentVersion() string
 	Uninstall(version string)
-	Install(version string)
+	Install(version string) string
 	Use(version string)
 	Prune()
 	Version(currentVersion string)
@@ -91,23 +91,18 @@ func (gb *GoBrew) Interactive(ask bool) {
 	latestVersion := gb.getLatestVersion()
 	latestMajorVersion := ExtractMajorVersion(latestVersion)
 
-	modVersion := ""
+	modVersion := "None"
 	if gb.hasModFile() {
 		modVersion = gb.getModVersion()
 		modVersion = ExtractMajorVersion(modVersion)
 	}
 
-	if modVersion == "" {
-		modVersion = "None"
-	}
-
 	fmt.Println()
 
-	if currentVersion == "" {
-		currentVersion = "None"
+	if currentVersion == "None" {
 		color.Warnln("GO Installed Version", ".......", currentVersion)
 	} else {
-		labels := []string{}
+		var labels []string
 		if modVersion != "None" && currentMajorVersion != modVersion {
 			labels = append(labels, "not same as go.mod")
 		}
@@ -117,8 +112,6 @@ func (gb *GoBrew) Interactive(ask bool) {
 		label := ""
 		if len(labels) > 0 {
 			label = "(" + strings.Join(labels, ", ") + ")"
-		}
-		if label != "" {
 			label = " " + color.FgRed.Render(label)
 		}
 		color.Successln("GO Installed Version", ".......", currentVersion+label)
@@ -141,7 +134,6 @@ func (gb *GoBrew) Interactive(ask bool) {
 			c = AskForConfirmation("Do you want to use latest GO version (" + latestVersion + ")?")
 		}
 		if c {
-			gb.Install(latestVersion)
 			gb.Use(latestVersion)
 		}
 		return
@@ -154,7 +146,6 @@ func (gb *GoBrew) Interactive(ask bool) {
 			c = AskForConfirmation("Do you want to use GO version same as go.mod version (" + modVersion + "@latest)?")
 		}
 		if c {
-			gb.Install(modVersion + "@latest")
 			gb.Use(modVersion + "@latest")
 		}
 		return
@@ -167,7 +158,6 @@ func (gb *GoBrew) Interactive(ask bool) {
 			c = AskForConfirmation("Do you want to update GO to latest version (" + latestVersion + ")?")
 		}
 		if c {
-			gb.Install(latestVersion)
 			gb.Use(latestVersion)
 		}
 		return
@@ -285,7 +275,9 @@ func (gb *GoBrew) ListVersions() {
 
 // ListRemoteVersions that are installed by dir ls
 func (gb *GoBrew) ListRemoteVersions(print bool) map[string][]string {
-	color.Infoln("==> [Info] Fetching remote versions\n")
+	if print {
+		color.Infoln("==> [Info] Fetching remote versions")
+	}
 	tags := gb.getGolangVersions()
 
 	var versions []string
@@ -427,13 +419,13 @@ func (gb *GoBrew) existsVersion(version string) bool {
 func (gb *GoBrew) CurrentVersion() string {
 	fp, err := filepath.EvalSymlinks(gb.currentBinDir)
 	if err != nil {
-		return ""
+		return "None"
 	}
 
 	version := strings.TrimSuffix(fp, filepath.Join("go", "bin"))
 	version = filepath.Base(version)
 	if version == "." {
-		return ""
+		return "None"
 	}
 	return version
 }
@@ -461,42 +453,43 @@ func (gb *GoBrew) cleanDownloadsDir() {
 }
 
 // Install the given version of go
-func (gb *GoBrew) Install(version string) {
-	if version == "" {
+func (gb *GoBrew) Install(version string) string {
+	if version == "" || version == "None" {
 		color.Errorln("[Error] No version provided")
 		os.Exit(1)
 	}
 	version = gb.judgeVersion(version)
-	gb.mkDirs(version)
 	if gb.existsVersion(version) {
 		color.Infof("==> [Info] Version: %s exists\n", version)
-		return
+		return version
 	}
+	gb.mkDirs(version)
 
 	color.Infof("==> [Info] Downloading version: %s\n", version)
 	gb.downloadAndExtract(version)
 	gb.cleanDownloadsDir()
 	color.Successf("==> [Success] Downloaded version: %s\n", version)
+	return version
 }
 
 func (gb *GoBrew) judgeVersion(version string) string {
-	judgedVersion := ""
+	judgedVersion := "None"
 	rcBetaOk := false
 	reRcOrBeta := regexp.MustCompile("beta.*|rc.*")
-	// check if version string ends with x
 
+	// check if version string ends with x
 	if strings.HasSuffix(version, "x") {
-		judgedVersion = version[:len(version)-1]
+		judgedVersion = strings.TrimSuffix(version, "x")
 	}
 
 	if strings.HasSuffix(version, ".x") {
-		judgedVersion = version[:len(version)-2]
+		judgedVersion = strings.TrimSuffix(version, ".x")
 	}
 	if strings.HasSuffix(version, "@latest") {
-		judgedVersion = version[:len(version)-7]
+		judgedVersion = strings.TrimSuffix(version, "@latest")
 	}
 	if strings.HasSuffix(version, "@dev-latest") {
-		judgedVersion = version[:len(version)-11]
+		judgedVersion = strings.TrimSuffix(version, "@dev-latest")
 		rcBetaOk = true
 	}
 
@@ -509,8 +502,8 @@ func (gb *GoBrew) judgeVersion(version string) string {
 		}
 		return gb.judgeVersion(modVersion)
 	}
+	groupedVersions := gb.ListRemoteVersions(false) // donot print
 	if version == "latest" || version == "dev-latest" {
-		groupedVersions := gb.ListRemoteVersions(false) // donot print
 		groupedVersionKeys := make([]string, 0, len(groupedVersions))
 		for groupedVersionKey := range groupedVersions {
 			groupedVersionKeys = append(groupedVersionKeys, groupedVersionKey)
@@ -522,7 +515,7 @@ func (gb *GoBrew) judgeVersion(version string) string {
 			}
 		}
 		if len(versionsSemantic) == 0 {
-			return ""
+			return "None"
 		}
 
 		// sort semantic versions
@@ -533,7 +526,7 @@ func (gb *GoBrew) judgeVersion(version string) string {
 			// get last element
 			if version == "dev-latest" {
 				if len(judgedVersions) == 0 {
-					return ""
+					return "None"
 				}
 				return judgedVersions[len(judgedVersions)-1]
 			}
@@ -551,8 +544,7 @@ func (gb *GoBrew) judgeVersion(version string) string {
 		return gb.judgeVersion(latest)
 	}
 
-	if judgedVersion != "" {
-		groupedVersions := gb.ListRemoteVersions(false) // donot print
+	if judgedVersion != "None" {
 		// check if judgedVersion is in the groupedVersions
 		if _, ok := groupedVersions[judgedVersion]; ok {
 			// get last item in the groupedVersions excluding rc and beta
@@ -592,8 +584,7 @@ func (gb *GoBrew) getModVersion() string {
 	modFilePath := filepath.Join("go.mod")
 	modFile, err := os.Open(modFilePath)
 	if err != nil {
-		color.Errorln(err)
-		os.Exit(1)
+		return "None"
 	}
 	defer func(modFile *os.File) {
 		_ = modFile.Close()
@@ -611,12 +602,12 @@ func (gb *GoBrew) getModVersion() string {
 		color.Errorln(err)
 		os.Exit(1)
 	}
-	return ""
+	return "None"
 }
 
 // Use a version
 func (gb *GoBrew) Use(version string) {
-	version = gb.judgeVersion(version)
+	version = gb.Install(version)
 	if gb.CurrentVersion() == version {
 		color.Infof("==> [Info] Version: %s is already your current version \n", version)
 		return
