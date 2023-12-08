@@ -55,8 +55,6 @@ type GoBrew struct {
 	downloadsDir  string
 }
 
-var gb GoBrew
-
 // NewGoBrew instance
 func NewGoBrew() GoBrew {
 	homeDir, err := os.UserHomeDir()
@@ -72,6 +70,7 @@ func NewGoBrew() GoBrew {
 }
 
 func NewGoBrewDirectory(homeDir string) GoBrew {
+	gb := GoBrew{}
 	gb.homeDir = homeDir
 
 	gb.installDir = filepath.Join(gb.homeDir, goBrewDir)
@@ -281,9 +280,7 @@ func (gb *GoBrew) ListRemoteVersions(print bool) map[string][]string {
 	tags := gb.getGolangVersions()
 
 	var versions []string
-	for _, tag := range tags {
-		versions = append(versions, tag)
-	}
+	versions = append(versions, tags...)
 
 	return gb.getGroupedVersion(versions, print)
 }

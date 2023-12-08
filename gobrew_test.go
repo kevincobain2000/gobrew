@@ -173,7 +173,7 @@ func TestUpgrade(t *testing.T) {
 	binaryFile := filepath.Join(binaryDir, baseName)
 
 	if oldFile, err := os.Create(binaryFile); err == nil {
-		// on tests we have to close the file to avoid an error on os.Rename
+		// on tests, we have to close the file to avoid an error on os.Rename
 		_ = oldFile.Close()
 	}
 
