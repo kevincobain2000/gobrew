@@ -45,9 +45,7 @@ func TestNewGobrewHomeDirDefaultsToHome(t *testing.T) {
 
 func TestNewGobrewHomeDirUsesGoBrewRoot(t *testing.T) {
 	t.Setenv("GOBREW_ROOT", "some_fancy_value")
-
 	gobrew := NewGoBrew()
-
 	assert.Equal(t, "some_fancy_value", gobrew.homeDir)
 	t.Log("test finished")
 }
