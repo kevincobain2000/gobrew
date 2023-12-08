@@ -171,7 +171,7 @@ func (gb *GoBrew) getLatestVersion() string {
 		r := regexp.MustCompile("beta.*|rc.*")
 		matches := r.FindAllString(getGolangVersions[i], -1)
 		if len(matches) == 0 {
-			return strings.ReplaceAll(getGolangVersions[i], "go", "")
+			return getGolangVersions[i]
 		}
 	}
 	return ""
@@ -282,7 +282,7 @@ func (gb *GoBrew) ListRemoteVersions(print bool) map[string][]string {
 
 	var versions []string
 	for _, tag := range tags {
-		versions = append(versions, strings.ReplaceAll(tag, "go", ""))
+		versions = append(versions, tag)
 	}
 
 	return gb.getGroupedVersion(versions, print)
@@ -765,7 +765,7 @@ func (gb *GoBrew) getGolangVersions() (result []string) {
 	for _, tag := range tags {
 		t := strings.ReplaceAll(tag.Ref, "refs/tags/", "")
 		if strings.HasPrefix(t, "go") {
-			result = append(result, t)
+			result = append(result, strings.TrimPrefix(t, "go"))
 		}
 	}
 
