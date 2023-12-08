@@ -36,13 +36,7 @@ func TestNewGobrewHomeDirDefaultsToHome(t *testing.T) {
 		envName = "HOME"
 	}
 
-	oldEnvValue := os.Getenv(envName)
-	defer func() {
-		_ = os.Setenv(envName, oldEnvValue)
-	}()
-
-	_ = os.Unsetenv(envName)
-
+	t.Setenv(envName, "")
 	gobrew := NewGoBrew()
 
 	assert.Equal(t, os.Getenv("HOME"), gobrew.homeDir)
@@ -50,12 +44,7 @@ func TestNewGobrewHomeDirDefaultsToHome(t *testing.T) {
 }
 
 func TestNewGobrewHomeDirUsesGoBrewRoot(t *testing.T) {
-	oldEnvValue := os.Getenv("GOBREW_ROOT")
-	defer func() {
-		_ = os.Setenv("GOBREW_ROOT", oldEnvValue)
-	}()
-
-	_ = os.Setenv("GOBREW_ROOT", "some_fancy_value")
+	t.Setenv("GOBREW_ROOT", "some_fancy_value")
 
 	gobrew := NewGoBrew()
 
