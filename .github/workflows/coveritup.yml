@@ -11,7 +11,8 @@ on:
       - '**/*.mod'
       - '**/*.sum'
       - '**/*.yaml'
-name: Cover It Up
+
+name: "Cover It Up"
 jobs:
   coveritup:
     strategy:
@@ -30,12 +31,13 @@ jobs:
           go install github.com/securego/gosec/v2/cmd/gosec@latest
           go install github.com/axw/gocov/gocov@latest
           go install github.com/AlekSi/gocov-xml@latest
+        shell: bash
       - name: Test
         run: |
           BUILD_START=$SECONDS
           go test -race -v ./... -count=1 -coverprofile=coverage.out
           echo SCORE=$(($SECONDS-BUILD_START)) >> "$GITHUB_ENV"
-
+        shell: bash
       - uses: kevincobain2000/action-coveritup@v1
         with:
           type: unit-test-run-time
@@ -49,6 +51,7 @@ jobs:
           BUILD_START=$SECONDS
           go build -ldflags '-s -w' -o main cmd/gobrew/main.go
           echo SCORE=$(($SECONDS-BUILD_START)) >> "$GITHUB_ENV"
+        shell: bash
 
       - uses: kevincobain2000/action-coveritup@v1
         with:
@@ -58,6 +61,7 @@ jobs:
         run: |
           curl -sLk https://raw.githubusercontent.com/kevincobain2000/cover-totalizer/master/install.sh | sh
           echo SCORE=`./cover-totalizer coverage.xml` >> "$GITHUB_ENV"
+        shell: bash
 
       - uses: kevincobain2000/action-coveritup@v1
         with:
@@ -66,6 +70,7 @@ jobs:
       - name: Go Binary Size
         run: |
           echo SCORE=`du -sk main | awk '{print $1}'` >> "$GITHUB_ENV"
+        shell: bash
 
       - uses: kevincobain2000/action-coveritup@v1
         with:
@@ -74,6 +79,7 @@ jobs:
       - name: Number of dependencies
         run: |
           echo SCORE=`go list -m all|wc -l|awk '{$1=$1};1'` >> "$GITHUB_ENV"
+        shell: bash
 
       - uses: kevincobain2000/action-coveritup@v1
         with:
@@ -82,6 +88,7 @@ jobs:
       - name: Number of GO Sec issues
         run: |
           echo SCORE=`gosec -no-fail --quiet ./...|grep Issues | tail -1 |awk '{print $3}'` >> "$GITHUB_ENV"
+        shell: bash
 
       - uses: kevincobain2000/action-coveritup@v1
         with:

@@ -425,15 +425,16 @@ func (gb *GoBrew) existsVersion(version string) bool {
 
 // CurrentVersion get current version from symb link
 func (gb *GoBrew) CurrentVersion() string {
-
 	fp, err := filepath.EvalSymlinks(gb.currentBinDir)
 	if err != nil {
 		return ""
 	}
 
-	version := strings.ReplaceAll(fp, strings.Join([]string{"go", "bin"}, string(os.PathSeparator)), "")
-	version = strings.ReplaceAll(version, gb.versionsDir, "")
-	version = strings.ReplaceAll(version, string(os.PathSeparator), "")
+	version := strings.TrimSuffix(fp, filepath.Join("go", "bin"))
+	version = filepath.Base(version)
+	if version == "." {
+		return ""
+	}
 	return version
 }
 
@@ -638,11 +639,6 @@ func (gb *GoBrew) Upgrade(currentVersion string) {
 		return
 	}
 
-	fileExt := ""
-	if runtime.GOOS == "windows" {
-		fileExt = ".exe"
-	}
-
 	mkdirTemp, _ := os.MkdirTemp("", "gobrew")
 	tmpFile := filepath.Join(mkdirTemp, "gobrew"+fileExt)
 	url := goBrewDownloadUrl + "gobrew-" + gb.getArch() + fileExt
@@ -658,12 +654,7 @@ func (gb *GoBrew) Upgrade(currentVersion string) {
 	}(source)
 
 	goBrewFile := filepath.Join(gb.installDir, "bin", "gobrew"+fileExt)
-	if runtime.GOOS == "windows" {
-		goBrewOldFile := goBrewFile + ".old"
-		utils.CheckError(os.Rename(goBrewFile, goBrewOldFile), "==> [Error] Cannot rename binary file")
-	} else {
-		utils.CheckError(os.Remove(goBrewFile), "==> [Error] Cannot remove binary file")
-	}
+	removeFile(goBrewFile)
 	destination, err := os.Create(goBrewFile)
 	utils.CheckError(err, "==> [Error] Cannot open file")
 	defer func(destination *os.File) {
@@ -687,14 +678,9 @@ func (gb *GoBrew) mkDirs(version string) {
 func (gb *GoBrew) getVersionDir(version string) string {
 	return filepath.Join(gb.versionsDir, version)
 }
-func (gb *GoBrew) downloadAndExtract(version string) {
-	tarName := "go" + version + "." + gb.getArch()
 
-	if runtime.GOOS == "windows" {
-		tarName = tarName + ".zip"
-	} else {
-		tarName = tarName + ".tar.gz"
-	}
+func (gb *GoBrew) downloadAndExtract(version string) {
+	tarName := "go" + version + "." + gb.getArch() + tarNameExt
 
 	registryPath := defaultRegistryPath
 	if p := os.Getenv("GOBREW_REGISTRY"); p != "" {
@@ -798,10 +784,7 @@ func (gb *GoBrew) getGolangVersions() (result []string) {
 func doRequest(url string) (data []byte) {
 	client := &http.Client{}
 	request, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		color.Errorln("==> [Error] Cannot create request:", err.Error())
-		return
-	}
+	utils.CheckError(err, "==> [Error] Cannot create request")
 
 	request.Header.Set("User-Agent", "gobrew")
 

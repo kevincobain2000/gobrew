@@ -3,8 +3,8 @@ on:
     # hourly
     # This crontab is related to https://github.com/kevincobain2000/gobrew/issues/45
     - cron: '0 * * * *'
-name: "Sync Go releases"
 
+name: "Sync Go releases"
 jobs:
   sync-tags:
     name: sync

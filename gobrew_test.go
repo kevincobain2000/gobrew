@@ -20,16 +20,18 @@ func TestNewGobrewHomeDirUsesUserHomeDir(t *testing.T) {
 	gobrew := NewGoBrew()
 
 	assert.Equal(t, homeDir, gobrew.homeDir)
+	t.Log("test finished")
 }
 
 func TestNewGobrewHomeDirDefaultsToHome(t *testing.T) {
 	var envName string
 
-	if runtime.GOOS == "windows" {
+	switch runtime.GOOS {
+	case "windows":
 		envName = "USERPROFILE"
-	} else if runtime.GOOS == "plan9" {
+	case "plan9":
 		envName = "home"
-	} else {
+	default:
 		envName = "HOME"
 	}
 
@@ -43,6 +45,7 @@ func TestNewGobrewHomeDirDefaultsToHome(t *testing.T) {
 	gobrew := NewGoBrew()
 
 	assert.Equal(t, os.Getenv("HOME"), gobrew.homeDir)
+	t.Log("test finished")
 }
 
 func TestNewGobrewHomeDirUsesGoBrewRoot(t *testing.T) {
@@ -56,6 +59,7 @@ func TestNewGobrewHomeDirUsesGoBrewRoot(t *testing.T) {
 	gobrew := NewGoBrew()
 
 	assert.Equal(t, "some_fancy_value", gobrew.homeDir)
+	t.Log("test finished")
 }
 
 func TestJudgeVersion(t *testing.T) {
@@ -88,8 +92,8 @@ func TestJudgeVersion(t *testing.T) {
 			version:     "1.18@dev-latest",
 			wantVersion: "1.18.10",
 		},
-		// // following 2 tests fail upon new version release
-		// // commenting out for now as the tool is stable
+		// following 2 tests fail upon new version release
+		// commenting out for now as the tool is stable
 		// {
 		// 	version:     "latest",
 		// 	wantVersion: "1.19.1",
@@ -100,6 +104,7 @@ func TestJudgeVersion(t *testing.T) {
 		// },
 	}
 	for _, test := range tests {
+		test := test
 		t.Run(test.version, func(t *testing.T) {
 			gb := NewGoBrew()
 			version := gb.judgeVersion(test.version)
@@ -107,6 +112,7 @@ func TestJudgeVersion(t *testing.T) {
 
 		})
 	}
+	t.Log("test finished")
 }
 
 func TestListVersions(t *testing.T) {
@@ -114,6 +120,7 @@ func TestListVersions(t *testing.T) {
 	gb := NewGoBrewDirectory(tempDir)
 
 	gb.ListVersions()
+	t.Log("test finished")
 }
 
 func TestExistVersion(t *testing.T) {
@@ -123,37 +130,25 @@ func TestExistVersion(t *testing.T) {
 	exists := gb.existsVersion("1.19")
 
 	assert.Equal(t, false, exists)
+	t.Log("test finished")
 }
 
 func TestInstallAndExistVersion(t *testing.T) {
-	tempDir := filepath.Join(os.TempDir(), "gobrew-test-install-uninstall")
-	err := os.MkdirAll(tempDir, os.ModePerm)
-	if err != nil {
-		t.Skip("could not create directory for gobrew update:", err)
-		return
-	}
-
+	tempDir := t.TempDir()
 	gb := NewGoBrewDirectory(tempDir)
 	gb.Install("1.19")
 	exists := gb.existsVersion("1.19")
 	assert.Equal(t, true, exists)
+	t.Log("test finished")
 }
 
 func TestUnInstallThenNotExistVersion(t *testing.T) {
-	tempDir := filepath.Join(os.TempDir(), "gobrew-test-install-uninstall")
-	err := os.MkdirAll(tempDir, os.ModePerm)
-	if err != nil {
-		t.Skip("could not create directory for gobrew update:", err)
-		return
-	}
-	defer func() {
-		_ = os.RemoveAll(tempDir)
-	}()
-
+	tempDir := t.TempDir()
 	gb := NewGoBrewDirectory(tempDir)
 	gb.Uninstall("1.19")
 	exists := gb.existsVersion("1.19")
 	assert.Equal(t, false, exists)
+	t.Log("test finished")
 }
 
 func TestUpgrade(t *testing.T) {
@@ -164,10 +159,7 @@ func TestUpgrade(t *testing.T) {
 	binaryDir := filepath.Join(gb.installDir, "bin")
 	_ = os.MkdirAll(binaryDir, os.ModePerm)
 
-	baseName := "gobrew"
-	if runtime.GOOS == "windows" {
-		baseName = baseName + ".exe"
-	}
+	baseName := "gobrew" + fileExt
 	binaryFile := filepath.Join(binaryDir, baseName)
 
 	if oldFile, err := os.Create(binaryFile); err == nil {
@@ -180,6 +172,7 @@ func TestUpgrade(t *testing.T) {
 	if _, err := os.Stat(binaryFile); err != nil {
 		t.Errorf("updated executable does not exist")
 	}
+	t.Log("test finished")
 }
 
 func TestDoNotUpgradeLatestVersion(t *testing.T) {
@@ -191,10 +184,7 @@ func TestDoNotUpgradeLatestVersion(t *testing.T) {
 	binaryDir := filepath.Join(gb.installDir, "bin")
 	_ = os.MkdirAll(binaryDir, os.ModePerm)
 
-	baseName := "gobrew"
-	if runtime.GOOS == "windows" {
-		baseName = baseName + ".exe"
-	}
+	baseName := "gobrew" + fileExt
 	binaryFile := filepath.Join(binaryDir, baseName)
 
 	currentVersion := gb.getGobrewVersion()
@@ -208,19 +198,11 @@ func TestDoNotUpgradeLatestVersion(t *testing.T) {
 	if _, err := os.Stat(binaryFile); err == nil {
 		t.Errorf("unexpected upgrade of latest version")
 	}
+	t.Log("test finished")
 }
 
 func TestInteractive(t *testing.T) {
-	tempDir := filepath.Join(os.TempDir(), "gobrew-test-interactive")
-	err := os.MkdirAll(tempDir, os.ModePerm)
-	if err != nil {
-		t.Skip("could not create directory for gobrew update:", err)
-		return
-	}
-
-	defer func() {
-		_ = os.RemoveAll(tempDir)
-	}()
+	tempDir := t.TempDir()
 
 	gb := NewGoBrewDirectory(tempDir)
 	currentVersion := gb.CurrentVersion()
@@ -248,4 +230,27 @@ func TestInteractive(t *testing.T) {
 	currentVersion = gb.CurrentVersion()
 	currentVersion = strings.Replace(currentVersion, "private", "", -1)
 	assert.Equal(t, currentVersion, latestVersion)
+	t.Log("test finished")
+}
+
+func TestPrune(t *testing.T) {
+	tempDir := t.TempDir()
+	gb := NewGoBrewDirectory(tempDir)
+	gb.Install("1.20")
+	gb.Install("1.19")
+	gb.Use("1.19")
+	gb.Prune()
+	assert.Equal(t, false, gb.existsVersion("1.20"))
+	assert.Equal(t, true, gb.existsVersion("1.19"))
+	t.Log("test finished")
+}
+
+func TestGoBrew_CurrentVersion(t *testing.T) {
+	tempDir := t.TempDir()
+	gb := NewGoBrewDirectory(tempDir)
+	assert.Equal(t, true, gb.CurrentVersion() == "")
+	gb.Install("1.19")
+	gb.Use("1.19")
+	assert.Equal(t, true, gb.CurrentVersion() == "1.19")
+	t.Log("test finished")
 }
