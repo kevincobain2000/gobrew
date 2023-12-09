@@ -4,13 +4,13 @@ on:
       - '**/*.go'
       - '**/*.mod'
       - '**/*.sum'
-      - '**/*.yaml'
+      - '**/*.yml'
   push:
     paths:
       - '**/*.go'
       - '**/*.mod'
       - '**/*.sum'
-      - '**/*.yaml'
+      - '**/*.yml'
 
 name: "Cover It Up"
 jobs:

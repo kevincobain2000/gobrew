@@ -4,6 +4,7 @@ on:
       - '**/*.go'
       - '**/*.mod'
       - '**/*.sum'
+      - '**/*.yml'
 
 name: "Build"
 jobs:
