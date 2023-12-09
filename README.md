@@ -35,43 +35,46 @@
 
 ## Install or update
 
-Using curl
+### Step 1
+
+**Using** curl (mac, linux) - recommended
 
 ```sh
 curl -sLk https://raw.githubusercontent.com/kevincobain2000/gobrew/master/git.io.sh | sh
 ```
 
-Using powershell
+**Using** powershell (windows)
 
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/kevincobain2000/gobrew/master/git.io.ps1'))
 
 ```
 
-or install using go
+**Using** go
 
 ```sh
 go install github.com/kevincobain2000/gobrew/cmd/gobrew@latest
 ```
 
-Add `PATH` setting your shell config file (`.bashrc` or `.zshrc`).
+### Step 2
+
+Now add `PATH` setting your shell config file (`.bashrc` or `.zshrc`).
 
  ```sh
 export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
-
-# optionally set
-export GOROOT="$HOME/.gobrew/current/go"
-# or
-export GOPATH="$HOME/.gobrew/current/go"
 ```
-
-Reload config.
 
 **All DONE!**
 
+Execute `gobrew` command from any dir.
+
+```sh
+gobrew
+```
+
 ### Quick Usage
 
-Just use command `gobrew` from any dir. It will auto detect if Go version is set, or not latest, or not same as `go.mod` file.
+Simply use command `gobrew` from any dir. It will auto detect if Go version is set, or not latest, or not same as `go.mod` file.
 
 <p align="center">
   <a href="https://github.com/kevincobain2000/gobrew">
@@ -283,6 +286,18 @@ jobs:
         run: go version
 ```
 
+# Using Bash completions
+
+```sh
+curl https://raw.githubusercontent.com/kevincobain2000/gobrew/master/completions/bash/gobrew-completion > /usr/local/etc/bash_completion.d/gobrew
+
+# or
+curl https://raw.githubusercontent.com/kevincobain2000/gobrew/master/completions/bash/gobrew-completion >> ~/.zshrc
+
+# or
+curl https://raw.githubusercontent.com/kevincobain2000/gobrew/master/completions/bash/gobrew-completion >> ~/.bashrc
+```
+
 # Customization
 
 By default, gobrew is installed in `$HOME` as `$HOME/.gobrew`.
@@ -290,8 +305,9 @@ By default, gobrew is installed in `$HOME` as `$HOME/.gobrew`.
 You can change this by setting the `GOBREW_ROOT` environment variable.
 
 ```sh
+# optionally set
 echo "export GOBREW_ROOT=/usr/local/share" >> ~/.bashrc
-# or
+# optionally set
 echo "export GOBREW_ROOT=/usr/local/share" >> ~/.zshrc
 
 
@@ -299,20 +315,13 @@ echo "export GOBREW_ROOT=/usr/local/share" >> ~/.zshrc
 curl -sLk https://raw.githubusercontent.com/kevincobain2000/gobrew/master/git.io.sh | sh
 ```
 
-Using bash completions
+Set `GOROOT` and `GOPATH` in your shell config file (`.bashrc` or `.zshrc`).
 
 ```sh
-curl https://raw.githubusercontent.com/kevincobain2000/gobrew/master/completions/bash/gobrew-completion > /usr/local/etc/bash_completion.d/gobrew
-# or
-curl https://raw.githubusercontent.com/kevincobain2000/gobrew/master/completions/bash/gobrew-completion >> ~/.zshrc
-# or
-curl https://raw.githubusercontent.com/kevincobain2000/gobrew/master/completions/bash/gobrew-completion >> ~/.bashrc
-```
-
-Auto Setting go version by `go.mod`
-
-```sh
-alias cd='builtin cd "$@" && ls go.mod 2> /dev/null && gobrew use mod'
+# optionally set
+export GOROOT="$HOME/.gobrew/current/go"
+# optionally set
+export GOPATH="$HOME/.gobrew/current/go"
 ```
 
 # Change Log
@@ -348,3 +357,4 @@ alias cd='builtin cd "$@" && ls go.mod 2> /dev/null && gobrew use mod'
 - v1.9.4 - `gobrew` interactive
 - v1.9.5 - bug
 - v1.9.8 - bug fix where 1.21 is not detected as 1.21.0
+- v1.10.0 - bug fixes for wrong gobrew version on windows
