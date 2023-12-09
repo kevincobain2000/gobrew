@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/kevincobain2000/gobrew"
+	"github.com/kevincobain2000/gobrew/utils"
 )
 
 var args []string
@@ -73,7 +74,14 @@ func init() {
 }
 
 func main() {
-	gb := gobrew.NewGoBrew()
+	homeDir, ok := os.LookupEnv("GOBREW_ROOT")
+	if !ok {
+		var err error
+		homeDir, err = os.UserHomeDir()
+		utils.CheckError(err, "failed get home directory and GOBREW_ROOT not defined")
+	}
+
+	gb := gobrew.NewGoBrew(homeDir)
 	switch actionArg {
 	case "interactive", "info":
 		gb.Interactive(true)

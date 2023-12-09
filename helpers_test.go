@@ -2,9 +2,85 @@ package gobrew
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
+func TestJudgeVersion(t *testing.T) {
+	t.Parallel()
+	tests := []struct {
+		version     string
+		wantVersion string
+		wantError   error
+	}{
+		{
+			version:     "1.8",
+			wantVersion: "1.8",
+		},
+		{
+			version:     "1.8.2",
+			wantVersion: "1.8.2",
+		},
+		{
+			version:     "1.18beta1",
+			wantVersion: "1.18beta1",
+		},
+		{
+			version:     "1.18rc1",
+			wantVersion: "1.18rc1",
+		},
+		{
+			version:     "1.18@latest",
+			wantVersion: "1.18.10",
+		},
+		{
+			version:     "1.18@dev-latest",
+			wantVersion: "1.18.10",
+		},
+		// following 2 tests fail upon new version release
+		// commenting out for now as the tool is stable
+		// {
+		// 	version:     "latest",
+		// 	wantVersion: "1.19.1",
+		// },
+		// {
+		// 	version:     "dev-latest",
+		// 	wantVersion: "1.19.1",
+		// },
+	}
+	for _, test := range tests {
+		test := test
+		t.Run(test.version, func(t *testing.T) {
+			t.Parallel()
+			gb := NewGoBrew(t.TempDir())
+			version := gb.judgeVersion(test.version)
+			assert.Equal(t, test.wantVersion, version)
+
+		})
+	}
+	t.Log("test finished")
+}
+
+func TestListVersions(t *testing.T) {
+	t.Parallel()
+	gb := NewGoBrew(t.TempDir())
+
+	gb.ListVersions()
+	t.Log("test finished")
+}
+
+func TestExistVersion(t *testing.T) {
+	t.Parallel()
+	gb := NewGoBrew(t.TempDir())
+
+	exists := gb.existsVersion("1.19")
+
+	assert.Equal(t, false, exists)
+	t.Log("test finished")
+}
+
 func TestExtractMajorVersion(t *testing.T) {
+	t.Parallel()
 	type args struct {
 		version string
 	}
@@ -50,8 +126,10 @@ func TestExtractMajorVersion(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ExtractMajorVersion(tt.args.version); got != tt.want {
+			t.Parallel()
+			if got := extractMajorVersion(tt.args.version); got != tt.want {
 				t.Errorf("ExtractMajorVersion() = %v, want %v", got, tt.want)
 			}
 		})

@@ -3,132 +3,15 @@ package gobrew
 import (
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewGobrewHomeDirUsesUserHomeDir(t *testing.T) {
-	t.Parallel()
-	homeDir, err := os.UserHomeDir()
-
-	if err != nil {
-		t.FailNow()
-	}
-
-	gobrew := NewGoBrew()
-
-	assert.Equal(t, homeDir, gobrew.homeDir)
-	t.Log("test finished")
-}
-
-func TestNewGobrewHomeDirDefaultsToHome(t *testing.T) {
-	var envName string
-
-	switch runtime.GOOS {
-	case "windows":
-		envName = "USERPROFILE"
-	case "plan9":
-		envName = "home"
-	default:
-		envName = "HOME"
-	}
-
-	t.Setenv(envName, "")
-	gobrew := NewGoBrew()
-
-	assert.Equal(t, os.Getenv("HOME"), gobrew.homeDir)
-	t.Log("test finished")
-}
-
-func TestNewGobrewHomeDirUsesGoBrewRoot(t *testing.T) {
-	t.Setenv("GOBREW_ROOT", "some_fancy_value")
-	gobrew := NewGoBrew()
-	assert.Equal(t, "some_fancy_value", gobrew.homeDir)
-	t.Log("test finished")
-}
-
-func TestJudgeVersion(t *testing.T) {
-	t.Parallel()
-	tests := []struct {
-		version     string
-		wantVersion string
-		wantError   error
-	}{
-		{
-			version:     "1.8",
-			wantVersion: "1.8",
-		},
-		{
-			version:     "1.8.2",
-			wantVersion: "1.8.2",
-		},
-		{
-			version:     "1.18beta1",
-			wantVersion: "1.18beta1",
-		},
-		{
-			version:     "1.18rc1",
-			wantVersion: "1.18rc1",
-		},
-		{
-			version:     "1.18@latest",
-			wantVersion: "1.18.10",
-		},
-		{
-			version:     "1.18@dev-latest",
-			wantVersion: "1.18.10",
-		},
-		// following 2 tests fail upon new version release
-		// commenting out for now as the tool is stable
-		// {
-		// 	version:     "latest",
-		// 	wantVersion: "1.19.1",
-		// },
-		// {
-		// 	version:     "dev-latest",
-		// 	wantVersion: "1.19.1",
-		// },
-	}
-	for _, test := range tests {
-		test := test
-		t.Run(test.version, func(t *testing.T) {
-			t.Parallel()
-			gb := NewGoBrew()
-			version := gb.judgeVersion(test.version)
-			assert.Equal(t, test.wantVersion, version)
-
-		})
-	}
-	t.Log("test finished")
-}
-
-func TestListVersions(t *testing.T) {
-	t.Parallel()
-	tempDir := t.TempDir()
-	gb := NewGoBrewDirectory(tempDir)
-
-	gb.ListVersions()
-	t.Log("test finished")
-}
-
-func TestExistVersion(t *testing.T) {
-	t.Parallel()
-	tempDir := t.TempDir()
-	gb := NewGoBrewDirectory(tempDir)
-
-	exists := gb.existsVersion("1.19")
-
-	assert.Equal(t, false, exists)
-	t.Log("test finished")
-}
-
 func TestInstallAndExistVersion(t *testing.T) {
 	t.Parallel()
-	tempDir := t.TempDir()
-	gb := NewGoBrewDirectory(tempDir)
+	gb := NewGoBrew(t.TempDir())
 	gb.Install("1.19")
 	exists := gb.existsVersion("1.19")
 	assert.Equal(t, true, exists)
@@ -137,8 +20,7 @@ func TestInstallAndExistVersion(t *testing.T) {
 
 func TestUnInstallThenNotExistVersion(t *testing.T) {
 	t.Parallel()
-	tempDir := t.TempDir()
-	gb := NewGoBrewDirectory(tempDir)
+	gb := NewGoBrew(t.TempDir())
 	gb.Uninstall("1.19")
 	exists := gb.existsVersion("1.19")
 	assert.Equal(t, false, exists)
@@ -147,9 +29,7 @@ func TestUnInstallThenNotExistVersion(t *testing.T) {
 
 func TestUpgrade(t *testing.T) {
 	t.Parallel()
-	tempDir := t.TempDir()
-
-	gb := NewGoBrewDirectory(tempDir)
+	gb := NewGoBrew(t.TempDir())
 
 	binaryDir := filepath.Join(gb.installDir, "bin")
 	_ = os.MkdirAll(binaryDir, os.ModePerm)
@@ -172,9 +52,7 @@ func TestUpgrade(t *testing.T) {
 
 func TestDoNotUpgradeLatestVersion(t *testing.T) {
 	t.Skip("skipping test...needs to rewrite")
-	tempDir := t.TempDir()
-
-	gb := NewGoBrewDirectory(tempDir)
+	gb := NewGoBrew(t.TempDir())
 
 	binaryDir := filepath.Join(gb.installDir, "bin")
 	_ = os.MkdirAll(binaryDir, os.ModePerm)
@@ -198,9 +76,7 @@ func TestDoNotUpgradeLatestVersion(t *testing.T) {
 
 func TestInteractive(t *testing.T) {
 	t.Parallel()
-	tempDir := t.TempDir()
-
-	gb := NewGoBrewDirectory(tempDir)
+	gb := NewGoBrew(t.TempDir())
 	currentVersion := gb.CurrentVersion()
 	latestVersion := gb.getLatestVersion()
 	// modVersion := gb.getModVersion()
@@ -230,8 +106,7 @@ func TestInteractive(t *testing.T) {
 
 func TestPrune(t *testing.T) {
 	t.Parallel()
-	tempDir := t.TempDir()
-	gb := NewGoBrewDirectory(tempDir)
+	gb := NewGoBrew(t.TempDir())
 	gb.Install("1.20")
 	gb.Install("1.19")
 	gb.Use("1.19")
@@ -243,8 +118,7 @@ func TestPrune(t *testing.T) {
 
 func TestGoBrew_CurrentVersion(t *testing.T) {
 	t.Parallel()
-	tempDir := t.TempDir()
-	gb := NewGoBrewDirectory(tempDir)
+	gb := NewGoBrew(t.TempDir())
 	assert.Equal(t, true, gb.CurrentVersion() == "None")
 	gb.Install("1.19")
 	gb.Use("1.19")
