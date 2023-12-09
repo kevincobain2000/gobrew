@@ -75,7 +75,7 @@ func init() {
 
 func main() {
 	homeDir, ok := os.LookupEnv("GOBREW_ROOT")
-	if !ok {
+	if !ok || homeDir == "" {
 		var err error
 		homeDir, err = os.UserHomeDir()
 		utils.CheckError(err, "failed get home directory and GOBREW_ROOT not defined")
