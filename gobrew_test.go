@@ -11,6 +11,7 @@ import (
 )
 
 func TestNewGobrewHomeDirUsesUserHomeDir(t *testing.T) {
+	t.Parallel()
 	homeDir, err := os.UserHomeDir()
 
 	if err != nil {
@@ -35,13 +36,7 @@ func TestNewGobrewHomeDirDefaultsToHome(t *testing.T) {
 		envName = "HOME"
 	}
 
-	oldEnvValue := os.Getenv(envName)
-	defer func() {
-		_ = os.Setenv(envName, oldEnvValue)
-	}()
-
-	_ = os.Unsetenv(envName)
-
+	t.Setenv(envName, "")
 	gobrew := NewGoBrew()
 
 	assert.Equal(t, os.Getenv("HOME"), gobrew.homeDir)
@@ -49,20 +44,14 @@ func TestNewGobrewHomeDirDefaultsToHome(t *testing.T) {
 }
 
 func TestNewGobrewHomeDirUsesGoBrewRoot(t *testing.T) {
-	oldEnvValue := os.Getenv("GOBREW_ROOT")
-	defer func() {
-		_ = os.Setenv("GOBREW_ROOT", oldEnvValue)
-	}()
-
-	_ = os.Setenv("GOBREW_ROOT", "some_fancy_value")
-
+	t.Setenv("GOBREW_ROOT", "some_fancy_value")
 	gobrew := NewGoBrew()
-
 	assert.Equal(t, "some_fancy_value", gobrew.homeDir)
 	t.Log("test finished")
 }
 
 func TestJudgeVersion(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		version     string
 		wantVersion string
@@ -106,6 +95,7 @@ func TestJudgeVersion(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.version, func(t *testing.T) {
+			t.Parallel()
 			gb := NewGoBrew()
 			version := gb.judgeVersion(test.version)
 			assert.Equal(t, test.wantVersion, version)
@@ -116,6 +106,7 @@ func TestJudgeVersion(t *testing.T) {
 }
 
 func TestListVersions(t *testing.T) {
+	t.Parallel()
 	tempDir := t.TempDir()
 	gb := NewGoBrewDirectory(tempDir)
 
@@ -124,6 +115,7 @@ func TestListVersions(t *testing.T) {
 }
 
 func TestExistVersion(t *testing.T) {
+	t.Parallel()
 	tempDir := t.TempDir()
 	gb := NewGoBrewDirectory(tempDir)
 
@@ -134,6 +126,7 @@ func TestExistVersion(t *testing.T) {
 }
 
 func TestInstallAndExistVersion(t *testing.T) {
+	t.Parallel()
 	tempDir := t.TempDir()
 	gb := NewGoBrewDirectory(tempDir)
 	gb.Install("1.19")
@@ -143,6 +136,7 @@ func TestInstallAndExistVersion(t *testing.T) {
 }
 
 func TestUnInstallThenNotExistVersion(t *testing.T) {
+	t.Parallel()
 	tempDir := t.TempDir()
 	gb := NewGoBrewDirectory(tempDir)
 	gb.Uninstall("1.19")
@@ -152,6 +146,7 @@ func TestUnInstallThenNotExistVersion(t *testing.T) {
 }
 
 func TestUpgrade(t *testing.T) {
+	t.Parallel()
 	tempDir := t.TempDir()
 
 	gb := NewGoBrewDirectory(tempDir)
@@ -163,7 +158,7 @@ func TestUpgrade(t *testing.T) {
 	binaryFile := filepath.Join(binaryDir, baseName)
 
 	if oldFile, err := os.Create(binaryFile); err == nil {
-		// on tests we have to close the file to avoid an error on os.Rename
+		// on tests, we have to close the file to avoid an error on os.Rename
 		_ = oldFile.Close()
 	}
 
@@ -202,17 +197,17 @@ func TestDoNotUpgradeLatestVersion(t *testing.T) {
 }
 
 func TestInteractive(t *testing.T) {
+	t.Parallel()
 	tempDir := t.TempDir()
 
 	gb := NewGoBrewDirectory(tempDir)
 	currentVersion := gb.CurrentVersion()
 	latestVersion := gb.getLatestVersion()
 	// modVersion := gb.getModVersion()
-	assert.Equal(t, "", currentVersion)
+	assert.Equal(t, "None", currentVersion)
 	assert.NotEqual(t, currentVersion, latestVersion)
 
-	ask := false
-	gb.Interactive(ask)
+	gb.Interactive(false)
 
 	currentVersion = gb.CurrentVersion()
 	// remove string private from currentVersion (for macOS) due to /private/var symlink issue
@@ -226,7 +221,7 @@ func TestInteractive(t *testing.T) {
 	assert.Equal(t, "1.16.5", currentVersion)
 	assert.NotEqual(t, currentVersion, latestVersion)
 
-	gb.Interactive(ask)
+	gb.Interactive(false)
 	currentVersion = gb.CurrentVersion()
 	currentVersion = strings.Replace(currentVersion, "private", "", -1)
 	assert.Equal(t, currentVersion, latestVersion)
@@ -234,6 +229,7 @@ func TestInteractive(t *testing.T) {
 }
 
 func TestPrune(t *testing.T) {
+	t.Parallel()
 	tempDir := t.TempDir()
 	gb := NewGoBrewDirectory(tempDir)
 	gb.Install("1.20")
@@ -246,9 +242,10 @@ func TestPrune(t *testing.T) {
 }
 
 func TestGoBrew_CurrentVersion(t *testing.T) {
+	t.Parallel()
 	tempDir := t.TempDir()
 	gb := NewGoBrewDirectory(tempDir)
-	assert.Equal(t, true, gb.CurrentVersion() == "")
+	assert.Equal(t, true, gb.CurrentVersion() == "None")
 	gb.Install("1.19")
 	gb.Use("1.19")
 	assert.Equal(t, true, gb.CurrentVersion() == "1.19")
