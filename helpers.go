@@ -334,7 +334,7 @@ func (gb *GoBrew) downloadAndExtract(version string) {
 	err := utils.DownloadWithProgress(downloadURL, tarName, dstDownloadDir)
 
 	if err != nil {
-		gb.cleanVersionDir(version)
+		gb.cleanDownloadsDir()
 		color.Infoln("==> [Info] Downloading version failed:", err)
 		color.Errorln("==> [Error]: Please check connectivity to url:", downloadURL)
 		os.Exit(1)
@@ -351,7 +351,6 @@ func (gb *GoBrew) downloadAndExtract(version string) {
 		// clean up dir
 		gb.cleanVersionDir(version)
 		color.Infoln("==> [Info] Extract failed:", err)
-		color.Errorln("==> [Error]: Please check if version exists from url:", downloadURL)
 		os.Exit(1)
 	}
 	color.Infoln("[Success] Extract to", gb.getVersionDir(version))
