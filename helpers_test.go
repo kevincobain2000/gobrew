@@ -224,7 +224,7 @@ func TestGoBrew_downloadAndExtract(t *testing.T) {
 		args args
 	}{
 		{
-			name: "",
+			name: "1.9",
 			args: args{
 				version: "1.9",
 			},
