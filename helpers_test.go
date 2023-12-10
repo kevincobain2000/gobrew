@@ -1,7 +1,11 @@
 package gobrew
 
 import (
+	"net/http"
+	"net/http/httptest"
+	"net/url"
 	"path/filepath"
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -156,6 +160,14 @@ func TestGoBrew_extract(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "dont.tar.gz",
+			args: args{
+				srcTar: "testdata/dont.tar.gz",
+				dstDir: "tmp",
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		tt := tt
@@ -164,6 +176,38 @@ func TestGoBrew_extract(t *testing.T) {
 			gb := NewGoBrew(t.TempDir())
 			if err := gb.extract(tt.args.srcTar, filepath.Join(t.TempDir(), tt.args.dstDir)); (err != nil) != tt.wantErr {
 				t.Errorf("GoBrew.extract() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func Test_doRequest(t *testing.T) {
+	t.Parallel()
+	type args struct {
+		url string
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantData []byte
+	}{
+		{
+			name: "test.txt",
+			args: args{
+				url: "test.txt",
+			},
+			wantData: []byte("test"),
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
+			urlGet, _ := url.JoinPath(ts.URL, tt.args.url)
+			defer ts.Close()
+			if gotData := doRequest(urlGet); !reflect.DeepEqual(gotData, tt.wantData) {
+				t.Errorf("doRequest() = %s, want %s", gotData, tt.wantData)
 			}
 		})
 	}
