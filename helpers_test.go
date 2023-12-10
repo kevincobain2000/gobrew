@@ -1,6 +1,7 @@
 package gobrew
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -131,6 +132,38 @@ func TestExtractMajorVersion(t *testing.T) {
 			t.Parallel()
 			if got := extractMajorVersion(tt.args.version); got != tt.want {
 				t.Errorf("ExtractMajorVersion() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestGoBrew_extract(t *testing.T) {
+	t.Parallel()
+	type args struct {
+		srcTar string
+		dstDir string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "arhive.tar.gz",
+			args: args{
+				srcTar: "testdata/archive.tar.gz",
+				dstDir: "tmp",
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			gb := NewGoBrew(t.TempDir())
+			if err := gb.extract(tt.args.srcTar, filepath.Join(t.TempDir(), tt.args.dstDir)); (err != nil) != tt.wantErr {
+				t.Errorf("GoBrew.extract() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
