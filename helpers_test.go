@@ -153,9 +153,9 @@ func TestGoBrew_extract(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "arhive.tar.gz",
+			name: "go1.9.darwin-arm64.tar.gz",
 			args: args{
-				srcTar: "testdata/archive.tar.gz",
+				srcTar: "testdata/go1.9.darwin-arm64.tar.gz",
 				dstDir: "tmp",
 			},
 			wantErr: false,
@@ -204,11 +204,40 @@ func Test_doRequest(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
-			urlGet, _ := url.JoinPath(ts.URL, tt.args.url)
 			defer ts.Close()
+			urlGet, _ := url.JoinPath(ts.URL, tt.args.url)
 			if gotData := doRequest(urlGet); !reflect.DeepEqual(gotData, tt.wantData) {
 				t.Errorf("doRequest() = %s, want %s", gotData, tt.wantData)
 			}
+		})
+	}
+}
+
+func TestGoBrew_downloadAndExtract(t *testing.T) {
+	t.Skip()
+	t.Parallel()
+	type args struct {
+		version string
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		{
+			name: "",
+			args: args{
+				version: "1.9",
+			},
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+			ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
+			defer ts.Close()
+			gb := NewGoBrew(t.TempDir())
+			gb.downloadAndExtract(ts.URL+"/", tt.args.version)
 		})
 	}
 }

@@ -319,10 +319,10 @@ func (gb *GoBrew) getVersionDir(version string) string {
 	return filepath.Join(gb.versionsDir, version)
 }
 
-func (gb *GoBrew) downloadAndExtract(version string) {
+func (gb *GoBrew) downloadAndExtract(url, version string) {
 	tarName := "go" + version + "." + gb.getArch() + tarNameExt
 
-	registryPath := defaultRegistryPath
+	registryPath := url
 	if p := os.Getenv("GOBREW_REGISTRY"); p != "" {
 		registryPath = p
 	}
