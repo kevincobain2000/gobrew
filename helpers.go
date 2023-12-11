@@ -158,13 +158,8 @@ func (gb *GoBrew) print(message string, shouldPrint bool) {
 func (gb *GoBrew) existsVersion(version string) bool {
 	path := filepath.Join(gb.versionsDir, version, "go")
 	_, err := os.Stat(path)
-	if err == nil {
-		return true
-	}
-	if os.IsNotExist(err) {
-		return false
-	}
-	return false
+
+	return err == nil
 }
 
 func (gb *GoBrew) cleanVersionDir(version string) {
@@ -350,7 +345,7 @@ func (gb *GoBrew) downloadAndExtract(version string) {
 		color.Infoln("==> [Info] Extract failed:", err)
 		os.Exit(1)
 	}
-	color.Infoln("[Success] Extract to", gb.getVersionDir(version))
+	color.Infoln("==> [Success] Extract to", gb.getVersionDir(version))
 }
 
 func (gb *GoBrew) changeSymblinkGoBin(version string) {
