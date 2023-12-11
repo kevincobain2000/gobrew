@@ -316,7 +316,7 @@ func (gb *GoBrew) Install(version string) string {
 
 	color.Infof("==> [Info] Downloading version: %s\n", version)
 	gb.downloadAndExtract(version)
-	//gb.cleanDownloadsDir()
+	gb.cleanDownloadsDir()
 	color.Successf("==> [Success] Downloaded version: %s\n", version)
 	return version
 }
