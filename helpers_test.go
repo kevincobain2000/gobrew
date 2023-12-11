@@ -214,7 +214,6 @@ func Test_doRequest(t *testing.T) {
 }
 
 func TestGoBrew_downloadAndExtract(t *testing.T) {
-	t.Skip()
 	t.Parallel()
 	type args struct {
 		version string
@@ -232,11 +231,12 @@ func TestGoBrew_downloadAndExtract(t *testing.T) {
 	}
 	for _, tt := range tests {
 		tt := tt
+		gb := NewGoBrew(t.TempDir())
+		gb.mkDirs("1.9")
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
 			defer ts.Close()
-			gb := NewGoBrew(t.TempDir())
 			gb.downloadAndExtract(ts.URL+"/", tt.args.version)
 		})
 	}

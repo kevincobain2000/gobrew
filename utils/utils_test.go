@@ -8,7 +8,7 @@ import (
 )
 
 func TestDownloadWithProgress(t *testing.T) {
-	t.Skip()
+	t.Parallel()
 	type args struct {
 		name       string
 		destFolder string
@@ -21,18 +21,20 @@ func TestDownloadWithProgress(t *testing.T) {
 		{
 			name: "",
 			args: args{
-				name:       "go1.9.darwin-arm64.tar.gz",
+				name:       "/go1.9.darwin-arm64.tar.gz",
 				destFolder: t.TempDir(),
 			},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
+			t.Parallel()
+			ts := httptest.NewServer(http.FileServer(http.Dir("../testdata")))
 			defer ts.Close()
-			url, _ := url.JoinPath(ts.URL, tt.args.name)
-			if err := DownloadWithProgress(url, tt.args.name, tt.args.destFolder); (err != nil) != tt.wantErr {
+			path, _ := url.JoinPath(ts.URL, tt.args.name)
+			if err := DownloadWithProgress(path, tt.args.name, tt.args.destFolder); (err != nil) != tt.wantErr {
 				t.Errorf("DownloadWithProgress() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
