@@ -44,12 +44,10 @@ func DownloadWithProgress(url string, tarName string, destFolder string) (err er
 		return fmt.Errorf("%s returned status code %d", url, resp.StatusCode)
 	}
 
-	f, _ := os.OpenFile(destTarPath, os.O_CREATE|os.O_WRONLY, 0o644)
-	defer func(f *os.File) {
-		if err = f.Close(); err != nil {
-			color.Errorln("==> [Error]: failed close file", err.Error())
-		}
-	}(f)
+	f, err := os.OpenFile(destTarPath, os.O_CREATE|os.O_WRONLY, 0o644)
+	if err != nil {
+		return err
+	}
 
 	bar := progressbar.DefaultBytes(
 		resp.ContentLength,
@@ -57,7 +55,14 @@ func DownloadWithProgress(url string, tarName string, destFolder string) (err er
 	)
 	_, err = io.Copy(io.MultiWriter(f, bar), resp.Body)
 	if err != nil {
+		if err := f.Close(); err != nil {
+			color.Errorln("==> [Error]: failed close file", err.Error())
+		}
 		return err
+	}
+
+	if err = f.Close(); err != nil {
+		color.Errorln("==> [Error]: failed close file", err.Error())
 	}
 
 	return nil
