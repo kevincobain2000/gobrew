@@ -1,35 +1,60 @@
 package gobrew
 
 import (
+	"net/http"
+	"net/http/httptest"
+	"net/url"
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
+func setupGobrew(t *testing.T, ts *httptest.Server) GoBrew {
+	tags, _ := url.JoinPath(ts.URL, "golang-tags.json")
+	versionUrl, _ := url.JoinPath(ts.URL, "latest")
+	config := Config{
+		RootDir:           t.TempDir(),
+		RegistryPathUrl:   ts.URL,
+		GobrewDownloadUrl: ts.URL,
+		GobrewTags:        tags,
+		GobrewVersionsUrl: versionUrl,
+	}
+	gb := NewGoBrew(config)
+	return gb
+}
+
 func TestInstallAndExistVersion(t *testing.T) {
 	t.Parallel()
-	gb := NewGoBrew(t.TempDir())
-	gb.Install("1.19")
-	exists := gb.existsVersion("1.19")
+	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
+	defer ts.Close()
+	gb := setupGobrew(t, ts)
+	gb.Install("1.9")
+	exists := gb.existsVersion("1.9")
 	assert.Equal(t, true, exists)
 	t.Log("test finished")
 }
 
 func TestUnInstallThenNotExistVersion(t *testing.T) {
 	t.Parallel()
-	gb := NewGoBrew(t.TempDir())
-	gb.Uninstall("1.19")
-	exists := gb.existsVersion("1.19")
+	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
+	defer ts.Close()
+	gb := setupGobrew(t, ts)
+	gb.Install("1.9")
+	exists := gb.existsVersion("1.9")
+	assert.Equal(t, true, exists)
+	gb.Uninstall("1.9")
+	exists = gb.existsVersion("1.9")
 	assert.Equal(t, false, exists)
 	t.Log("test finished")
 }
 
 func TestUpgrade(t *testing.T) {
 	t.Parallel()
-	gb := NewGoBrew(t.TempDir())
+	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
+	defer ts.Close()
+	gb := setupGobrew(t, ts)
 
 	binaryDir := filepath.Join(gb.installDir, "bin")
 	_ = os.MkdirAll(binaryDir, os.ModePerm)
@@ -52,7 +77,9 @@ func TestUpgrade(t *testing.T) {
 
 func TestDoNotUpgradeLatestVersion(t *testing.T) {
 	t.Skip("skipping test...needs to rewrite")
-	gb := NewGoBrew(t.TempDir())
+	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
+	defer ts.Close()
+	gb := setupGobrew(t, ts)
 
 	binaryDir := filepath.Join(gb.installDir, "bin")
 	_ = os.MkdirAll(binaryDir, os.ModePerm)
@@ -76,37 +103,37 @@ func TestDoNotUpgradeLatestVersion(t *testing.T) {
 
 func TestInteractive(t *testing.T) {
 	t.Parallel()
-	gb := NewGoBrew(t.TempDir())
+	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
+	defer ts.Close()
+	gb := setupGobrew(t, ts)
+
 	currentVersion := gb.CurrentVersion()
 	latestVersion := gb.getLatestVersion()
-	// modVersion := gb.getModVersion()
 	assert.Equal(t, "None", currentVersion)
 	assert.NotEqual(t, currentVersion, latestVersion)
 
 	gb.Interactive(false)
 
 	currentVersion = gb.CurrentVersion()
-	// remove string private from currentVersion (for macOS) due to /private/var symlink issue
-	currentVersion = strings.Replace(currentVersion, "private", "", -1)
 	assert.Equal(t, currentVersion, latestVersion)
 
 	gb.Install("1.16.5") // we know, it is not latest
 	gb.Use("1.16.5")
 	currentVersion = gb.CurrentVersion()
-	currentVersion = strings.Replace(currentVersion, "private", "", -1)
 	assert.Equal(t, "1.16.5", currentVersion)
 	assert.NotEqual(t, currentVersion, latestVersion)
 
 	gb.Interactive(false)
 	currentVersion = gb.CurrentVersion()
-	currentVersion = strings.Replace(currentVersion, "private", "", -1)
 	assert.Equal(t, currentVersion, latestVersion)
 	t.Log("test finished")
 }
 
 func TestPrune(t *testing.T) {
 	t.Parallel()
-	gb := NewGoBrew(t.TempDir())
+	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
+	defer ts.Close()
+	gb := setupGobrew(t, ts)
 	gb.Install("1.20")
 	gb.Install("1.19")
 	gb.Use("1.19")
@@ -118,7 +145,9 @@ func TestPrune(t *testing.T) {
 
 func TestGoBrew_CurrentVersion(t *testing.T) {
 	t.Parallel()
-	gb := NewGoBrew(t.TempDir())
+	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
+	defer ts.Close()
+	gb := setupGobrew(t, ts)
 	assert.Equal(t, true, gb.CurrentVersion() == "None")
 	gb.Install("1.19")
 	gb.Use("1.19")

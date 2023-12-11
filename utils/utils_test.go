@@ -9,34 +9,11 @@ import (
 
 func TestDownloadWithProgress(t *testing.T) {
 	t.Parallel()
-	type args struct {
-		name       string
-		destFolder string
+	ts := httptest.NewServer(http.FileServer(http.Dir("../testdata")))
+	defer ts.Close()
+	path, _ := url.JoinPath(ts.URL, "go1.9.darwin-arm64.tar.gz")
+	if err := DownloadWithProgress(path, "go1.9.darwin-arm64.tar.gz", t.TempDir()); (err != nil) != false {
+		t.Errorf("DownloadWithProgress() error = %v, wantErr %v", err, false)
 	}
-	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
-	}{
-		{
-			name: "",
-			args: args{
-				name:       "/go1.9.darwin-arm64.tar.gz",
-				destFolder: t.TempDir(),
-			},
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		tt := tt
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-			ts := httptest.NewServer(http.FileServer(http.Dir("../testdata")))
-			defer ts.Close()
-			path, _ := url.JoinPath(ts.URL, tt.args.name)
-			if err := DownloadWithProgress(path, tt.args.name, tt.args.destFolder); (err != nil) != tt.wantErr {
-				t.Errorf("DownloadWithProgress() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
+	t.Log("test finished")
 }

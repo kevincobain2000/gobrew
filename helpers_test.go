@@ -57,7 +57,9 @@ func TestJudgeVersion(t *testing.T) {
 		test := test
 		t.Run(test.version, func(t *testing.T) {
 			t.Parallel()
-			gb := NewGoBrew(t.TempDir())
+			ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
+			defer ts.Close()
+			gb := setupGobrew(t, ts)
 			version := gb.judgeVersion(test.version)
 			assert.Equal(t, test.wantVersion, version)
 
@@ -68,7 +70,9 @@ func TestJudgeVersion(t *testing.T) {
 
 func TestListVersions(t *testing.T) {
 	t.Parallel()
-	gb := NewGoBrew(t.TempDir())
+	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
+	defer ts.Close()
+	gb := setupGobrew(t, ts)
 
 	gb.ListVersions()
 	t.Log("test finished")
@@ -76,7 +80,9 @@ func TestListVersions(t *testing.T) {
 
 func TestExistVersion(t *testing.T) {
 	t.Parallel()
-	gb := NewGoBrew(t.TempDir())
+	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
+	defer ts.Close()
+	gb := setupGobrew(t, ts)
 
 	exists := gb.existsVersion("1.19")
 
@@ -139,6 +145,7 @@ func TestExtractMajorVersion(t *testing.T) {
 			}
 		})
 	}
+	t.Log("test finished")
 }
 
 func TestGoBrew_extract(t *testing.T) {
@@ -173,12 +180,15 @@ func TestGoBrew_extract(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			gb := NewGoBrew(t.TempDir())
+			ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
+			defer ts.Close()
+			gb := setupGobrew(t, ts)
 			if err := gb.extract(tt.args.srcTar, filepath.Join(t.TempDir(), tt.args.dstDir)); (err != nil) != tt.wantErr {
 				t.Errorf("GoBrew.extract() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
+	t.Log("test finished")
 }
 
 func Test_doRequest(t *testing.T) {
@@ -211,33 +221,15 @@ func Test_doRequest(t *testing.T) {
 			}
 		})
 	}
+	t.Log("test finished")
 }
 
 func TestGoBrew_downloadAndExtract(t *testing.T) {
 	t.Parallel()
-	type args struct {
-		version string
-	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		{
-			name: "1.9",
-			args: args{
-				version: "1.9",
-			},
-		},
-	}
-	for _, tt := range tests {
-		tt := tt
-		gb := NewGoBrew(t.TempDir())
-		gb.mkDirs("1.9")
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-			ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
-			defer ts.Close()
-			gb.downloadAndExtract(ts.URL+"/", tt.args.version)
-		})
-	}
+	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
+	defer ts.Close()
+	gb := setupGobrew(t, ts)
+	gb.mkDirs("1.9")
+	gb.downloadAndExtract("1.9")
+	t.Log("test finished")
 }

@@ -8,6 +8,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -319,14 +320,10 @@ func (gb *GoBrew) getVersionDir(version string) string {
 	return filepath.Join(gb.versionsDir, version)
 }
 
-func (gb *GoBrew) downloadAndExtract(url, version string) {
+func (gb *GoBrew) downloadAndExtract(version string) {
 	tarName := "go" + version + "." + gb.getArch() + tarNameExt
 
-	registryPath := url
-	if p := os.Getenv("GOBREW_REGISTRY"); p != "" {
-		registryPath = p
-	}
-	downloadURL := registryPath + tarName
+	downloadURL, _ := url.JoinPath(gb.registryPathUrl, tarName)
 	color.Infoln("==> [Info] Downloading from:", downloadURL)
 
 	dstDownloadDir := filepath.Join(gb.downloadsDir)
@@ -369,8 +366,7 @@ func (gb *GoBrew) changeSymblinkGo(version string) {
 }
 
 func (gb *GoBrew) getGobrewVersion() string {
-	url := "https://api.github.com/repos/kevincobain2000/gobrew/releases/latest"
-	data := doRequest(url)
+	data := doRequest(gb.gobrewVersionsUrl)
 	if len(data) == 0 {
 		return ""
 	}
@@ -385,7 +381,7 @@ func (gb *GoBrew) getGobrewVersion() string {
 }
 
 func (gb *GoBrew) getGolangVersions() (result []string) {
-	data := doRequest(goBrewTagsApi)
+	data := doRequest(gb.gobrewTags)
 	if len(data) == 0 {
 		return
 	}

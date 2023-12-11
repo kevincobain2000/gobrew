@@ -74,14 +74,27 @@ func init() {
 }
 
 func main() {
-	homeDir, ok := os.LookupEnv("GOBREW_ROOT")
-	if !ok || homeDir == "" {
+	rootDir := os.Getenv("GOBREW_ROOT")
+	if rootDir == "" {
 		var err error
-		homeDir, err = os.UserHomeDir()
+		rootDir, err = os.UserHomeDir()
 		utils.CheckError(err, "failed get home directory and GOBREW_ROOT not defined")
 	}
 
-	gb := gobrew.NewGoBrew(homeDir)
+	registryPath := gobrew.DefaultRegistryPath
+	if p := os.Getenv("GOBREW_REGISTRY"); p != "" {
+		registryPath = p
+	}
+
+	config := gobrew.Config{
+		RootDir:           rootDir,
+		RegistryPathUrl:   registryPath,
+		GobrewDownloadUrl: gobrew.GoBrewDownloadUrl,
+		GobrewTags:        gobrew.GoBrewTagsApi,
+		GobrewVersionsUrl: gobrew.GoBrewVersionsUrl,
+	}
+
+	gb := gobrew.NewGoBrew(config)
 	switch actionArg {
 	case "interactive", "info":
 		gb.Interactive(true)
