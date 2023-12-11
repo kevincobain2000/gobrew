@@ -26,7 +26,7 @@ func setupGobrew(t *testing.T, ts *httptest.Server) GoBrew {
 }
 
 func TestInstallAndExistVersion(t *testing.T) {
-	t.Parallel()
+	//t.Parallel()
 	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
 	defer ts.Close()
 	gb := setupGobrew(t, ts)
@@ -37,7 +37,7 @@ func TestInstallAndExistVersion(t *testing.T) {
 }
 
 func TestUnInstallThenNotExistVersion(t *testing.T) {
-	t.Parallel()
+	//t.Parallel()
 	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
 	defer ts.Close()
 	gb := setupGobrew(t, ts)
@@ -51,7 +51,7 @@ func TestUnInstallThenNotExistVersion(t *testing.T) {
 }
 
 func TestUpgrade(t *testing.T) {
-	t.Parallel()
+	//t.Parallel()
 	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
 	defer ts.Close()
 	gb := setupGobrew(t, ts)
@@ -102,7 +102,7 @@ func TestDoNotUpgradeLatestVersion(t *testing.T) {
 }
 
 func TestInteractive(t *testing.T) {
-	t.Parallel()
+	//t.Parallel()
 	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
 	defer ts.Close()
 	gb := setupGobrew(t, ts)
@@ -130,7 +130,7 @@ func TestInteractive(t *testing.T) {
 }
 
 func TestPrune(t *testing.T) {
-	t.Parallel()
+	//t.Parallel()
 	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
 	defer ts.Close()
 	gb := setupGobrew(t, ts)
@@ -144,7 +144,7 @@ func TestPrune(t *testing.T) {
 }
 
 func TestGoBrew_CurrentVersion(t *testing.T) {
-	t.Parallel()
+	//t.Parallel()
 	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
 	defer ts.Close()
 	gb := setupGobrew(t, ts)
