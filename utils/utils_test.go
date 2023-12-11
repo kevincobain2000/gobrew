@@ -8,7 +8,7 @@ import (
 )
 
 func TestDownloadWithProgress(t *testing.T) {
-	//t.Parallel()
+	t.Parallel()
 	ts := httptest.NewServer(http.FileServer(http.Dir("../testdata")))
 	defer ts.Close()
 	path, _ := url.JoinPath(ts.URL, "go1.9.darwin-arm64.tar.gz")

@@ -12,7 +12,7 @@ import (
 )
 
 func TestJudgeVersion(t *testing.T) {
-	//t.Parallel()
+	t.Parallel()
 	tests := []struct {
 		version     string
 		wantVersion string
@@ -56,7 +56,7 @@ func TestJudgeVersion(t *testing.T) {
 	for _, test := range tests {
 		test := test
 		t.Run(test.version, func(t *testing.T) {
-			//t.Parallel()
+			t.Parallel()
 			ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
 			defer ts.Close()
 			gb := setupGobrew(t, ts)
@@ -69,7 +69,7 @@ func TestJudgeVersion(t *testing.T) {
 }
 
 func TestListVersions(t *testing.T) {
-	//t.Parallel()
+	t.Parallel()
 	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
 	defer ts.Close()
 	gb := setupGobrew(t, ts)
@@ -79,7 +79,7 @@ func TestListVersions(t *testing.T) {
 }
 
 func TestExistVersion(t *testing.T) {
-	//t.Parallel()
+	t.Parallel()
 	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
 	defer ts.Close()
 	gb := setupGobrew(t, ts)
@@ -91,7 +91,7 @@ func TestExistVersion(t *testing.T) {
 }
 
 func TestExtractMajorVersion(t *testing.T) {
-	//t.Parallel()
+	t.Parallel()
 	type args struct {
 		version string
 	}
@@ -139,7 +139,7 @@ func TestExtractMajorVersion(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			//t.Parallel()
+			t.Parallel()
 			if got := extractMajorVersion(tt.args.version); got != tt.want {
 				t.Errorf("ExtractMajorVersion() = %v, want %v", got, tt.want)
 			}
@@ -149,7 +149,7 @@ func TestExtractMajorVersion(t *testing.T) {
 }
 
 func TestGoBrew_extract(t *testing.T) {
-	//t.Parallel()
+	t.Parallel()
 	type args struct {
 		srcTar string
 		dstDir string
@@ -179,7 +179,7 @@ func TestGoBrew_extract(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			//t.Parallel()
+			t.Parallel()
 			ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
 			defer ts.Close()
 			gb := setupGobrew(t, ts)
@@ -192,7 +192,7 @@ func TestGoBrew_extract(t *testing.T) {
 }
 
 func Test_doRequest(t *testing.T) {
-	//t.Parallel()
+	t.Parallel()
 	type args struct {
 		url string
 	}
@@ -212,7 +212,7 @@ func Test_doRequest(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
-			//t.Parallel()
+			t.Parallel()
 			ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
 			defer ts.Close()
 			urlGet, _ := url.JoinPath(ts.URL, tt.args.url)
@@ -225,7 +225,7 @@ func Test_doRequest(t *testing.T) {
 }
 
 func TestGoBrew_downloadAndExtract(t *testing.T) {
-	//t.Parallel()
+	t.Parallel()
 	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
 	defer ts.Close()
 	gb := setupGobrew(t, ts)
