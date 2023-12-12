@@ -89,9 +89,9 @@ func main() {
 	config := gobrew.Config{
 		RootDir:           rootDir,
 		RegistryPathUrl:   registryPath,
-		GobrewDownloadUrl: gobrew.GoBrewDownloadUrl,
-		GobrewTags:        gobrew.GoBrewTagsApi,
-		GobrewVersionsUrl: gobrew.GoBrewVersionsUrl,
+		GobrewDownloadUrl: gobrew.DownloadUrl,
+		GobrewTags:        gobrew.TagsApi,
+		GobrewVersionsUrl: gobrew.VersionsUrl,
 	}
 
 	gb := gobrew.NewGoBrew(config)

@@ -20,9 +20,9 @@ import (
 const (
 	goBrewDir           string = ".gobrew"
 	DefaultRegistryPath string = "https://go.dev/dl/"
-	GoBrewDownloadUrl   string = "https://github.com/kevincobain2000/gobrew/releases/latest/download/"
-	GoBrewTagsApi              = "https://raw.githubusercontent.com/kevincobain2000/gobrew/json/golang-tags.json"
-	GoBrewVersionsUrl   string = "https://api.github.com/repos/kevincobain2000/gobrew/releases/latest"
+	DownloadUrl         string = "https://github.com/kevincobain2000/gobrew/releases/latest/download/"
+	TagsApi                    = "https://raw.githubusercontent.com/kevincobain2000/gobrew/json/golang-tags.json"
+	VersionsUrl         string = "https://api.github.com/repos/kevincobain2000/gobrew/releases/latest"
 )
 
 // check GoBrew implement is Command interface
@@ -38,7 +38,7 @@ type Command interface {
 	Use(version string)
 	Prune()
 	Version(currentVersion string)
-	Upgrade(string)
+	Upgrade(currentVersion string)
 	Interactive(ask bool)
 }
 
