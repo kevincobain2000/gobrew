@@ -3,11 +3,9 @@ package utils
 import (
 	"fmt"
 	"io"
-	"net"
 	"net/http"
 	"os"
 	"path"
-	"time"
 
 	"github.com/gookit/color"
 	"github.com/schollz/progressbar/v3"
@@ -19,17 +17,8 @@ func DownloadWithProgress(url string, tarName string, destFolder string) (err er
 	if err != nil {
 		return err
 	}
-	client := &http.Client{
-		Transport: &http.Transport{
-			Dial: (&net.Dialer{
-				Timeout: 5 * time.Second,
-			}).Dial,
-			TLSHandshakeTimeout: 5 * time.Second,
-		},
-		Timeout: 10 * time.Second,
-	}
 
-	resp, err := client.Do(req)
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return err
 	}
