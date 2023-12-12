@@ -316,7 +316,7 @@ func (gb *GoBrew) getVersionDir(version string) string {
 func (gb *GoBrew) downloadAndExtract(version string) {
 	tarName := "go" + version + "." + gb.getArch() + tarNameExt
 
-	downloadURL, _ := url.JoinPath(gb.registryPathUrl, tarName)
+	downloadURL, _ := url.JoinPath(gb.RegistryPathUrl, tarName)
 	color.Infoln("==> [Info] Downloading from:", downloadURL)
 
 	dstDownloadDir := filepath.Join(gb.downloadsDir)
@@ -359,7 +359,7 @@ func (gb *GoBrew) changeSymblinkGo(version string) {
 }
 
 func (gb *GoBrew) getGobrewVersion() string {
-	data := doRequest(gb.gobrewVersionsUrl)
+	data := doRequest(gb.GobrewVersionsUrl)
 	if len(data) == 0 {
 		return ""
 	}
@@ -374,7 +374,7 @@ func (gb *GoBrew) getGobrewVersion() string {
 }
 
 func (gb *GoBrew) getGolangVersions() (result []string) {
-	data := doRequest(gb.gobrewTags)
+	data := doRequest(gb.GobrewTags)
 	if len(data) == 0 {
 		return
 	}

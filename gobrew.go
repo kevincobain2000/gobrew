@@ -44,17 +44,13 @@ type Command interface {
 
 // GoBrew struct
 type GoBrew struct {
-	rootDir           string
-	installDir        string
-	versionsDir       string
-	currentDir        string
-	currentBinDir     string
-	currentGoDir      string
-	downloadsDir      string
-	registryPathUrl   string
-	gobrewDownloadUrl string
-	gobrewTags        string
-	gobrewVersionsUrl string
+	installDir    string
+	versionsDir   string
+	currentDir    string
+	currentBinDir string
+	currentGoDir  string
+	downloadsDir  string
+	Config
 }
 
 type Config struct {
@@ -69,17 +65,13 @@ type Config struct {
 func NewGoBrew(config Config) GoBrew {
 	installDir := filepath.Join(config.RootDir, goBrewDir)
 	gb := GoBrew{
-		rootDir:           config.RootDir,
-		installDir:        installDir,
-		versionsDir:       filepath.Join(installDir, "versions"),
-		currentDir:        filepath.Join(installDir, "current"),
-		currentBinDir:     filepath.Join(installDir, "current", "bin"),
-		currentGoDir:      filepath.Join(installDir, "current", "go"),
-		downloadsDir:      filepath.Join(installDir, "downloads"),
-		registryPathUrl:   config.RegistryPathUrl,
-		gobrewDownloadUrl: config.GobrewDownloadUrl,
-		gobrewTags:        config.GobrewTags,
-		gobrewVersionsUrl: config.GobrewVersionsUrl,
+		Config:        config,
+		installDir:    installDir,
+		versionsDir:   filepath.Join(installDir, "versions"),
+		currentDir:    filepath.Join(installDir, "current"),
+		currentBinDir: filepath.Join(installDir, "current", "bin"),
+		currentGoDir:  filepath.Join(installDir, "current", "go"),
+		downloadsDir:  filepath.Join(installDir, "downloads"),
 	}
 
 	return gb
@@ -348,7 +340,7 @@ func (gb *GoBrew) Upgrade(currentVersion string) {
 
 	mkdirTemp, _ := os.MkdirTemp("", "gobrew")
 	tmpFile := filepath.Join(mkdirTemp, "gobrew"+fileExt)
-	downloadUrl, _ := url.JoinPath(gb.gobrewDownloadUrl, "gobrew-"+gb.getArch()+fileExt)
+	downloadUrl, _ := url.JoinPath(gb.GobrewDownloadUrl, "gobrew-"+gb.getArch()+fileExt)
 	utils.CheckError(
 		utils.DownloadWithProgress(downloadUrl, "gobrew"+fileExt, mkdirTemp),
 		"[Error] Download GoBrew failed")
