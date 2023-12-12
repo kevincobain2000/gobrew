@@ -410,6 +410,7 @@ func (gb *GoBrew) getGolangVersions() (result []string) {
 func doRequest(url string) (data []byte) {
 	client := &http.Client{
 		Transport: &http.Transport{
+			Proxy: http.ProxyFromEnvironment,
 			Dial: (&net.Dialer{
 				Timeout: 5 * time.Second,
 			}).Dial,
