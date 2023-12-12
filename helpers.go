@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"net"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -14,7 +13,6 @@ import (
 	"runtime"
 	"sort"
 	"strings"
-	"time"
 
 	"github.com/Masterminds/semver"
 	"github.com/c4milo/unpackit"
@@ -408,16 +406,7 @@ func (gb *GoBrew) getGolangVersions() (result []string) {
 }
 
 func doRequest(url string) (data []byte) {
-	client := &http.Client{
-		Transport: &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-			Dial: (&net.Dialer{
-				Timeout: 5 * time.Second,
-			}).Dial,
-			TLSHandshakeTimeout: 5 * time.Second,
-		},
-		Timeout: 10 * time.Second,
-	}
+	client := &http.Client{}
 	request, err := http.NewRequest("GET", url, nil)
 	utils.CheckError(err, "==> [Error] Cannot create request")
 
