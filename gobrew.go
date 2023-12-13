@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -18,9 +19,10 @@ import (
 
 const (
 	goBrewDir           string = ".gobrew"
-	defaultRegistryPath string = "https://go.dev/dl/"
-	goBrewDownloadUrl   string = "https://github.com/kevincobain2000/gobrew/releases/latest/download/"
-	goBrewTagsApi       string = "https://raw.githubusercontent.com/kevincobain2000/gobrew/json/golang-tags.json"
+	DefaultRegistryPath string = "https://go.dev/dl/"
+	DownloadUrl         string = "https://github.com/kevincobain2000/gobrew/releases/latest/download/"
+	TagsApi                    = "https://raw.githubusercontent.com/kevincobain2000/gobrew/json/golang-tags.json"
+	VersionsUrl         string = "https://api.github.com/repos/kevincobain2000/gobrew/releases/latest"
 )
 
 // check GoBrew implement is Command interface
@@ -42,20 +44,28 @@ type Command interface {
 
 // GoBrew struct
 type GoBrew struct {
-	homeDir       string
 	installDir    string
 	versionsDir   string
 	currentDir    string
 	currentBinDir string
 	currentGoDir  string
 	downloadsDir  string
+	Config
+}
+
+type Config struct {
+	RootDir           string
+	RegistryPathUrl   string
+	GobrewDownloadUrl string
+	GobrewTags        string
+	GobrewVersionsUrl string
 }
 
 // NewGoBrew instance
-func NewGoBrew(homeDir string) GoBrew {
-	installDir := filepath.Join(homeDir, goBrewDir)
+func NewGoBrew(config Config) GoBrew {
+	installDir := filepath.Join(config.RootDir, goBrewDir)
 	gb := GoBrew{
-		homeDir:       homeDir,
+		Config:        config,
 		installDir:    installDir,
 		versionsDir:   filepath.Join(installDir, "versions"),
 		currentDir:    filepath.Join(installDir, "current"),
@@ -330,9 +340,9 @@ func (gb *GoBrew) Upgrade(currentVersion string) {
 
 	mkdirTemp, _ := os.MkdirTemp("", "gobrew")
 	tmpFile := filepath.Join(mkdirTemp, "gobrew"+fileExt)
-	url := goBrewDownloadUrl + "gobrew-" + gb.getArch() + fileExt
+	downloadUrl, _ := url.JoinPath(gb.GobrewDownloadUrl, "gobrew-"+gb.getArch()+fileExt)
 	utils.CheckError(
-		utils.DownloadWithProgress(url, "gobrew"+fileExt, mkdirTemp),
+		utils.DownloadWithProgress(downloadUrl, "gobrew"+fileExt, mkdirTemp),
 		"[Error] Download GoBrew failed")
 
 	source, err := os.Open(tmpFile)

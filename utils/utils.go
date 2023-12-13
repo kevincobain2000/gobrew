@@ -17,22 +17,27 @@ func DownloadWithProgress(url string, tarName string, destFolder string) (err er
 	if err != nil {
 		return err
 	}
+
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return err
 	}
 
 	defer func(body io.ReadCloser) {
-		_ = body.Close()
+		if err = body.Close(); err != nil {
+			color.Errorln("==> [Error]: failed close response body", err.Error())
+		}
 	}(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("%s returned status code %d", url, resp.StatusCode)
 	}
 
-	f, _ := os.OpenFile(destTarPath, os.O_CREATE|os.O_WRONLY, 0644)
+	f, _ := os.OpenFile(destTarPath, os.O_CREATE|os.O_WRONLY, 0o644)
 	defer func(f *os.File) {
-		_ = f.Close()
+		if err = f.Close(); err != nil {
+			color.Errorln("==> [Error]: failed close file", err.Error())
+		}
 	}(f)
 
 	bar := progressbar.DefaultBytes(

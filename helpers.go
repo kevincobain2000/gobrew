@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -155,13 +156,8 @@ func (gb *GoBrew) print(message string, shouldPrint bool) {
 func (gb *GoBrew) existsVersion(version string) bool {
 	path := filepath.Join(gb.versionsDir, version, "go")
 	_, err := os.Stat(path)
-	if err == nil {
-		return true
-	}
-	if os.IsNotExist(err) {
-		return false
-	}
-	return false
+
+	return err == nil
 }
 
 func (gb *GoBrew) cleanVersionDir(version string) {
@@ -320,11 +316,7 @@ func (gb *GoBrew) getVersionDir(version string) string {
 func (gb *GoBrew) downloadAndExtract(version string) {
 	tarName := "go" + version + "." + gb.getArch() + tarNameExt
 
-	registryPath := defaultRegistryPath
-	if p := os.Getenv("GOBREW_REGISTRY"); p != "" {
-		registryPath = p
-	}
-	downloadURL := registryPath + tarName
+	downloadURL, _ := url.JoinPath(gb.RegistryPathUrl, tarName)
 	color.Infoln("==> [Info] Downloading from:", downloadURL)
 
 	dstDownloadDir := filepath.Join(gb.downloadsDir)
@@ -332,7 +324,7 @@ func (gb *GoBrew) downloadAndExtract(version string) {
 	err := utils.DownloadWithProgress(downloadURL, tarName, dstDownloadDir)
 
 	if err != nil {
-		gb.cleanVersionDir(version)
+		gb.cleanDownloadsDir()
 		color.Infoln("==> [Info] Downloading version failed:", err)
 		color.Errorln("==> [Error]: Please check connectivity to url:", downloadURL)
 		os.Exit(1)
@@ -349,10 +341,9 @@ func (gb *GoBrew) downloadAndExtract(version string) {
 		// clean up dir
 		gb.cleanVersionDir(version)
 		color.Infoln("==> [Info] Extract failed:", err)
-		color.Errorln("==> [Error]: Please check if version exists from url:", downloadURL)
 		os.Exit(1)
 	}
-	color.Infoln("[Success] Extract to", gb.getVersionDir(version))
+	color.Infoln("==> [Success] Extract to", gb.getVersionDir(version))
 }
 
 func (gb *GoBrew) changeSymblinkGoBin(version string) {
@@ -368,8 +359,7 @@ func (gb *GoBrew) changeSymblinkGo(version string) {
 }
 
 func (gb *GoBrew) getGobrewVersion() string {
-	url := "https://api.github.com/repos/kevincobain2000/gobrew/releases/latest"
-	data := doRequest(url)
+	data := doRequest(gb.GobrewVersionsUrl)
 	if len(data) == 0 {
 		return ""
 	}
@@ -384,7 +374,7 @@ func (gb *GoBrew) getGobrewVersion() string {
 }
 
 func (gb *GoBrew) getGolangVersions() (result []string) {
-	data := doRequest(goBrewTagsApi)
+	data := doRequest(gb.GobrewTags)
 	if len(data) == 0 {
 		return
 	}
