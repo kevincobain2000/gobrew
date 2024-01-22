@@ -22,14 +22,15 @@
 
 # Build Status
 
-| Branch          | Status                                                                                                                                                  |
-| :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| master          | ![CI](https://github.com/kevincobain2000/gobrew/actions/workflows/build.yml/badge.svg)                                                                  |
-| Coverage        | [![coveritup](https://coveritup.app/embed/kevincobain2000/gobrew?branch=master&type=coverage)](https://coveritup.app/kevincobain2000/gobrew)            |
-| Binary Size     | [![coveritup](https://coveritup.app/embed/kevincobain2000/gobrew?branch=master&type=go-binary-size)](https://coveritup.app/kevincobain2000/gobrew)      |
-| Mod Dependecies | [![coveritup](https://coveritup.app/embed/kevincobain2000/gobrew?branch=master&type=go-mod-dependencies)](https://coveritup.app/kevincobain2000/gobrew) |
-| Unit Test Time  | [![coveritup](https://coveritup.app/embed/kevincobain2000/gobrew?branch=master&type=unit-test-run-time)](https://coveritup.app/kevincobain2000/gobrew)  |
-| Average PR Days | [![coveritup](https://coveritup.app/embed/kevincobain2000/gobrew?branch=master&type=average-pr-days)](https://coveritup.app/kevincobain2000/gobrew)     |
+![CI](https://github.com/kevincobain2000/gobrew/actions/workflows/build.yml/badge.svg)
+![coverage](https://coveritup.app/badge?org=kevincobain2000&repo=gobrew&type=coverage&branch=master)
+![build-time](https://coveritup.app/badge?org=kevincobain2000&repo=gobrew&type=build-time&branch=master)
+![go-binary-size](https://coveritup.app/badge?org=kevincobain2000&repo=gobrew&type=go-binary-size&branch=master)
+![unit-test-run-time](https://coveritup.app/badge?org=kevincobain2000&repo=gobrew&type=unit-test-run-time&branch=master)
+
+![go-mod-dependencies](https://coveritup.app/badge?org=kevincobain2000&repo=gobrew&type=go-mod-dependencies&branch=master)
+![go-sec-issues](https://coveritup.app/badge?org=kevincobain2000&repo=gobrew&type=go-sec-issues&branch=master)
+
 
 
 
