@@ -31,12 +31,12 @@
 ![go-mod-dependencies](https://coveritup.app/badge?org=kevincobain2000&repo=gobrew&type=go-mod-dependencies&branch=master)
 ![go-sec-issues](https://coveritup.app/badge?org=kevincobain2000&repo=gobrew&type=go-sec-issues&branch=master)
 
-![coverage](https://coveritup.app/chart?org=kevincobain2000&repo=gobrew&type=coverage&branch=master&output=svg&width=200&height=200&line=fill)
-![build-time](https://coveritup.app/chart?org=kevincobain2000&repo=gobrew&type=build-time&branch=master&output=svg&width=200&height=200)
-![go-binary-size](https://coveritup.app/chart?org=kevincobain2000&repo=gobrew&type=go-binary-size&branch=master&output=svg&width=200&height=200&line=fill)
-![go-mod-dependencies](https://coveritup.app/chart?org=kevincobain2000&repo=gobrew&type=go-mod-dependencies&branch=master&output=svg&width=200&height=200)
-![go-sec-issues](https://coveritup.app/chart?org=kevincobain2000&repo=gobrew&type=go-sec-issues&branch=master&output=svg&width=200&height=200&line=fill)
-![unit-test-run-time](https://coveritup.app/chart?org=kevincobain2000&repo=gobrew&type=unit-test-run-time&branch=master&output=svg&width=200&height=200)
+![coverage](https://coveritup.app/chart?org=kevincobain2000&repo=gobrew&type=coverage&branch=master&output=svg&width=160&height=160&line=fill)
+![build-time](https://coveritup.app/chart?org=kevincobain2000&repo=gobrew&type=build-time&branch=master&output=svg&width=160&height=160)
+![go-binary-size](https://coveritup.app/chart?org=kevincobain2000&repo=gobrew&type=go-binary-size&branch=master&output=svg&width=160&height=160&line=fill)
+![go-mod-dependencies](https://coveritup.app/chart?org=kevincobain2000&repo=gobrew&type=go-mod-dependencies&branch=master&output=svg&width=160&height=160)
+![go-sec-issues](https://coveritup.app/chart?org=kevincobain2000&repo=gobrew&type=go-sec-issues&branch=master&output=svg&width=160&height=160&line=fill)
+![unit-test-run-time](https://coveritup.app/chart?org=kevincobain2000&repo=gobrew&type=unit-test-run-time&branch=master&output=svg&width=160&height=160)
 
 
 
