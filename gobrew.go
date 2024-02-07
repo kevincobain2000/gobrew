@@ -6,10 +6,8 @@ import (
 	"io/fs"
 	"net/url"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
-	"runtime"
 	"sort"
 	"strconv"
 	"strings"
@@ -268,26 +266,10 @@ func (gb *GoBrew) ListRemoteVersions(print bool) map[string][]string {
 
 // CurrentVersion get current version from symb link
 func (gb *GoBrew) CurrentVersion() string {
-	// https://github.com/golang/go/issues/63703
-	var fp string
-	if runtime.GOOS == "windows" {
-		cmd := fmt.Sprintf(
-			"Get-Item -Path %s | Select-Object -ExpandProperty Target",
-			gb.currentBinDir,
-		)
-		output, err := exec.Command("powershell", "/c", cmd).CombinedOutput()
-		if err != nil {
-			return "None"
-		}
-		fp = strings.TrimSpace(string(output))
-	} else {
-		var err error
-		fp, err = filepath.EvalSymlinks(gb.currentBinDir)
-		if err != nil {
-			return "None"
-		}
+	fp, err := evalSymlinks(gb.currentBinDir)
+	if err != nil {
+		return "None"
 	}
-
 	version := strings.TrimSuffix(fp, filepath.Join("go", "bin"))
 	version = filepath.Base(version)
 	if version == "." {

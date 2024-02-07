@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -350,27 +349,13 @@ func (gb *GoBrew) downloadAndExtract(version string) {
 func (gb *GoBrew) changeSymblinkGoBin(version string) {
 	goBinDst := filepath.Join(gb.versionsDir, version, "/go/bin")
 	_ = os.RemoveAll(gb.currentBinDir)
-	if runtime.GOOS == "windows" {
-		utils.CheckError(
-			exec.Command("cmd", "/c", "mklink", "/J", gb.currentBinDir, goBinDst).Run(),
-			"==> [Error]: symbolic link failed",
-		)
-		return
-	}
-	utils.CheckError(os.Symlink(goBinDst, gb.currentBinDir), "==> [Error]: symbolic link failed")
+	symlink(goBinDst, gb.currentBinDir)
 }
 
 func (gb *GoBrew) changeSymblinkGo(version string) {
 	_ = os.RemoveAll(gb.currentGoDir)
 	versionGoDir := filepath.Join(gb.versionsDir, version, "go")
-	if runtime.GOOS == "windows" {
-		utils.CheckError(
-			exec.Command("cmd", "/c", "mklink", "/J", gb.currentGoDir, versionGoDir).Run(),
-			"==> [Error]: symbolic link failed",
-		)
-		return
-	}
-	utils.CheckError(os.Symlink(versionGoDir, gb.currentGoDir), "==> [Error]: symbolic link failed")
+	symlink(versionGoDir, gb.currentGoDir)
 }
 
 func (gb *GoBrew) getGobrewVersion() string {
