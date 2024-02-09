@@ -6,6 +6,8 @@ on:
       - '**/*.sum'
       - '**/*.yml'
   push:
+    tags-ignore:
+      - '**'
     paths:
       - '**/*.go'
       - '**/*.mod'
