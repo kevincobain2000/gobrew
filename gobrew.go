@@ -266,11 +266,10 @@ func (gb *GoBrew) ListRemoteVersions(print bool) map[string][]string {
 
 // CurrentVersion get current version from symb link
 func (gb *GoBrew) CurrentVersion() string {
-	fp, err := filepath.EvalSymlinks(gb.currentBinDir)
+	fp, err := evalSymlinks(gb.currentBinDir)
 	if err != nil {
 		return "None"
 	}
-
 	version := strings.TrimSuffix(fp, filepath.Join("go", "bin"))
 	version = filepath.Base(version)
 	if version == "." {
