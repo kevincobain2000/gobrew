@@ -367,3 +367,4 @@ export GOPATH="$HOME/.gobrew/current/go"
 - v1.9.5 - bug
 - v1.9.8 - bug fix where 1.21 is not detected as 1.21.0
 - v1.10.0 - bug fixes for wrong gobrew version on windows
+- v1.10.6 - fix for powershell
