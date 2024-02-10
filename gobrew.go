@@ -20,9 +20,14 @@ import (
 const (
 	goBrewDir           string = ".gobrew"
 	DefaultRegistryPath string = "https://go.dev/dl/"
-	DownloadUrl         string = "https://github.com/kevincobain2000/gobrew/releases/latest/download/"
-	TagsApi                    = "https://raw.githubusercontent.com/kevincobain2000/gobrew/json/golang-tags.json"
-	VersionsUrl         string = "https://api.github.com/repos/kevincobain2000/gobrew/releases/latest"
+	DownloadURL         string = "https://github.com/kevincobain2000/gobrew/releases/latest/download/"
+	TagsAPI                    = "https://raw.githubusercontent.com/kevincobain2000/gobrew/json/golang-tags.json"
+	VersionsURL         string = "https://api.github.com/repos/kevincobain2000/gobrew/releases/latest"
+)
+
+const (
+	NoneVersion = "None"
+	ProgramName = "gobrew"
 )
 
 // check GoBrew implement is Command interface
@@ -31,7 +36,7 @@ var _ Command = (*GoBrew)(nil)
 // Command ...
 type Command interface {
 	ListVersions()
-	ListRemoteVersions(print bool) map[string][]string
+	ListRemoteVersions(bool) map[string][]string
 	CurrentVersion() string
 	Uninstall(version string)
 	Install(version string) string
@@ -55,10 +60,10 @@ type GoBrew struct {
 
 type Config struct {
 	RootDir           string
-	RegistryPathUrl   string
-	GobrewDownloadUrl string
+	RegistryPathURL   string
+	GobrewDownloadURL string
 	GobrewTags        string
-	GobrewVersionsUrl string
+	GobrewVersionsURL string
 }
 
 // NewGoBrew instance
@@ -85,7 +90,7 @@ func (gb *GoBrew) Interactive(ask bool) {
 	latestVersion := gb.getLatestVersion()
 	latestMajorVersion := extractMajorVersion(latestVersion)
 
-	modVersion := "None"
+	modVersion := NoneVersion
 	if gb.hasModFile() {
 		modVersion = gb.getModVersion()
 		modVersion = extractMajorVersion(modVersion)
@@ -93,11 +98,11 @@ func (gb *GoBrew) Interactive(ask bool) {
 
 	fmt.Println()
 
-	if currentVersion == "None" {
+	if currentVersion == NoneVersion {
 		color.Warnln("GO Installed Version", ".......", currentVersion)
 	} else {
 		var labels []string
-		if modVersion != "None" && currentMajorVersion != modVersion {
+		if modVersion != NoneVersion && currentMajorVersion != modVersion {
 			labels = append(labels, "not same as go.mod")
 		}
 		if currentVersion != latestVersion {
@@ -111,7 +116,7 @@ func (gb *GoBrew) Interactive(ask bool) {
 		color.Successln("GO Installed Version", ".......", currentVersion+label)
 	}
 
-	if modVersion != "None" && latestMajorVersion != modVersion {
+	if modVersion != NoneVersion && latestMajorVersion != modVersion {
 		label := " " + color.FgYellow.Render("(not latest)")
 		color.Successln("GO go.mod Version", "   .......", modVersion+label)
 	} else {
@@ -121,7 +126,7 @@ func (gb *GoBrew) Interactive(ask bool) {
 	color.Successln("GO Latest Version", "   .......", latestVersion)
 	fmt.Println()
 
-	if currentVersion == "None" {
+	if currentVersion == NoneVersion {
 		color.Warnln("GO is not installed.")
 		c := true
 		if ask {
@@ -133,7 +138,7 @@ func (gb *GoBrew) Interactive(ask bool) {
 		return
 	}
 
-	if modVersion != "None" && currentMajorVersion != modVersion {
+	if modVersion != NoneVersion && currentMajorVersion != modVersion {
 		color.Warnf("GO Installed Version (%s) and go.mod Version (%s) are different.\n", currentMajorVersion, modVersion)
 		c := true
 		if ask {
@@ -268,12 +273,12 @@ func (gb *GoBrew) ListRemoteVersions(print bool) map[string][]string {
 func (gb *GoBrew) CurrentVersion() string {
 	fp, err := evalSymlinks(gb.currentBinDir)
 	if err != nil {
-		return "None"
+		return NoneVersion
 	}
 	version := strings.TrimSuffix(fp, filepath.Join("go", "bin"))
 	version = filepath.Base(version)
 	if version == "." {
-		return "None"
+		return NoneVersion
 	}
 	return version
 }
@@ -294,7 +299,7 @@ func (gb *GoBrew) Uninstall(version string) {
 
 // Install the given version of go
 func (gb *GoBrew) Install(version string) string {
-	if version == "" || version == "None" {
+	if version == "" || version == NoneVersion {
 		color.Errorln("[Error] No version provided")
 		os.Exit(1)
 	}
@@ -337,11 +342,11 @@ func (gb *GoBrew) Upgrade(currentVersion string) {
 		return
 	}
 
-	mkdirTemp, _ := os.MkdirTemp("", "gobrew")
-	tmpFile := filepath.Join(mkdirTemp, "gobrew"+fileExt)
-	downloadUrl, _ := url.JoinPath(gb.GobrewDownloadUrl, "gobrew-"+gb.getArch()+fileExt)
+	mkdirTemp, _ := os.MkdirTemp("", ProgramName)
+	tmpFile := filepath.Join(mkdirTemp, ProgramName+fileExt)
+	downloadURL, _ := url.JoinPath(gb.GobrewDownloadURL, "gobrew-"+gb.getArch()+fileExt)
 	utils.CheckError(
-		utils.DownloadWithProgress(downloadUrl, "gobrew"+fileExt, mkdirTemp),
+		utils.DownloadWithProgress(downloadURL, ProgramName+fileExt, mkdirTemp),
 		"[Error] Download GoBrew failed")
 
 	source, err := os.Open(tmpFile)
@@ -351,7 +356,7 @@ func (gb *GoBrew) Upgrade(currentVersion string) {
 		utils.CheckError(os.Remove(source.Name()), "==> [Error] Cannot remove tmp file:")
 	}(source)
 
-	goBrewFile := filepath.Join(gb.installDir, "bin", "gobrew"+fileExt)
+	goBrewFile := filepath.Join(gb.installDir, "bin", ProgramName+fileExt)
 	removeFile(goBrewFile)
 	destination, err := os.Create(goBrewFile)
 	utils.CheckError(err, "==> [Error] Cannot open file")

@@ -72,7 +72,7 @@ func (gb *GoBrew) getGroupedVersion(versions []string, print bool) map[string][]
 	sort.Sort(semver.Collection(versionsSemantic))
 
 	// match 1.0.0 or 2.0.0
-	reTopVersion, _ := regexp.Compile("[0-9]+.0.0")
+	reTopVersion := regexp.MustCompile("[0-9]+.0.0")
 
 	for _, versionSemantic := range versionsSemantic {
 		maxPerLine := 0
@@ -101,7 +101,6 @@ func (gb *GoBrew) getGroupedVersion(versions []string, print bool) map[string][]
 			if v, err := semver.NewVersion(r); err == nil {
 				groupedVersionsSemantic = append(groupedVersionsSemantic, v)
 			}
-
 		}
 		// sort semantic versions
 		sort.Sort(semver.Collection(groupedVersionsSemantic))
@@ -169,7 +168,7 @@ func (gb *GoBrew) cleanDownloadsDir() {
 }
 
 func (gb *GoBrew) judgeVersion(version string) string {
-	judgedVersion := "None"
+	judgedVersion := NoneVersion
 	rcBetaOk := false
 	reRcOrBeta := regexp.MustCompile("beta.*|rc.*")
 
@@ -194,7 +193,7 @@ func (gb *GoBrew) judgeVersion(version string) string {
 		modVersion := gb.getModVersion()
 		// if modVersion is like 1.19, 1.20, 1.21 then appened @latest to it
 		if strings.Count(modVersion, ".") == 1 {
-			modVersion = modVersion + "@latest"
+			modVersion += "@latest"
 		}
 		return gb.judgeVersion(modVersion)
 	}
@@ -214,7 +213,7 @@ func (gb *GoBrew) judgeVersion(version string) string {
 			}
 		}
 		if len(versionsSemantic) == 0 {
-			return "None"
+			return NoneVersion
 		}
 
 		// sort semantic versions
@@ -225,7 +224,7 @@ func (gb *GoBrew) judgeVersion(version string) string {
 			// get last element
 			if version == "dev-latest" {
 				if len(judgedVersions) == 0 {
-					return "None"
+					return NoneVersion
 				}
 				// Filter versions containing "rc" or "beta"
 				filteredVersions := gb.filterVersions(judgedVersions, []string{"rc", "beta"})
@@ -252,7 +251,7 @@ func (gb *GoBrew) judgeVersion(version string) string {
 		return gb.judgeVersion(latest)
 	}
 
-	if judgedVersion != "None" {
+	if judgedVersion != NoneVersion {
 		// check if judgedVersion is in the groupedVersions
 		if _, ok := groupedVersions[judgedVersion]; ok {
 			// get last item in the groupedVersions excluding rc and beta
@@ -274,7 +273,7 @@ func (gb *GoBrew) judgeVersion(version string) string {
 }
 
 func (gb *GoBrew) hasModFile() bool {
-	modFilePath := filepath.Join("go.mod")
+	modFilePath := "go.mod"
 	_, err := os.Stat(modFilePath)
 	if err == nil {
 		return true
@@ -285,14 +284,15 @@ func (gb *GoBrew) hasModFile() bool {
 	return false
 }
 
+// nolint:gocritic
 // read go.mod file and extract version
 // Do not use go to get the version as go list -m -f '{{.GoVersion}}'
 // Because go might not be installed
 func (gb *GoBrew) getModVersion() string {
-	modFilePath := filepath.Join("go.mod")
+	modFilePath := "go.mod"
 	modFile, err := os.Open(modFilePath)
 	if err != nil {
-		return "None"
+		return NoneVersion
 	}
 	defer func(modFile *os.File) {
 		_ = modFile.Close()
@@ -310,7 +310,7 @@ func (gb *GoBrew) getModVersion() string {
 		color.Errorln(err)
 		os.Exit(1)
 	}
-	return "None"
+	return NoneVersion
 }
 
 func (gb *GoBrew) mkDirs(version string) {
@@ -342,10 +342,10 @@ func (gb *GoBrew) filterVersions(versions []string, contains []string) []string 
 func (gb *GoBrew) downloadAndExtract(version string) {
 	tarName := "go" + version + "." + gb.getArch() + tarNameExt
 
-	downloadURL, _ := url.JoinPath(gb.RegistryPathUrl, tarName)
+	downloadURL, _ := url.JoinPath(gb.RegistryPathURL, tarName)
 	color.Infoln("==> [Info] Downloading from:", downloadURL)
 
-	dstDownloadDir := filepath.Join(gb.downloadsDir)
+	dstDownloadDir := gb.downloadsDir
 	color.Infoln("==> [Info] Downloading to:", dstDownloadDir)
 	err := utils.DownloadWithProgress(downloadURL, tarName, dstDownloadDir)
 
@@ -385,7 +385,7 @@ func (gb *GoBrew) changeSymblinkGo(version string) {
 }
 
 func (gb *GoBrew) getGobrewVersion() string {
-	data := doRequest(gb.GobrewVersionsUrl)
+	data := doRequest(gb.GobrewVersionsURL)
 	if len(data) == 0 {
 		return ""
 	}
@@ -421,12 +421,13 @@ func (gb *GoBrew) getGolangVersions() (result []string) {
 	return
 }
 
+// nolint:gocritic
 func doRequest(url string) (data []byte) {
 	client := &http.Client{}
 	request, err := http.NewRequest("GET", url, nil)
 	utils.CheckError(err, "==> [Error] Cannot create request")
 
-	request.Header.Set("User-Agent", "gobrew")
+	request.Header.Set("User-Agent", ProgramName)
 
 	response, err := client.Do(request)
 	utils.CheckError(err, "==> [Error] Cannot get response")

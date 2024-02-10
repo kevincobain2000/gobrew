@@ -62,7 +62,6 @@ func TestJudgeVersion(t *testing.T) {
 			gb := setupGobrew(t, ts)
 			version := gb.judgeVersion(test.version)
 			assert.Equal(t, test.wantVersion, version)
-
 		})
 	}
 	t.Log("test finished")

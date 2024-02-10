@@ -13,13 +13,13 @@ import (
 
 func setupGobrew(t *testing.T, ts *httptest.Server) GoBrew {
 	tags, _ := url.JoinPath(ts.URL, "golang-tags.json")
-	versionUrl, _ := url.JoinPath(ts.URL, "latest")
+	versionURL, _ := url.JoinPath(ts.URL, "latest")
 	config := Config{
 		RootDir:           t.TempDir(),
-		RegistryPathUrl:   ts.URL,
-		GobrewDownloadUrl: ts.URL,
+		RegistryPathURL:   ts.URL,
+		GobrewDownloadURL: ts.URL,
 		GobrewTags:        tags,
-		GobrewVersionsUrl: versionUrl,
+		GobrewVersionsURL: versionURL,
 	}
 	gb := NewGoBrew(config)
 	return gb
@@ -59,7 +59,7 @@ func TestUpgrade(t *testing.T) {
 	binaryDir := filepath.Join(gb.installDir, "bin")
 	_ = os.MkdirAll(binaryDir, os.ModePerm)
 
-	baseName := "gobrew" + fileExt
+	baseName := ProgramName + fileExt
 	binaryFile := filepath.Join(binaryDir, baseName)
 
 	if oldFile, err := os.Create(binaryFile); err == nil {
@@ -84,7 +84,7 @@ func TestDoNotUpgradeLatestVersion(t *testing.T) {
 	binaryDir := filepath.Join(gb.installDir, "bin")
 	_ = os.MkdirAll(binaryDir, os.ModePerm)
 
-	baseName := "gobrew" + fileExt
+	baseName := ProgramName + fileExt
 	binaryFile := filepath.Join(binaryDir, baseName)
 
 	currentVersion := gb.getGobrewVersion()
@@ -109,7 +109,7 @@ func TestInteractive(t *testing.T) {
 
 	currentVersion := gb.CurrentVersion()
 	latestVersion := gb.getLatestVersion()
-	assert.Equal(t, "None", currentVersion)
+	assert.Equal(t, NoneVersion, currentVersion)
 	assert.NotEqual(t, currentVersion, latestVersion)
 
 	gb.Interactive(false)
@@ -148,7 +148,7 @@ func TestGoBrew_CurrentVersion(t *testing.T) {
 	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
 	defer ts.Close()
 	gb := setupGobrew(t, ts)
-	assert.Equal(t, true, gb.CurrentVersion() == "None")
+	assert.Equal(t, true, gb.CurrentVersion() == NoneVersion)
 	gb.Install("1.19")
 	gb.Use("1.19")
 	assert.Equal(t, true, gb.CurrentVersion() == "1.19")

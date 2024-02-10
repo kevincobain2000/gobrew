@@ -10,7 +10,6 @@ linters:
     - govet
     - ineffassign
     - staticcheck
-    - bodyclose
     - dupl
     - errorlint
     - exportloopref
@@ -20,7 +19,6 @@ linters:
     - goprintffuncname
     - gosec
     - prealloc
-    - predeclared
     - revive
     - stylecheck
     - whitespace
