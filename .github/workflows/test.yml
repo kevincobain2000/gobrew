@@ -21,4 +21,3 @@ jobs:
           version: ${{ matrix.go-version }}
       - name: Test
         run: go test -v ./...
-        shell: bash
