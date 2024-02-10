@@ -11,6 +11,7 @@ mkdir -p $GOBREW_BIN_DIR
 
 GOBREW_ARCH_BIN=''
 GOBREW_BIN='gobrew'
+GOBREW_VERSION=${1:-latest}
 
 THISOS=$(uname -s)
 ARCH=$(uname -m)
@@ -56,10 +57,15 @@ if [ -z "$GOBREW_ARCH_BIN" ]; then
    exit 1
 fi
 
-echo "Installing gobrew from: https://github.com/kevincobain2000/gobrew/releases/latest/download/$GOBREW_ARCH_BIN ..."
+DOWNLOAD_URL="https://github.com/kevincobain2000/gobrew/releases/download/$GOBREW_VERSION/$GOBREW_ARCH_BIN"
+if [ "$GOBREW_VERSION" = "latest" ]; then
+  DOWNLOAD_URL="https://github.com/kevincobain2000/gobrew/releases/$GOBREW_VERSION/download/$GOBREW_ARCH_BIN"
+fi
+
+echo "Installing gobrew from: $DOWNLOAD_URL"
 echo ""
 
-curl -kL --progress-bar https://github.com/kevincobain2000/gobrew/releases/latest/download/$GOBREW_ARCH_BIN -o $GOBREW_BIN_DIR/$GOBREW_BIN
+curl -kL --progress-bar $DOWNLOAD_URL -o $GOBREW_BIN_DIR/$GOBREW_BIN
 
 chmod +x $GOBREW_BIN_DIR/$GOBREW_BIN
 
