@@ -224,7 +224,8 @@ func (gb *GoBrew) judgeVersion(version string) string {
 				if len(judgedVersions) == 0 {
 					return "None"
 				}
-				return judgedVersions[len(judgedVersions)-1]
+
+				return judgedVersions[0]
 			}
 
 			// loop in reverse
