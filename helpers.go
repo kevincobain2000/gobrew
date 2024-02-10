@@ -284,7 +284,6 @@ func (gb *GoBrew) hasModFile() bool {
 	return false
 }
 
-// nolint:gocritic
 // read go.mod file and extract version
 // Do not use go to get the version as go list -m -f '{{.GoVersion}}'
 // Because go might not be installed
@@ -308,7 +307,7 @@ func (gb *GoBrew) getModVersion() string {
 
 	if err = scanner.Err(); err != nil {
 		color.Errorln(err)
-		os.Exit(1)
+		os.Exit(1) // nolint:gocritic
 	}
 	return NoneVersion
 }
@@ -421,7 +420,6 @@ func (gb *GoBrew) getGolangVersions() (result []string) {
 	return
 }
 
-// nolint:gocritic
 func doRequest(url string) (data []byte) {
 	client := &http.Client{}
 	request, err := http.NewRequest("GET", url, nil)
@@ -439,12 +437,12 @@ func doRequest(url string) (data []byte) {
 	if response.StatusCode == http.StatusTooManyRequests ||
 		response.StatusCode == http.StatusForbidden {
 		color.Errorln("==> [Error] Rate limit exhausted")
-		os.Exit(1)
+		os.Exit(1) // nolint:gocritic
 	}
 
 	if response.StatusCode != http.StatusOK {
 		color.Errorln("==> [Error] Cannot read response:", response.Status)
-		os.Exit(1)
+		os.Exit(1) // nolint:gocritic
 	}
 
 	data, err = io.ReadAll(response.Body)
