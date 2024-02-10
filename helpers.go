@@ -199,6 +199,9 @@ func (gb *GoBrew) judgeVersion(version string) string {
 		return gb.judgeVersion(modVersion)
 	}
 	groupedVersions := gb.ListRemoteVersions(false) // donot print
+
+	// latest will pick the latest version excluding rc and beta
+	// dev-latest will first remove rc and beta from the list of versions and then pick the latest version
 	if version == "latest" || version == "dev-latest" {
 		groupedVersionKeys := make([]string, 0, len(groupedVersions))
 		for groupedVersionKey := range groupedVersions {
