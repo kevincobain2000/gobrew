@@ -199,6 +199,9 @@ func (gb *GoBrew) judgeVersion(version string) string {
 		return gb.judgeVersion(modVersion)
 	}
 	groupedVersions := gb.ListRemoteVersions(false) // donot print
+
+	// latest will pick the latest version excluding rc and beta
+	// dev-latest will first remove rc and beta from the list of versions and then pick the latest version
 	if version == "latest" || version == "dev-latest" {
 		groupedVersionKeys := make([]string, 0, len(groupedVersions))
 		for groupedVersionKey := range groupedVersions {
@@ -224,7 +227,16 @@ func (gb *GoBrew) judgeVersion(version string) string {
 				if len(judgedVersions) == 0 {
 					return "None"
 				}
-				return judgedVersions[len(judgedVersions)-1]
+				// Filter versions containing "rc" or "beta"
+				filteredVersions := gb.filterVersions(judgedVersions, []string{"rc", "beta"})
+
+				// Get the last element of the filtered slice
+				var lastVersion string
+				if len(filteredVersions) > 0 {
+					lastVersion = filteredVersions[len(filteredVersions)-1]
+				}
+
+				return lastVersion
 			}
 
 			// loop in reverse
@@ -311,6 +323,20 @@ func (gb *GoBrew) mkDirs(version string) {
 
 func (gb *GoBrew) getVersionDir(version string) string {
 	return filepath.Join(gb.versionsDir, version)
+}
+
+// filterVersions returns a new slice containing only the elements that contain any of the substrings in contains
+func (gb *GoBrew) filterVersions(versions []string, contains []string) []string {
+	var filtered []string
+	for _, version := range versions {
+		for _, contain := range contains {
+			if strings.Contains(version, contain) {
+				filtered = append(filtered, version)
+				break // Move to the next version after the first match
+			}
+		}
+	}
+	return filtered
 }
 
 func (gb *GoBrew) downloadAndExtract(version string) {
