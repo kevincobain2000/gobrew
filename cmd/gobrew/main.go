@@ -67,7 +67,7 @@ func init() {
 			// Check if the major version is 1 and the minor version is 21 or greater
 			if majorVersionNum == 1 && minorVersionNum >= 21 {
 				// Modify the versionArg to include ".0"
-				versionArg = versionArg + ".0"
+				versionArg += ".0"
 			}
 		}
 	}
@@ -88,10 +88,10 @@ func main() {
 
 	config := gobrew.Config{
 		RootDir:           rootDir,
-		RegistryPathUrl:   registryPath,
-		GobrewDownloadUrl: gobrew.DownloadUrl,
-		GobrewTags:        gobrew.TagsApi,
-		GobrewVersionsUrl: gobrew.VersionsUrl,
+		RegistryPathURL:   registryPath,
+		GobrewDownloadURL: gobrew.DownloadURL,
+		GobrewTags:        gobrew.TagsAPI,
+		GobrewVersionsURL: gobrew.VersionsURL,
 	}
 
 	gb := gobrew.NewGoBrew(config)
@@ -108,7 +108,7 @@ func main() {
 		gb.ListRemoteVersions(true)
 	case "install":
 		gb.Install(versionArg)
-		if gb.CurrentVersion() == "None" {
+		if gb.CurrentVersion() == gobrew.NoneVersion {
 			gb.Use(versionArg)
 		}
 	case "use":
