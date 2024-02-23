@@ -95,16 +95,26 @@ Simply use command `gobrew` from any dir. It will auto detect if Go version is s
 ### Full Usage
 
 
-Smart and interactive command
+**Smart command**
 
 ```sh
 gobrew
 ```
 
+**Specific commands**
+
 Will install and set Go
 
 ```sh
 gobrew use 1.16
+```
+
+Will automatically install and set Go
+
+```sh
+gobrew use mod #from go.mod
+gobrew use latest #latest stable
+gobrew use dev-latest #latest of latest including rc|beta
 ```
 
 Will only install it
