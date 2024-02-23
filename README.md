@@ -239,7 +239,7 @@ List available versions
 ```sh
 ╰─$ gobrew help
 
-gobrew 1.6.3
+gobrew 1.10.7
 
 Usage:
 
@@ -265,14 +265,15 @@ Examples:
     gobrew use 1.16@dev-latest     # use go version latest of 1.16, including rc and beta
                                    # Note: rc and beta become no longer latest upon major release
 
+    gobrew use mod                 # use go version listed in the go.mod file
     gobrew use latest              # use go version latest available
-
     gobrew use dev-latest          # use go version latest avalable, including rc and beta
 
 Installation Path:
-    # Add gobrew to your ~/.bashrc or ~/.zshrc
-    export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
-    export GOROOT="$HOME/.gobrew/current/go"
+
+# Add gobrew to your ~/.bashrc or ~/.zshrc
+export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
+export GOROOT="$HOME/.gobrew/current/go"
 ```
 
 # Uninstall gobrew
