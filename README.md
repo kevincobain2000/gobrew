@@ -95,16 +95,26 @@ Simply use command `gobrew` from any dir. It will auto detect if Go version is s
 ### Full Usage
 
 
-Smart and interactive command
+**Smart command**
 
 ```sh
 gobrew
 ```
 
+**Specific commands**
+
 Will install and set Go
 
 ```sh
 gobrew use 1.16
+```
+
+Will automatically install and set Go
+
+```sh
+gobrew use mod #from go.mod
+gobrew use latest #latest stable
+gobrew use dev-latest #latest of latest including rc|beta
 ```
 
 Will only install it
@@ -137,91 +147,101 @@ List installed versions
 1.17.7
 1.17.8
 1.18
-1.18.1*
+1.18.1
 1.18beta1
 1.18rc1
+1.22.0*
+1.22rc1
+1.22rc2
 
-current: 1.18.1
+current: 1.20.0
 ```
 
 List available versions
 
 ```sh
 ╰─$ gobrew ls-remote
-[Info] Fetching remote versions
-1	1.0.1  1.0.2  1.0.3
+==> [Info] Fetching remote versions
+1.5	1.5.0  1.5.1  1.5.2  1.5.3  1.5.4
+	1.5beta1  1.5beta2  1.5beta3  1.5rc1
 
-1.1	1.1.0  1.1.1  1.1.2  1.1rc2  1.1rc3
-
-1.2	1.2.0  1.2.1  1.2.2  1.2rc2  1.2rc3  1.2rc4
-	1.2rc5
-
-1.3	1.3.0  1.3.1  1.3.2  1.3.3  1.3beta1  1.3beta2
-	1.3rc1  1.3rc2
-
-1.4	1.4.0  1.4.1  1.4.2  1.4.3  1.4beta1  1.4rc1
-	1.4rc2
-
-1.5	1.5.0  1.5.1  1.5.2  1.5.3  1.5.4  1.5beta1
-	1.5beta2  1.5beta3  1.5rc1
-
-1.6	1.6.0  1.6.1  1.6.2  1.6.3  1.6.4  1.6beta1
-	1.6beta2  1.6rc1  1.6rc2
+1.6	1.6.0  1.6.1  1.6.2  1.6.3  1.6.4
+	1.6beta1  1.6beta2  1.6rc1  1.6rc2
 
 1.7	1.7.0  1.7.1  1.7.2  1.7.3  1.7.4
-	1.7.5  1.7.6  1.7beta1  1.7beta2  1.7rc1  1.7rc2  1.7rc3
-	1.7rc4  1.7rc5  1.7rc6
+	1.7.5  1.7.6
+	1.7beta1  1.7beta2  1.7rc1  1.7rc2  1.7rc3  1.7rc4
+	1.7rc5  1.7rc6
 
 1.8	1.8.0  1.8.1  1.8.2  1.8.3  1.8.4
-	1.8.5  1.8.6  1.8.7  1.8.5rc4  1.8.5rc5  1.8beta1  1.8beta2
-	1.8rc1  1.8rc2  1.8rc3
+	1.8.5  1.8.6  1.8.7
+	1.8beta1  1.8beta2  1.8rc1  1.8rc2  1.8rc3  1.8.5rc4
+	1.8.5rc5
 
 1.9	1.9.0  1.9.1  1.9.2  1.9.3  1.9.4
-	1.9.5  1.9.6  1.9.7  1.9beta1  1.9beta2  1.9rc1  1.9rc2
-
+	1.9.5  1.9.6  1.9.7
+	1.9beta1  1.9beta2  1.9rc1  1.9rc2
 
 1.10	1.10.0  1.10.1  1.10.2  1.10.3  1.10.4
-	1.10.5  1.10.6  1.10.7  1.10.8  1.10beta1  1.10beta2  1.10rc1
-	1.10rc2
+	1.10.5  1.10.6  1.10.7  1.10.8
+	1.10beta1  1.10beta2  1.10rc1  1.10rc2
 
 1.11	1.11.0  1.11.1  1.11.2  1.11.3  1.11.4
 	1.11.5  1.11.6  1.11.7  1.11.8  1.11.9  1.11.10
-	1.11.11  1.11.12  1.11.13  1.11beta1  1.11beta2  1.11beta3  1.11rc1
-	1.11rc2
+	1.11.11  1.11.12  1.11.13
+	1.11beta1  1.11beta2  1.11beta3  1.11rc1  1.11rc2
 
 1.12	1.12.0  1.12.1  1.12.2  1.12.3  1.12.4
 	1.12.5  1.12.6  1.12.7  1.12.8  1.12.9  1.12.10
 	1.12.11  1.12.12  1.12.13  1.12.14  1.12.15  1.12.16
-	1.12.17  1.12beta1  1.12beta2  1.12rc1
+	1.12.17
+	1.12beta1  1.12beta2  1.12rc1
 
 1.13	1.13.0  1.13.1  1.13.2  1.13.3  1.13.4
 	1.13.5  1.13.6  1.13.7  1.13.8  1.13.9  1.13.10
-	1.13.11  1.13.12  1.13.13  1.13.14  1.13.15  1.13beta1  1.13rc1
-	1.13rc2
+	1.13.11  1.13.12  1.13.13  1.13.14  1.13.15
+	1.13beta1  1.13rc1  1.13rc2
 
 1.14	1.14.0  1.14.1  1.14.2  1.14.3  1.14.4
 	1.14.5  1.14.6  1.14.7  1.14.8  1.14.9  1.14.10
-	1.14.11  1.14.12  1.14.13  1.14.14  1.14.15  1.14beta1  1.14rc1
-
+	1.14.11  1.14.12  1.14.13  1.14.14  1.14.15
+	1.14beta1  1.14rc1
 
 1.15	1.15.0  1.15.1  1.15.2  1.15.3  1.15.4
 	1.15.5  1.15.6  1.15.7  1.15.8  1.15.9  1.15.10
-	1.15.11  1.15.12  1.15.13  1.15.14  1.15.15  1.15beta1  1.15rc1
-	1.15rc2
+	1.15.11  1.15.12  1.15.13  1.15.14  1.15.15
+	1.15beta1  1.15rc1  1.15rc2
 
 1.16	1.16.0  1.16.1  1.16.2  1.16.3  1.16.4
 	1.16.5  1.16.6  1.16.7  1.16.8  1.16.9  1.16.10
-	1.16.11  1.16.12  1.16.13  1.16.14  1.16.15  1.16beta1  1.16rc1
-
+	1.16.11  1.16.12  1.16.13  1.16.14  1.16.15
+	1.16beta1  1.16rc1
 
 1.17	1.17.0  1.17.1  1.17.2  1.17.3  1.17.4
 	1.17.5  1.17.6  1.17.7  1.17.8  1.17.9  1.17.10
-	1.17.11  1.17.12  1.17beta1  1.17rc1  1.17rc2
+	1.17.11  1.17.12  1.17.13
+	1.17beta1  1.17rc1  1.17rc2
 
-1.18	1.18.0  1.18.1  1.18.2  1.18.3  1.18.4  1.18beta1
-	1.18beta2  1.18rc1
+1.18	1.18.0  1.18.1  1.18.2  1.18.3  1.18.4
+	1.18.5  1.18.6  1.18.7  1.18.8  1.18.9  1.18.10
+	1.18beta1  1.18beta2  1.18rc1
 
-1.19	1.19beta1  1.19rc1  1.19rc2
+1.19	1.19.0  1.19.1  1.19.2  1.19.3  1.19.4
+	1.19.5  1.19.6  1.19.7  1.19.8  1.19.9  1.19.10
+	1.19.11  1.19.12  1.19.13
+	1.19beta1  1.19rc1  1.19rc2
+
+1.20	1.20.0  1.20.1  1.20.2  1.20.3  1.20.4
+	1.20.5  1.20.6  1.20.7  1.20.8  1.20.9  1.20.10
+	1.20.11  1.20.12  1.20.13  1.20.14
+	1.20rc1  1.20rc2  1.20rc3
+
+1.21	1.21.0  1.21.1  1.21.2  1.21.3  1.21.4
+	1.21.5  1.21.6  1.21.7
+	1.21rc1  1.21rc2  1.21rc3  1.21rc4
+
+1.22	1.22.0
+	1.22rc1  1.22rc2
 ```
 
 # All commands
@@ -229,7 +249,7 @@ List available versions
 ```sh
 ╰─$ gobrew help
 
-gobrew 1.6.3
+gobrew 1.10.7
 
 Usage:
 
@@ -255,14 +275,15 @@ Examples:
     gobrew use 1.16@dev-latest     # use go version latest of 1.16, including rc and beta
                                    # Note: rc and beta become no longer latest upon major release
 
+    gobrew use mod                 # use go version listed in the go.mod file
     gobrew use latest              # use go version latest available
-
     gobrew use dev-latest          # use go version latest avalable, including rc and beta
 
 Installation Path:
-    # Add gobrew to your ~/.bashrc or ~/.zshrc
-    export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
-    export GOROOT="$HOME/.gobrew/current/go"
+
+# Add gobrew to your ~/.bashrc or ~/.zshrc
+export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
+export GOROOT="$HOME/.gobrew/current/go"
 ```
 
 # Uninstall gobrew
