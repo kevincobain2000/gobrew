@@ -65,7 +65,7 @@ fi
 echo "Installing gobrew from: $DOWNLOAD_URL"
 echo ""
 
-curl -kL --progress-bar $DOWNLOAD_URL -o $GOBREW_BIN_DIR/$GOBREW_BIN
+curl -L --progress-bar $DOWNLOAD_URL -o $GOBREW_BIN_DIR/$GOBREW_BIN
 
 chmod +x $GOBREW_BIN_DIR/$GOBREW_BIN
 
