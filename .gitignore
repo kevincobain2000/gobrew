@@ -8,7 +8,7 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
-# diskcache directory 
+# diskcache directory
 cache/*
 vendor/*
 
@@ -20,3 +20,5 @@ dist/
 bin/
 build/
 gobrew
+coverage.xml
+main
