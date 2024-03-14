@@ -33,69 +33,42 @@ jobs:
           go install github.com/securego/gosec/v2/cmd/gosec@latest
           go install github.com/axw/gocov/gocov@latest
           go install github.com/AlekSi/gocov-xml@latest
-        shell: bash
-      - name: Test
-        run: |
-          BUILD_START=$SECONDS
-          go test -race -v ./... -count=1 -coverprofile=coverage.out
-          echo SCORE=$(($SECONDS-BUILD_START)) >> "$GITHUB_ENV"
-        shell: bash
-      - uses: kevincobain2000/action-coveritup@v1
+          curl -sLk https://raw.githubusercontent.com/kevincobain2000/cover-totalizer/master/install.sh | sh
+
+      - uses: kevincobain2000/action-coveritup@v2
         with:
           type: unit-test-run-time
+          command: go test -race -v ./... -count=1 -coverprofile=coverage.out
+          record: runtime
 
       - name: Coverage
-        run: |
-          go tool cover -html=coverage.out -o coverage.html
-          gocov convert coverage.out | gocov-xml > coverage.xml
-      - name: Build
-        run: |
-          BUILD_START=$SECONDS
-          go build -ldflags '-s -w' -o main ./cmd/gobrew
-          echo SCORE=$(($SECONDS-BUILD_START)) >> "$GITHUB_ENV"
-        shell: bash
+        run: gocov convert coverage.out | gocov-xml > coverage.xml
 
-      - uses: kevincobain2000/action-coveritup@v1
+      - uses: kevincobain2000/action-coveritup@v2
+        with:
+           command: ./cover-totalizer coverage.xml
+
+      - uses: kevincobain2000/action-coveritup@v2
         with:
           type: build-time
+          command: go build -ldflags '-s -w' -o main ./cmd/gobrew
+          record: runtime
 
-      - name: Coveritup
-        run: |
-          curl -sLk https://raw.githubusercontent.com/kevincobain2000/cover-totalizer/master/install.sh | sh
-          echo SCORE=`./cover-totalizer coverage.xml` >> "$GITHUB_ENV"
-        shell: bash
-
-      - uses: kevincobain2000/action-coveritup@v1
-        with:
-          type: coverage
-
-      - name: Go Binary Size
-        run: |
-          echo SCORE=`du -sk main | awk '{print $1}'` >> "$GITHUB_ENV"
-        shell: bash
-
-      - uses: kevincobain2000/action-coveritup@v1
+      - uses: kevincobain2000/action-coveritup@v2
         with:
           type: go-binary-size
+          command: du -sk main | awk '{print $1}'
 
-      - name: Number of dependencies
-        run: |
-          echo SCORE=`go list -m all|wc -l|awk '{$1=$1};1'` >> "$GITHUB_ENV"
-        shell: bash
-
-      - uses: kevincobain2000/action-coveritup@v1
+      - uses: kevincobain2000/action-coveritup@v2
         with:
           type: go-mod-dependencies
+          command: go list -m all|wc -l|awk '{$1=$1};1'
 
-      - name: Number of GO Sec issues
-        run: |
-          echo SCORE=`gosec -no-fail --quiet ./...|grep Issues | tail -1 |awk '{print $3}'` >> "$GITHUB_ENV"
-        shell: bash
-
-      - uses: kevincobain2000/action-coveritup@v1
+      - uses: kevincobain2000/action-coveritup@v2
         with:
           type: go-sec-issues
+          command: gosec -no-fail --quiet ./...|grep Issues | tail -1 |awk '{print $3}'
 
-      - uses: kevincobain2000/action-coveritup@v1
+      - uses: kevincobain2000/action-coveritup@v2
         with:
           pr_comment: true
