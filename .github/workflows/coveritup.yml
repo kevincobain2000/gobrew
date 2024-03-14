@@ -47,6 +47,7 @@ jobs:
       - uses: kevincobain2000/action-coveritup@v2
         with:
            command: ./cover-totalizer coverage.xml
+           type: coverage
 
       - uses: kevincobain2000/action-coveritup@v2
         with:
