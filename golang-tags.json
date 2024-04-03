@@ -2970,6 +2970,16 @@
     }
   },
   {
+    "ref": "refs/tags/go1.21.9",
+    "node_id": "MDM6UmVmMjMwOTY5NTk6cmVmcy90YWdzL2dvMS4yMS45",
+    "url": "https://api.github.com/repos/golang/go/git/refs/tags/go1.21.9",
+    "object": {
+      "sha": "d8392e69973a64d96534d544d1f8ac2defc1bc64",
+      "type": "commit",
+      "url": "https://api.github.com/repos/golang/go/git/commits/d8392e69973a64d96534d544d1f8ac2defc1bc64"
+    }
+  },
+  {
     "ref": "refs/tags/go1.22rc1",
     "node_id": "MDM6UmVmMjMwOTY5NTk6cmVmcy90YWdzL2dvMS4yMnJjMQ==",
     "url": "https://api.github.com/repos/golang/go/git/refs/tags/go1.22rc1",
@@ -3007,6 +3017,16 @@
       "sha": "db6097f8cbaceaed02051850d2411c88b763a0c3",
       "type": "commit",
       "url": "https://api.github.com/repos/golang/go/git/commits/db6097f8cbaceaed02051850d2411c88b763a0c3"
+    }
+  },
+  {
+    "ref": "refs/tags/go1.22.2",
+    "node_id": "MDM6UmVmMjMwOTY5NTk6cmVmcy90YWdzL2dvMS4yMi4y",
+    "url": "https://api.github.com/repos/golang/go/git/refs/tags/go1.22.2",
+    "object": {
+      "sha": "dddf0ae40fa0c1223aba191d73a44425a08e1035",
+      "type": "commit",
+      "url": "https://api.github.com/repos/golang/go/git/commits/dddf0ae40fa0c1223aba191d73a44425a08e1035"
     }
   },
   {
