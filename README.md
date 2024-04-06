@@ -27,6 +27,7 @@
 ![build-time](https://coveritup.app/badge?org=kevincobain2000&repo=gobrew&type=build-time&branch=master)
 ![go-binary-size](https://coveritup.app/badge?org=kevincobain2000&repo=gobrew&type=go-binary-size&branch=master)
 ![unit-test-run-time](https://coveritup.app/badge?org=kevincobain2000&repo=gobrew&type=unit-test-run-time&branch=master)
+![allocs-per-op](https://coveritup.app/badge?org=kevincobain2000&repo=gobrew&type=allocs-per-op&branch=master)
 
 ![go-mod-dependencies](https://coveritup.app/badge?org=kevincobain2000&repo=gobrew&type=go-mod-dependencies&branch=master)
 ![go-sec-issues](https://coveritup.app/badge?org=kevincobain2000&repo=gobrew&type=go-sec-issues&branch=master)
@@ -37,7 +38,7 @@
 ![go-mod-dependencies](https://coveritup.app/chart?org=kevincobain2000&repo=gobrew&type=go-mod-dependencies&branch=master&output=svg&width=160&height=160)
 ![go-sec-issues](https://coveritup.app/chart?org=kevincobain2000&repo=gobrew&type=go-sec-issues&branch=master&output=svg&width=160&height=160&line=fill)
 ![unit-test-run-time](https://coveritup.app/chart?org=kevincobain2000&repo=gobrew&type=unit-test-run-time&branch=master&output=svg&width=160&height=160)
-
+![allocs-per-op](https://coveritup.app/chart?org=kevincobain2000&repo=gobrew&type=allocs-per-op&output=svg&width=160&height=160&branch=master)
 
 
 

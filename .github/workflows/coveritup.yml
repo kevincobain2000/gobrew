@@ -45,7 +45,7 @@ jobs:
         uses: kevincobain2000/action-coveritup@v2
         with:
           type: allocs-per-op
-          command: go test -count 1 -bench=. ./... -benchmem|grep allocs|awk ' { print $(--NF)}'
+          command: go test -count 1 -bench=. ./... -benchmem|grep allocs|awk '{ print $(--NF)}'
           record: score
           metric: alloc
 
