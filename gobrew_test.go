@@ -26,10 +26,10 @@ func setupGobrew[T testing.TB](t T, ts *httptest.Server) GoBrew {
 }
 
 func BenchmarkInstallGo(t *testing.B) {
+	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
+	gb := setupGobrew(t, ts)
+	defer ts.Close()
 	for i := 0; i < t.N; i++ {
-		ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
-		defer ts.Close()
-		gb := setupGobrew(t, ts)
 		gb.Install("1.9")
 		exists := gb.existsVersion("1.9")
 		assert.Equal(t, true, exists)
