@@ -49,7 +49,7 @@
 **Using** curl (mac, linux) - recommended
 
 ```sh
-curl -sLk https://raw.githubusercontent.com/kevincobain2000/gobrew/master/git.io.sh | sh
+curl -sL https://raw.githubusercontent.com/kevincobain2000/gobrew/master/git.io.sh | sh
 ```
 
 **Using** powershell (windows)
