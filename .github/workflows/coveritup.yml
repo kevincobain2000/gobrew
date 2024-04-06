@@ -41,6 +41,13 @@ jobs:
           type: unit-test-run-time
           command: go test -race -v ./... -count=1 -coverprofile=coverage.out
           record: runtime
+      - name: Benchmark Test
+        uses: kevincobain2000/action-coveritup@v2
+        with:
+          type: allocs-per-op
+          command: go test  -count 2 -bench=. ./... -benchmem|grep "allocs"|tail -1|awk '{print $7}'
+          record: score
+          metric: alloc
 
       - name: Coverage
         run: gocov convert coverage.out | gocov-xml > coverage.xml
