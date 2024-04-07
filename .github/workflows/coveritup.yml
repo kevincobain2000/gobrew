@@ -1,18 +1,4 @@
-on:
-  pull_request:
-    paths:
-      - '**/*.go'
-      - '**/*.mod'
-      - '**/*.sum'
-      - '**/*.yml'
-  push:
-    tags-ignore:
-      - '**'
-    paths:
-      - '**/*.go'
-      - '**/*.mod'
-      - '**/*.sum'
-      - '**/*.yml'
+on: [push, pull_request]
 
 name: "Cover It Up"
 jobs:
