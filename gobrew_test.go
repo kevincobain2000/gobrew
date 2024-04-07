@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func setupGobrew(t *testing.T, ts *httptest.Server) GoBrew {
+func setupGobrew[T testing.TB](t T, ts *httptest.Server) GoBrew {
 	tags, _ := url.JoinPath(ts.URL, "golang-tags.json")
 	versionURL, _ := url.JoinPath(ts.URL, "latest")
 	config := Config{
@@ -23,6 +23,17 @@ func setupGobrew(t *testing.T, ts *httptest.Server) GoBrew {
 	}
 	gb := NewGoBrew(config)
 	return gb
+}
+
+func BenchmarkInstallGo(t *testing.B) {
+	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
+	gb := setupGobrew(t, ts)
+	defer ts.Close()
+	for i := 0; i < t.N; i++ {
+		gb.Install("1.9")
+		exists := gb.existsVersion("1.9")
+		assert.Equal(t, true, exists)
+	}
 }
 
 func TestInstallAndExistVersion(t *testing.T) {
