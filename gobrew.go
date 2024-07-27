@@ -14,6 +14,7 @@ import (
 
 	"github.com/Masterminds/semver"
 	"github.com/gookit/color"
+
 	"github.com/kevincobain2000/gobrew/utils"
 )
 
@@ -304,6 +305,10 @@ func (gb *GoBrew) Install(version string) string {
 		os.Exit(1)
 	}
 	version = gb.judgeVersion(version)
+	if version == NoneVersion {
+		color.Errorln("[Error] Version non exists")
+		os.Exit(1)
+	}
 	if gb.existsVersion(version) {
 		color.Infof("==> [Info] Version: %s exists\n", version)
 		return version

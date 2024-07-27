@@ -42,6 +42,10 @@ func TestJudgeVersion(t *testing.T) {
 			version:     "1.18@dev-latest",
 			wantVersion: "1.18.10",
 		},
+		{
+			version:     "go1.18",
+			wantVersion: "None",
+		},
 		// following 2 tests fail upon new version release
 		// commenting out for now as the tool is stable
 		// {
