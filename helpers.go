@@ -12,12 +12,14 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"slices"
 	"sort"
 	"strings"
 
 	"github.com/Masterminds/semver"
 	"github.com/c4milo/unpackit"
 	"github.com/gookit/color"
+
 	"github.com/kevincobain2000/gobrew/utils"
 )
 
@@ -269,6 +271,17 @@ func (gb *GoBrew) judgeVersion(version string) string {
 		}
 	}
 
+	exists := false
+	for _, value := range groupedVersions {
+		if slices.Contains(value, version) {
+			exists = true
+			break
+		}
+	}
+	if !exists {
+		return NoneVersion
+	}
+
 	return version
 }
 
@@ -350,7 +363,7 @@ func (gb *GoBrew) downloadAndExtract(version string) {
 
 	if err != nil {
 		gb.cleanDownloadsDir()
-		color.Infoln("==> [Info] Downloading version failed:", err)
+		color.Errorln("==> [Error] Downloading version failed:", err)
 		color.Errorln("==> [Error]: Please check connectivity to url:", downloadURL)
 		os.Exit(1)
 	}
@@ -365,7 +378,7 @@ func (gb *GoBrew) downloadAndExtract(version string) {
 	if err != nil {
 		// clean up dir
 		gb.cleanVersionDir(version)
-		color.Infoln("==> [Info] Extract failed:", err)
+		color.Errorln("==> [Info] Extract failed:", err)
 		os.Exit(1)
 	}
 	color.Infoln("==> [Success] Extract to", gb.getVersionDir(version))
@@ -452,7 +465,7 @@ func doRequest(url string) (data []byte) {
 }
 
 func (gb *GoBrew) extract(srcTar string, dstDir string) error {
-	//#nosec G304
+	// #nosec G304
 	file, err := os.Open(srcTar)
 	if err != nil {
 		return err
