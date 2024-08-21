@@ -15,6 +15,7 @@ import (
 	"slices"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/Masterminds/semver"
 	"github.com/c4milo/unpackit"
@@ -412,6 +413,10 @@ func (gb *GoBrew) getGobrewVersion() string {
 }
 
 func (gb *GoBrew) getGolangVersions() (result []string) {
+	if result = gb.getVersionsFromCache(); len(result) > 0 {
+		return result
+	}
+
 	data := doRequest(gb.GobrewTags)
 	if len(data) == 0 {
 		return
@@ -430,7 +435,9 @@ func (gb *GoBrew) getGolangVersions() (result []string) {
 		}
 	}
 
-	return
+	gb.saveVersionsToCache(result)
+
+	return result
 }
 
 func doRequest(url string) (data []byte) {
@@ -513,4 +520,53 @@ func askForConfirmation(s string) bool {
 			return false
 		}
 	}
+}
+
+type Cache struct {
+	Timestamp string   `json:"timestamp"`
+	Versions  []string `json:"versions"`
+}
+
+func (gb *GoBrew) getVersionsFromCache() []string {
+	cacheFile := filepath.Join(gb.installDir, "cache.json")
+	if _, err := os.Stat(cacheFile); err == nil {
+		data, e := os.ReadFile(cacheFile)
+		if e != nil {
+			return []string{}
+		}
+
+		var cache Cache
+		if e = json.Unmarshal(data, &cache); e != nil {
+			return []string{}
+		}
+
+		timestamp, e := time.Parse(time.RFC3339, cache.Timestamp)
+		if e != nil {
+			return []string{}
+		}
+
+		// cache for 20 minutes
+		if time.Now().UTC().After(timestamp.Add(20 * time.Minute)) {
+			return []string{}
+		}
+
+		return cache.Versions
+	}
+
+	return []string{}
+}
+
+func (gb *GoBrew) saveVersionsToCache(versions []string) {
+	cacheFile := filepath.Join(gb.installDir, "cache.json")
+	var cache = Cache{
+		Timestamp: time.Now().UTC().Format(time.RFC3339),
+		Versions:  versions,
+	}
+	data, err := json.Marshal(&cache)
+	if err != nil {
+		return
+	}
+
+	// #nosec G306
+	_ = os.WriteFile(cacheFile, data, 0600)
 }
