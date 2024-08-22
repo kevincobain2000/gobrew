@@ -355,40 +355,25 @@ export GOROOT="$HOME/.gobrew/current/go"
 export GOPATH="$HOME/.gobrew/current/go"
 ```
 
-# Change Log
+# MAJOR CHANGE LOG
 
 - v1.2.0 - Added rc|beta versions, appended at the end of list
-- v1.4.1 - Go mod updated to 1.17
 - v1.5.0 - Mac M1 support
-- v1.5.1 - Oops
 - v1.5.5 - arm|M1|darwin support added
-- v1.5.6 - README updated
-- v1.5.7 - Exit code fixed
 - v1.5.8 - Show download progress and use Go's compression instead of tar command
-- v1.5.9 - oops
 - v1.6.0 - Added support for @latest and @dev-latest and progress bar for download
-- v1.6.1 - Bug on use
 - v1.6.2 - Using goreleaser #35 by @juev
 - v1.6.3 - Added latest and dev-latest
 - v1.6.4 - Github action publish
 - v1.6.7 - Fixes rate limit issue
-- v1.6.9 - Fixes #52, download error on status != 200
 - v1.7.4 - Added 2 new options `gobrew version` and `gobrew prune`
 - v1.7.5 - Fixes strange output on `gobrew use latest`
-- v1.7.7 - Windows support?
 - v1.7.8 - Windows support, self-update fixes
 - v1.7.9 - Windows fix ups and bash-completions
 - v1.8.0 - Windows support, including actions
-- v1.8.2 - Prune old go versions, bug fix and `go.mod` auto detection
 - v1.8.4 - Light background terminal support
 - v1.8.6 - Fixes where 1.20.0 was detected as 1.20
 - v1.9.0 - v1.8.6 ~ v1.9.0, updates colors packages, fixes UT issues for Github status codes
-- v1.9.1 - Minor logging fixes
-- v1.9.2 - Minor log message updated
 - v1.9.4 - `gobrew` interactive
-- v1.9.5 - bug
 - v1.9.8 - bug fix where 1.21 is not detected as 1.21.0
-- v1.10.0 - bug fixes for wrong gobrew version on windows
-- v1.10.6 - fix for powershell
-- v1.10.7 - fixes where `dev-latest` was not from `rc` or `beta`. `go get -u` deps updated and use go `1.22` in `go.mod`
-- v1.10.8 - `ls-remote` is blazing fast, cached.
+- v1.10.10 - `ls-remote` is blazing fast, cached.
