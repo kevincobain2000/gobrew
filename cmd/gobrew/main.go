@@ -46,7 +46,7 @@ func init() {
 
 	if !isArgAllowed() {
 		log.Println("[Info] Invalid usage")
-		flag.Usage()
+		Usage()
 		return
 	}
 
