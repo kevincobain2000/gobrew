@@ -528,9 +528,12 @@ type Cache struct {
 }
 
 func (gb *GoBrew) getVersionsFromCache() []string {
-	cacheFile := filepath.Join(gb.installDir, "cache.json")
-	if _, err := os.Stat(cacheFile); err == nil {
-		data, e := os.ReadFile(cacheFile)
+	if gb.DisableCache {
+		return []string{}
+	}
+
+	if _, err := os.Stat(gb.cacheFile); err == nil {
+		data, e := os.ReadFile(gb.cacheFile)
 		if e != nil {
 			return []string{}
 		}
@@ -545,8 +548,8 @@ func (gb *GoBrew) getVersionsFromCache() []string {
 			return []string{}
 		}
 
-		// cache for 20 minutes
-		if time.Now().UTC().After(timestamp.Add(20 * time.Minute)) {
+		// cache for gb.TTL duration
+		if time.Now().UTC().After(timestamp.Add(gb.TTL)) {
 			return []string{}
 		}
 
@@ -557,6 +560,10 @@ func (gb *GoBrew) getVersionsFromCache() []string {
 }
 
 func (gb *GoBrew) saveVersionsToCache(versions []string) {
+	if gb.DisableCache {
+		return
+	}
+
 	cacheFile := filepath.Join(gb.installDir, "cache.json")
 	var cache = Cache{
 		Timestamp: time.Now().UTC().Format(time.RFC3339),

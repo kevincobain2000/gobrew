@@ -2,7 +2,7 @@
 
 package main
 
-const usageMsg = `
+const usageMsg string = `
     # Add gobrew to your ~/.bashrc or ~/.zshrc
     export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
     export GOROOT="$HOME/.gobrew/current/go"

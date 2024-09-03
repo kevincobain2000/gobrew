@@ -11,6 +11,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/Masterminds/semver"
 	"github.com/gookit/color"
@@ -56,6 +57,7 @@ type GoBrew struct {
 	currentBinDir string
 	currentGoDir  string
 	downloadsDir  string
+	cacheFile     string
 	Config
 }
 
@@ -65,11 +67,18 @@ type Config struct {
 	GobrewDownloadURL string
 	GobrewTags        string
 	GobrewVersionsURL string
+
+	// cache settings
+	TTL          time.Duration
+	DisableCache bool
+	ClearCache   bool
 }
 
 // NewGoBrew instance
 func NewGoBrew(config Config) GoBrew {
 	installDir := filepath.Join(config.RootDir, goBrewDir)
+	cacheFile := filepath.Join(installDir, "cache.json")
+
 	gb := GoBrew{
 		Config:        config,
 		installDir:    installDir,
@@ -78,6 +87,11 @@ func NewGoBrew(config Config) GoBrew {
 		currentBinDir: filepath.Join(installDir, "current", "bin"),
 		currentGoDir:  filepath.Join(installDir, "current", "go"),
 		downloadsDir:  filepath.Join(installDir, "downloads"),
+		cacheFile:     cacheFile,
+	}
+
+	if gb.ClearCache {
+		_ = os.RemoveAll(gb.cacheFile)
 	}
 
 	return gb

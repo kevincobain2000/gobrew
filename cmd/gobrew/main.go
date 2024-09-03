@@ -1,11 +1,15 @@
 package main
 
 import (
-	"flag"
+	"fmt"
 	"log"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
+	"time"
+
+	flag "github.com/spf13/pflag"
 
 	"github.com/kevincobain2000/gobrew"
 	"github.com/kevincobain2000/gobrew/utils"
@@ -15,6 +19,11 @@ var args []string
 var actionArg = ""
 var versionArg = ""
 var version = "dev"
+
+var help bool
+var clearCache bool
+var ttl time.Duration
+var disableCache bool
 
 var allowedArgs = []string{
 	"h",
@@ -37,11 +46,25 @@ func init() {
 
 	if !isArgAllowed() {
 		log.Println("[Info] Invalid usage")
-		log.Print(usage())
+		flag.Usage()
 		return
 	}
 
+	flag.BoolVarP(&disableCache, "disable-cache", "d", false, "disable local cache")
+	flag.BoolVarP(&clearCache, "clear-cache", "c", false, "clear local cache")
+	flag.DurationVarP(&ttl, "ttl", "t", 20*time.Minute, "set cache duration in minutes")
+
+	flag.BoolVarP(&help, "help", "h", false, "show usage message")
+
+	flag.Usage = Usage
+
 	flag.Parse()
+
+	if help {
+		Usage()
+		return
+	}
+
 	args = flag.Args()
 	if len(args) == 0 {
 		actionArg = "interactive"
@@ -92,6 +115,9 @@ func main() {
 		GobrewDownloadURL: gobrew.DownloadURL,
 		GobrewTags:        gobrew.TagsAPI,
 		GobrewVersionsURL: gobrew.VersionsURL,
+		TTL:               ttl,
+		DisableCache:      disableCache,
+		ClearCache:        clearCache,
 	}
 
 	gb := gobrew.NewGoBrew(config)
@@ -101,7 +127,7 @@ func main() {
 	case "noninteractive":
 		gb.Interactive(false)
 	case "h", "help":
-		log.Print(usage())
+		flag.Usage()
 	case "ls", "list":
 		gb.ListVersions()
 	case "ls-remote":
@@ -124,17 +150,22 @@ func main() {
 	}
 }
 
+// isArgAllowed checks if the arg is allowed
+// but ignored flags
+//
+// if the any arg is not allowed, it will return false
 func isArgAllowed() bool {
 	ok := true
-	if len(os.Args) > 1 {
-		_, ok = Find(allowedArgs, os.Args[1])
-		if !ok {
-			return false
+	for i := range os.Args {
+		if i == 0 {
+			continue
 		}
-	}
+		arg := os.Args[i]
+		if strings.HasPrefix(arg, "-") {
+			continue
+		}
 
-	if len(os.Args) > 2 {
-		_, ok = Find(allowedArgs, os.Args[1])
+		ok = Find(allowedArgs, arg)
 		if !ok {
 			return false
 		}
@@ -145,22 +176,21 @@ func isArgAllowed() bool {
 
 // Find takes a slice and looks for an element in it. If found it will
 // return it's key, otherwise it will return -1 and a bool of false.
-func Find(slice []string, val string) (int, bool) {
-	for i, item := range slice {
+func Find(slice []string, val string) bool {
+	r := regexp.MustCompile("([0-9]+).([0-9]+)*|beta.*|rc.*|latest")
+	if matches := r.FindString(val); matches != "" {
+		return true
+	}
+
+	for _, item := range slice {
 		if item == val {
-			return i, true
+			return true
 		}
 	}
-	return -1, false
+	return false
 }
 
-func usage() string {
-	usageMsg :=
-		`
-# Add gobrew to your ~/.bashrc or ~/.zshrc
-export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
-export GOROOT="$HOME/.gobrew/current/go"
-`
+var Usage = func() {
 	msg := `
 gobrew ` + version + `
 
@@ -177,6 +207,11 @@ Usage:
     gobrew prune                   Uninstall all go versions except current version
     gobrew version                 Show gobrew version
     gobrew help                    Show this message
+
+Options:
+    gobrew [--clear-cache | -c]   clear gobrew cache
+    gobrew [--disable-cache | -d] disable gobrew cache
+    gobrew [--ttl=20m | -t 20m]   set gobrew cache ttl, default 20m
 
 Examples:
     gobrew use 1.16                # use go version 1.16
@@ -195,5 +230,5 @@ Examples:
 Installation Path:
 ` + usageMsg
 
-	return msg
+	fmt.Fprintf(os.Stderr, "%s\n", msg)
 }
