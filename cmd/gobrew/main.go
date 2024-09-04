@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -15,7 +14,6 @@ import (
 	"github.com/kevincobain2000/gobrew/utils"
 )
 
-var args []string
 var actionArg = ""
 var versionArg = ""
 var version = "dev"
@@ -25,30 +23,24 @@ var clearCache bool
 var ttl time.Duration
 var disableCache bool
 
-var allowedArgs = []string{
-	"h",
-	"help",
-	"ls",
-	"list",
-	"ls-remote",
-	"install",
-	"use",
-	"uninstall",
-	"interactive",
-	"noninteractive",
-	"prune",
-	"version",
-	"self-update",
+var allowedArgs = map[string]struct{}{
+	"h":              {},
+	"help":           {},
+	"ls":             {},
+	"list":           {},
+	"ls-remote":      {},
+	"install":        {},
+	"use":            {},
+	"uninstall":      {},
+	"interactive":    {},
+	"noninteractive": {},
+	"prune":          {},
+	"version":        {},
+	"self-update":    {},
 }
 
 func init() {
 	log.SetFlags(0)
-
-	if !isArgAllowed() {
-		log.Println("[Info] Invalid usage")
-		Usage()
-		return
-	}
 
 	flag.BoolVarP(&disableCache, "disable-cache", "d", false, "disable local cache")
 	flag.BoolVarP(&clearCache, "clear-cache", "c", false, "clear local cache")
@@ -60,12 +52,18 @@ func init() {
 
 	flag.Parse()
 
+	args := flag.Args()
+	if !isArgAllowed(args) {
+		log.Println("[Info] Invalid usage")
+		Usage()
+		return
+	}
+
 	if help {
 		Usage()
 		return
 	}
 
-	args = flag.Args()
 	if len(args) == 0 {
 		actionArg = "interactive"
 	} else {
@@ -154,40 +152,13 @@ func main() {
 // but ignored flags
 //
 // if the any arg is not allowed, it will return false
-func isArgAllowed() bool {
-	ok := true
-	for i := range os.Args {
-		if i == 0 {
-			continue
-		}
-		arg := os.Args[i]
-		if strings.HasPrefix(arg, "-") {
-			continue
-		}
-
-		ok = Find(allowedArgs, arg)
-		if !ok {
-			return false
-		}
+func isArgAllowed(args []string) bool {
+	if len(args) > 0 {
+		_, ok := allowedArgs[args[0]]
+		return ok
 	}
 
-	return ok
-}
-
-// Find takes a slice and looks for an element in it. If found it will
-// return it's key, otherwise it will return -1 and a bool of false.
-func Find(slice []string, val string) bool {
-	r := regexp.MustCompile("([0-9]+).([0-9]+)*|beta.*|rc.*|latest")
-	if matches := r.FindString(val); matches != "" {
-		return true
-	}
-
-	for _, item := range slice {
-		if item == val {
-			return true
-		}
-	}
-	return false
+	return true
 }
 
 var Usage = func() {
