@@ -125,7 +125,7 @@ func main() {
 	case "noninteractive":
 		gb.Interactive(false)
 	case "h", "help":
-		flag.Usage()
+		Usage()
 	case "ls", "list":
 		gb.ListVersions()
 	case "ls-remote":
@@ -151,7 +151,7 @@ func main() {
 // isArgAllowed checks if the arg is allowed
 // but ignored flags
 //
-// if the any arg is not allowed, it will return false
+// we check only the first argument, the command
 func isArgAllowed(args []string) bool {
 	if len(args) > 0 {
 		_, ok := allowedArgs[args[0]]
