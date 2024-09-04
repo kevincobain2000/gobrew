@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/bin/bash
+
+set -euxo pipefail
 
 GOBREW_BIN_DIR=$HOME/.gobrew/bin
 
@@ -65,7 +67,7 @@ fi
 echo "Installing gobrew from: $DOWNLOAD_URL"
 echo ""
 
-curl -L --progress-bar $DOWNLOAD_URL -o $GOBREW_BIN_DIR/$GOBREW_BIN
+curl -L -f --progress-bar $DOWNLOAD_URL -o $GOBREW_BIN_DIR/$GOBREW_BIN
 
 chmod +x $GOBREW_BIN_DIR/$GOBREW_BIN
 
