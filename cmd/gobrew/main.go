@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gookit/color"
 	"github.com/spf13/pflag"
 
 	"github.com/kevincobain2000/gobrew"
@@ -23,22 +24,6 @@ var clearCache bool
 var ttl time.Duration
 var disableCache bool
 
-var allowedArgs = map[string]struct{}{
-	"h":              {},
-	"help":           {},
-	"ls":             {},
-	"list":           {},
-	"ls-remote":      {},
-	"install":        {},
-	"use":            {},
-	"uninstall":      {},
-	"interactive":    {},
-	"noninteractive": {},
-	"prune":          {},
-	"version":        {},
-	"self-update":    {},
-}
-
 func init() {
 	log.SetFlags(0)
 
@@ -49,26 +34,13 @@ func init() {
 
 	flag.BoolVarP(&help, "help", "h", false, "show usage message")
 
-	flag.Usage = Usage
-
 	if err := flag.Parse(os.Args[1:]); err != nil {
-		log.Println("[Info] Invalid usage")
+		color.Errorln("[Error] Invalid usage")
 		Usage()
-		return
+		os.Exit(2)
 	}
 
 	args := flag.Args()
-	if !isArgAllowed(args) {
-		log.Println("[Info] Invalid usage")
-		Usage()
-		return
-	}
-
-	if help {
-		Usage()
-		return
-	}
-
 	if len(args) == 0 {
 		actionArg = "interactive"
 	} else {
@@ -100,6 +72,11 @@ func init() {
 }
 
 func main() {
+	if help {
+		Usage()
+		return
+	}
+
 	rootDir := os.Getenv("GOBREW_ROOT")
 	if rootDir == "" {
 		var err error
@@ -150,20 +127,11 @@ func main() {
 		gb.Version(version)
 	case "self-update":
 		gb.Upgrade(version)
+	default:
+		color.Errorln("[Error] Invalid usage")
+		Usage()
+		os.Exit(2)
 	}
-}
-
-// isArgAllowed checks if the arg is allowed
-// but ignored flags
-//
-// we check only the first argument, the command
-func isArgAllowed(args []string) bool {
-	if len(args) > 0 {
-		_, ok := allowedArgs[args[0]]
-		return ok
-	}
-
-	return true
 }
 
 var Usage = func() {
