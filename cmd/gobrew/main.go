@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	flag "github.com/spf13/pflag"
+	"github.com/spf13/pflag"
 
 	"github.com/kevincobain2000/gobrew"
 	"github.com/kevincobain2000/gobrew/utils"
@@ -42,6 +42,7 @@ var allowedArgs = map[string]struct{}{
 func init() {
 	log.SetFlags(0)
 
+	flag := pflag.NewFlagSet("gobrew", pflag.ContinueOnError)
 	flag.BoolVarP(&disableCache, "disable-cache", "d", false, "disable local cache")
 	flag.BoolVarP(&clearCache, "clear-cache", "c", false, "clear local cache")
 	flag.DurationVarP(&ttl, "ttl", "t", 20*time.Minute, "set cache duration in minutes")
@@ -50,7 +51,11 @@ func init() {
 
 	flag.Usage = Usage
 
-	flag.Parse()
+	if err := flag.Parse(os.Args[1:]); err != nil {
+		log.Println("[Info] Invalid usage")
+		Usage()
+		return
+	}
 
 	args := flag.Args()
 	if !isArgAllowed(args) {
