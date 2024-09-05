@@ -5,7 +5,7 @@ set -euxo pipefail
 GOBREW_BIN_DIR=$HOME/.gobrew/bin
 
 # check if env GOBREW_ROOT is set
-if [ -n "$GOBREW_ROOT" ]; then
+if [ -n "${GOBREW_ROOT:-}" ]; then
   GOBREW_BIN_DIR=$GOBREW_ROOT/.gobrew/bin
 fi
 
