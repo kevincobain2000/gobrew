@@ -1,48 +1,46 @@
 package main
 
 import (
-	"flag"
+	"fmt"
 	"log"
 	"os"
 	"strconv"
 	"strings"
+	"time"
+
+	"github.com/gookit/color"
+	"github.com/spf13/pflag"
 
 	"github.com/kevincobain2000/gobrew"
 	"github.com/kevincobain2000/gobrew/utils"
 )
 
-var args []string
 var actionArg = ""
 var versionArg = ""
 var version = "dev"
 
-var allowedArgs = []string{
-	"h",
-	"help",
-	"ls",
-	"list",
-	"ls-remote",
-	"install",
-	"use",
-	"uninstall",
-	"interactive",
-	"noninteractive",
-	"prune",
-	"version",
-	"self-update",
-}
+var help bool
+var clearCache bool
+var ttl time.Duration
+var disableCache bool
 
 func init() {
 	log.SetFlags(0)
 
-	if !isArgAllowed() {
-		log.Println("[Info] Invalid usage")
-		log.Print(usage())
-		return
+	flag := pflag.NewFlagSet("gobrew", pflag.ContinueOnError)
+	flag.BoolVarP(&disableCache, "disable-cache", "d", false, "disable local cache")
+	flag.BoolVarP(&clearCache, "clear-cache", "c", false, "clear local cache")
+	flag.DurationVarP(&ttl, "ttl", "t", 20*time.Minute, "set cache duration in minutes")
+
+	flag.BoolVarP(&help, "help", "h", false, "show usage message")
+
+	if err := flag.Parse(os.Args[1:]); err != nil {
+		color.Errorln("[Error] Invalid usage")
+		Usage()
+		os.Exit(2)
 	}
 
-	flag.Parse()
-	args = flag.Args()
+	args := flag.Args()
 	if len(args) == 0 {
 		actionArg = "interactive"
 	} else {
@@ -74,6 +72,11 @@ func init() {
 }
 
 func main() {
+	if help {
+		Usage()
+		return
+	}
+
 	rootDir := os.Getenv("GOBREW_ROOT")
 	if rootDir == "" {
 		var err error
@@ -92,6 +95,9 @@ func main() {
 		GobrewDownloadURL: gobrew.DownloadURL,
 		GobrewTags:        gobrew.TagsAPI,
 		GobrewVersionsURL: gobrew.VersionsURL,
+		TTL:               ttl,
+		DisableCache:      disableCache,
+		ClearCache:        clearCache,
 	}
 
 	gb := gobrew.NewGoBrew(config)
@@ -101,7 +107,7 @@ func main() {
 	case "noninteractive":
 		gb.Interactive(false)
 	case "h", "help":
-		log.Print(usage())
+		Usage()
 	case "ls", "list":
 		gb.ListVersions()
 	case "ls-remote":
@@ -121,46 +127,14 @@ func main() {
 		gb.Version(version)
 	case "self-update":
 		gb.Upgrade(version)
+	default:
+		color.Errorln("[Error] Invalid usage")
+		Usage()
+		os.Exit(2)
 	}
 }
 
-func isArgAllowed() bool {
-	ok := true
-	if len(os.Args) > 1 {
-		_, ok = Find(allowedArgs, os.Args[1])
-		if !ok {
-			return false
-		}
-	}
-
-	if len(os.Args) > 2 {
-		_, ok = Find(allowedArgs, os.Args[1])
-		if !ok {
-			return false
-		}
-	}
-
-	return ok
-}
-
-// Find takes a slice and looks for an element in it. If found it will
-// return it's key, otherwise it will return -1 and a bool of false.
-func Find(slice []string, val string) (int, bool) {
-	for i, item := range slice {
-		if item == val {
-			return i, true
-		}
-	}
-	return -1, false
-}
-
-func usage() string {
-	usageMsg :=
-		`
-# Add gobrew to your ~/.bashrc or ~/.zshrc
-export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
-export GOROOT="$HOME/.gobrew/current/go"
-`
+var Usage = func() {
 	msg := `
 gobrew ` + version + `
 
@@ -177,6 +151,11 @@ Usage:
     gobrew prune                   Uninstall all go versions except current version
     gobrew version                 Show gobrew version
     gobrew help                    Show this message
+
+Options:
+    gobrew [--clear-cache | -c]   clear gobrew cache
+    gobrew [--disable-cache | -d] disable gobrew cache
+    gobrew [--ttl=20m | -t 20m]   set gobrew cache ttl, default 20m
 
 Examples:
     gobrew use 1.16                # use go version 1.16
@@ -195,5 +174,5 @@ Examples:
 Installation Path:
 ` + usageMsg
 
-	return msg
+	fmt.Fprintf(os.Stderr, "%s\n", msg)
 }

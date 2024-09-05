@@ -377,3 +377,13 @@ export GOPATH="$HOME/.gobrew/current/go"
 - v1.9.4 - `gobrew` interactive
 - v1.9.8 - bug fix where 1.21 is not detected as 1.21.0
 - v1.10.10 - `ls-remote` is blazing fast, cached.
+- v1.10.11 - Optional options for cache and ttl.
+
+
+# DEVELOPMENT NOTES
+
+```sh
+go run ./cmd/gobrew -h
+golangci-lint run ./...
+go test -v ./...
+```
