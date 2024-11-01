@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euxo pipefail
+set -euo pipefail
 
 GOBREW_BIN_DIR=$HOME/.gobrew/bin
 
@@ -9,7 +9,7 @@ if [ -n "${GOBREW_ROOT:-}" ]; then
   GOBREW_BIN_DIR=$GOBREW_ROOT/.gobrew/bin
 fi
 
-mkdir -p $GOBREW_BIN_DIR
+mkdir -p "$GOBREW_BIN_DIR"
 
 GOBREW_ARCH_BIN=''
 GOBREW_BIN='gobrew'
@@ -64,15 +64,17 @@ if [ "$GOBREW_VERSION" = "latest" ]; then
   DOWNLOAD_URL="https://github.com/kevincobain2000/gobrew/releases/$GOBREW_VERSION/download/$GOBREW_ARCH_BIN"
 fi
 
-echo "Installing gobrew from: $DOWNLOAD_URL"
+echo "🥳 Installing gobrew from: $DOWNLOAD_URL"
 echo ""
 
-curl -L -f --progress-bar $DOWNLOAD_URL -o $GOBREW_BIN_DIR/$GOBREW_BIN
+curl -L -f --progress-bar "$DOWNLOAD_URL" -o "$GOBREW_BIN_DIR"/$GOBREW_BIN
 
-chmod +x $GOBREW_BIN_DIR/$GOBREW_BIN
+chmod +x "$GOBREW_BIN_DIR/$GOBREW_BIN"
 
-echo "Installed successfully to: $GOBREW_BIN_DIR/$GOBREW_BIN"
+echo "🔧 Installed successfully to: $GOBREW_BIN_DIR/$GOBREW_BIN"
 
-echo "============================"
-$GOBREW_BIN_DIR/$GOBREW_BIN help
-echo "============================"
+echo "🚀 gobrew help"
+"$GOBREW_BIN_DIR/$GOBREW_BIN" help
+
+echo "⭐ Star us on Github, please give it a star on GitHub: https://github.com/kevincobain2000/gobrew"
+echo
