@@ -114,31 +114,36 @@ func (gb *GoBrew) Interactive(ask bool) {
 	fmt.Println()
 
 	if currentVersion == NoneVersion {
-		color.Warnln("GO Installed Version", ".......", currentVersion)
+		color.Warnln("🚨 Installed Version", ".......", currentVersion, "⚠️")
 	} else {
 		var labels []string
 		if modVersion != NoneVersion && currentMajorVersion != modVersion {
-			labels = append(labels, "not same as go.mod")
+			labels = append(labels, "🔄 not same as go.mod")
 		}
 		if currentVersion != latestVersion {
-			labels = append(labels, "not latest")
+			labels = append(labels, "⬆️ not latest")
 		}
 		label := ""
 		if len(labels) > 0 {
-			label = "(" + strings.Join(labels, ", ") + ")"
+			// label = "(" + strings.Join(labels, ", ") + ")"
 			label = " " + color.FgRed.Render(label)
 		}
-		color.Successln("GO Installed Version", ".......", currentVersion+label)
+		if currentVersion != latestVersion {
+			color.Successln("✅ Installed Version", ".......", currentVersion+label, "\t🌟", latestVersion, "available")
+		} else {
+			color.Successln("✅ Installed Version", ".......", currentVersion+label, "\t🎉", "on latest")
+		}
 	}
 
 	if modVersion != NoneVersion && latestMajorVersion != modVersion {
-		label := " " + color.FgYellow.Render("(not latest)")
-		color.Successln("GO go.mod Version", "   .......", modVersion+label)
+		label := " " + color.FgYellow.Render("\t⚠️  not latest")
+		color.Successln("📄 go.mod Version", "   .......", modVersion+label)
 	} else {
-		color.Successln("GO go.mod Version", "   .......", modVersion)
+		color.Successln("📄 go.mod Version", "   .......", modVersion)
 	}
 
-	color.Successln("GO Latest Version", "   .......", latestVersion)
+	// color.Successln("🌟 GO Latest Version", "   .......", latestVersion)
+
 	fmt.Println()
 
 	if currentVersion == NoneVersion {
@@ -154,14 +159,15 @@ func (gb *GoBrew) Interactive(ask bool) {
 	}
 
 	if modVersion != NoneVersion && currentMajorVersion != modVersion {
-		color.Warnf("GO Installed Version (%s) and go.mod Version (%s) are different.\n", currentMajorVersion, modVersion)
-		c := true
-		if ask {
-			c = askForConfirmation("Do you want to use GO version same as go.mod version (" + modVersion + "@latest)?")
-		}
-		if c {
-			gb.Use(modVersion + "@latest")
-		}
+		color.Warnf("⚠️  GO Installed Version (%s) and go.mod Version (%s) are different.\n", currentMajorVersion, modVersion)
+		fmt.Println("   Please consider updating your go.mod file")
+		// c := true
+		// if ask {
+		// 	c = askForConfirmation("Do you want to use GO version same as go.mod version (" + modVersion + "@latest)?")
+		// }
+		// if c {
+		// 	gb.Use(modVersion + "@latest")
+		// }
 		return
 	}
 
