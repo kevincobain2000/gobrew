@@ -125,7 +125,6 @@ func (gb *GoBrew) Interactive(ask bool) {
 		}
 		label := ""
 		if len(labels) > 0 {
-			// label = "(" + strings.Join(labels, ", ") + ")"
 			label = " " + color.FgRed.Render(label)
 		}
 		if currentVersion != latestVersion {
