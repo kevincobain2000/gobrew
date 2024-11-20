@@ -12,6 +12,7 @@ linters:
     - staticcheck
     - dupl
     - errorlint
+    - copyloopvar
     - goconst
     - gocritic
     - gocyclo
