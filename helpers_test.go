@@ -58,7 +58,6 @@ func TestJudgeVersion(t *testing.T) {
 		// },
 	}
 	for _, test := range tests {
-		test := test
 		t.Run(test.version, func(t *testing.T) {
 			t.Parallel()
 			ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
@@ -140,7 +139,6 @@ func TestExtractMajorVersion(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			if got := extractMajorVersion(tt.args.version); got != tt.want {
@@ -180,7 +178,6 @@ func TestGoBrew_extract(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
@@ -213,7 +210,6 @@ func Test_doRequest(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))

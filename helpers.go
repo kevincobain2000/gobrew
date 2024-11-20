@@ -41,7 +41,7 @@ func (gb *GoBrew) getArch() string {
 	return runtime.GOOS + "-" + runtime.GOARCH
 }
 
-func (gb *GoBrew) getGroupedVersion(versions []string, print bool) map[string][]string {
+func (gb *GoBrew) getGroupedVersion(versions []string, shouldPrint bool) map[string][]string {
 	groupedVersions := make(map[string][]string)
 	for _, version := range versions {
 		parts := strings.Split(version, ".")
@@ -88,15 +88,15 @@ func (gb *GoBrew) getGroupedVersion(versions []string, print bool) map[string][]
 		lookupKey = versionParts[0] + "." + versionParts[1]
 		// On match 1.0.0, print 1. On match 2.0.0 print 2
 		if reTopVersion.MatchString(strKey) {
-			if print {
+			if shouldPrint {
 				color.Infop(versionParts[0])
 			}
-			gb.print("\t", print)
+			gb.print("\t", shouldPrint)
 		} else {
-			if print {
+			if shouldPrint {
 				color.Successp(lookupKey)
 			}
-			gb.print("\t", print)
+			gb.print("\t", shouldPrint)
 		}
 
 		groupedVersionsSemantic := make([]*semver.Version, 0)
@@ -112,29 +112,29 @@ func (gb *GoBrew) getGroupedVersion(versions []string, print bool) map[string][]
 			maxPerLine++
 			if maxPerLine == 6 {
 				maxPerLine = 0
-				gb.print("\n\t", print)
+				gb.print("\n\t", shouldPrint)
 			}
-			gb.print(gvSemantic.String()+"  ", print)
+			gb.print(gvSemantic.String()+"  ", shouldPrint)
 		}
 
 		maxPerLine = 0
-		gb.print("\n\t", print)
+		gb.print("\n\t", shouldPrint)
 
 		// print rc and beta versions in the end
 		for _, rcVersion := range groupedVersions[lookupKey] {
 			r := regexp.MustCompile("beta.*|rc.*")
 			matches := r.FindAllString(rcVersion, -1)
 			if len(matches) == 1 {
-				gb.print(rcVersion+"  ", print)
+				gb.print(rcVersion+"  ", shouldPrint)
 				maxPerLine++
 				if maxPerLine == 6 {
 					maxPerLine = 0
-					gb.print("\n\t", print)
+					gb.print("\n\t", shouldPrint)
 				}
 			}
 		}
-		gb.print("\n", print)
-		gb.print("\n", print)
+		gb.print("\n", shouldPrint)
+		gb.print("\n", shouldPrint)
 	}
 	return groupedVersions
 }
@@ -503,8 +503,8 @@ func askForConfirmation(s string) bool {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		fmt.Printf("%s ", s)
-		color.Successf("[y/n]: ")
+		color.Successf(s) // nolint:govet
+		fmt.Print(" [y/n]: ")
 
 		response, err := reader.ReadString('\n')
 		if err != nil {
