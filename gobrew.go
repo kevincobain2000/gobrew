@@ -275,8 +275,8 @@ func (gb *GoBrew) ListVersions() {
 }
 
 // ListRemoteVersions that are installed by dir ls
-func (gb *GoBrew) ListRemoteVersions(print bool) map[string][]string {
-	if print {
+func (gb *GoBrew) ListRemoteVersions(shouldPrint bool) map[string][]string {
+	if shouldPrint {
 		color.Infoln("==> [Info] Fetching remote versions")
 	}
 	tags := gb.getGolangVersions()
@@ -284,7 +284,7 @@ func (gb *GoBrew) ListRemoteVersions(print bool) map[string][]string {
 	var versions []string
 	versions = append(versions, tags...)
 
-	return gb.getGroupedVersion(versions, print)
+	return gb.getGroupedVersion(versions, shouldPrint)
 }
 
 // CurrentVersion get current version from symb link
