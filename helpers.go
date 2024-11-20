@@ -503,8 +503,8 @@ func askForConfirmation(s string) bool {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		fmt.Printf("%s ", s)
-		color.Successf("[y/n]: ")
+		color.Successf(s)
+		fmt.Print(" [y/n]: ")
 
 		response, err := reader.ReadString('\n')
 		if err != nil {
