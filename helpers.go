@@ -503,7 +503,7 @@ func askForConfirmation(s string) bool {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		color.Successf(s)
+		color.Successf(s) // nolint:govet
 		fmt.Print(" [y/n]: ")
 
 		response, err := reader.ReadString('\n')
