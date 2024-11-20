@@ -357,27 +357,28 @@ export GOPATH="$HOME/.gobrew/current/go"
 
 # MAJOR CHANGE LOG
 
-- v1.2.0 - Added rc|beta versions, appended at the end of list
-- v1.5.0 - Mac M1 support
-- v1.5.5 - arm|M1|darwin support added
-- v1.5.8 - Show download progress and use Go's compression instead of tar command
-- v1.6.0 - Added support for @latest and @dev-latest and progress bar for download
-- v1.6.2 - Using goreleaser #35 by @juev
-- v1.6.3 - Added latest and dev-latest
-- v1.6.4 - Github action publish
-- v1.6.7 - Fixes rate limit issue
-- v1.7.4 - Added 2 new options `gobrew version` and `gobrew prune`
-- v1.7.5 - Fixes strange output on `gobrew use latest`
-- v1.7.8 - Windows support, self-update fixes
-- v1.7.9 - Windows fix ups and bash-completions
-- v1.8.0 - Windows support, including actions
-- v1.8.4 - Light background terminal support
-- v1.8.6 - Fixes where 1.20.0 was detected as 1.20
-- v1.9.0 - v1.8.6 ~ v1.9.0, updates colors packages, fixes UT issues for Github status codes
-- v1.9.4 - `gobrew` interactive
-- v1.9.8 - bug fix where 1.21 is not detected as 1.21.0
-- v1.10.10 - `ls-remote` is blazing fast, cached.
-- v1.10.11 - Optional options for cache and ttl.
+- **v1.2.0** - Added rc|beta versions, appended at the end of list
+- **v1.5.0** - Mac M1 support
+- **v1.5.5** - arm|M1|darwin support added
+- **v1.5.8** - Show download progress and use Go's compression instead of tar command
+- **v1.6.0** - Added support for @latest and @dev-latest and progress bar for download
+- **v1.6.2** - Using goreleaser #35 by @juev
+- **v1.6.3** - Added latest and dev-latest
+- **v1.6.4** - Github action publish
+- **v1.6.7** - Fixes rate limit issue
+- **v1.7.4** - Added 2 new options `gobrew version` and `gobrew prune`
+- **v1.7.5** - Fixes strange output on `gobrew use latest`
+- **v1.7.8** - Windows support, self-update fixes
+- **v1.7.9** - Windows fix ups and bash-completions
+- **v1.8.0** - Windows support, including actions
+- **v1.8.4** - Light background terminal support
+- **v1.8.6** - Fixes where 1.20.0 was detected as 1.20
+- **v1.9.0** - v1.8.6 ~ v1.9.0, updates colors packages, fixes UT issues for Github status codes
+- **v1.9.4** - `gobrew` interactive
+- **v1.9.8** - bug fix where 1.21 is not detected as 1.21.0
+- **v1.10.10** - `ls-remote` is blazing fast, cached.
+- **v1.10.11** - Optional options for cache and ttl.
+- **v1.10.12** - Icons on `gobrew` and install command.
 
 
 # DEVELOPMENT NOTES
