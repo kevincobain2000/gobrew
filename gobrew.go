@@ -142,8 +142,6 @@ func (gb *GoBrew) Interactive(ask bool) {
 		color.Successln("📄 go.mod Version", "   .......", modVersion)
 	}
 
-	// color.Successln("🌟 GO Latest Version", "   .......", latestVersion)
-
 	fmt.Println()
 
 	if currentVersion == NoneVersion {
@@ -161,13 +159,13 @@ func (gb *GoBrew) Interactive(ask bool) {
 	if modVersion != NoneVersion && currentMajorVersion != modVersion {
 		color.Warnf("⚠️  GO Installed Version (%s) and go.mod Version (%s) are different.\n", currentMajorVersion, modVersion)
 		fmt.Println("   Please consider updating your go.mod file")
-		// c := true
-		// if ask {
-		// 	c = askForConfirmation("Do you want to use GO version same as go.mod version (" + modVersion + "@latest)?")
-		// }
-		// if c {
-		// 	gb.Use(modVersion + "@latest")
-		// }
+		c := true
+		if ask {
+			c = askForConfirmation("Do you want to use GO version same as go.mod version (" + modVersion + "@latest)?")
+		}
+		if c {
+			gb.Use(modVersion + "@latest")
+		}
 		return
 	}
 
