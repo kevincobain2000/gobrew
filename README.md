@@ -6,7 +6,7 @@
 <p align="center">
   Go version manager, written in Go<br>
   Update and switch Go versions easily<br>
-  Install Go on Linux or Mac (intel) or Mac with Apple chip (M1, M2 etc) or Windows
+  Install Go on Linux or Mac (intel) or Mac with Apple chip (M1 to M4) or Windows
 </p>
 
 **Quick Setup:** One command to install Go and manage versions.
@@ -39,8 +39,6 @@
 ![go-sec-issues](https://coveritup.app/chart?org=kevincobain2000&repo=gobrew&type=go-sec-issues&branch=master&output=svg&width=160&height=160&line=fill)
 ![unit-test-run-time](https://coveritup.app/chart?org=kevincobain2000&repo=gobrew&type=unit-test-run-time&branch=master&output=svg&width=160&height=160)
 ![allocs-per-op](https://coveritup.app/chart?org=kevincobain2000&repo=gobrew&type=allocs-per-op&output=svg&width=160&height=160&branch=master)
-
-
 
 
 ## Install or update
@@ -135,15 +133,6 @@ List installed versions
 
 ```sh
 ╰─$ gobrew ls
-1.15.1
-1.16
-1.16.3
-1.17
-1.17.1
-1.17.2
-1.17.3
-1.17.4
-1.17.5
 1.17.6
 1.17.7
 1.17.8
