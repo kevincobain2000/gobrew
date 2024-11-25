@@ -86,7 +86,7 @@ Simply use command `gobrew` from any dir. It will auto detect if Go version is s
 
 <p align="center">
   <a href="https://github.com/kevincobain2000/gobrew">
-    <img alt="gobrew command" src="https://imgur.com/iV3WuVb.png">
+    <img alt="gobrew command" src="https://imgur.com/vaqbS5o.png">
   </a>
 </p>
 
@@ -133,7 +133,7 @@ List installed versions `gobrew ls`
 
 <p align="center">
   <a href="https://github.com/kevincobain2000/gobrew">
-    <img alt="gobrew command" src="https://imgur.com/CXZTXxE.png">
+    <img alt="gobrew command" src="https://imgur.com/qCuaUMD.png">
   </a>
 </p>
 
