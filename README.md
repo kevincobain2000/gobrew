@@ -238,6 +238,18 @@ export GOROOT="$HOME/.gobrew/current/go"
 export GOPATH="$HOME/.gobrew/current/go"
 ```
 
+# MCP
+
+```sh
+{
+    "mcpServers": {
+      "mcp_server_gobrew": {
+        "command": "~/.gobrew/bin/mcp-gobrew"
+      }
+    }
+  }
+```
+
 # CHANGELOG
 
 - **v1.2.0** - Added rc|beta versions, appended at the end of list
@@ -262,6 +274,7 @@ export GOPATH="$HOME/.gobrew/current/go"
 - **v1.10.10** - `ls-remote` is blazing fast, cached.
 - **v1.10.11** - Optional options for cache and ttl.
 - **v1.10.12** - Icons on `gobrew` and install command.
+- **v1.10.13** - MCP support.
 
 
 # DEVELOPMENT NOTES
