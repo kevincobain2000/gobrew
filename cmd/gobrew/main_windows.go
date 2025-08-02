@@ -5,6 +5,6 @@ package main
 const usageMsg string = `
     # Add gobrew to your environment variables
     PATH="%USERPROFILE%\.gobrew\current\bin;%USERPROFILE%\.gobrew\bin;%PATH%"
-    GOPATH="%USERPROFILE%\go"
+    GOPATH="%USERPROFILE%\.gobrew\current\go"
 
 `
