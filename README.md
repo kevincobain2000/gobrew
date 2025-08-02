@@ -167,7 +167,7 @@ Installation Path:
 
 # Add gobrew to your ~/.bashrc or ~/.zshrc
 export PATH="$HOME/.gobrew/current/bin:$HOME/.gobrew/bin:$PATH"
-export GOROOT="$HOME/.gobrew/current/go"
+export GOPATH="$HOME/go"
 ```
 
 # Uninstall gobrew
@@ -229,13 +229,11 @@ echo "export GOBREW_ROOT=/usr/local/share" >> ~/.zshrc
 curl -sLk https://raw.githubusercontent.com/kevincobain2000/gobrew/master/git.io.sh | sh
 ```
 
-Set `GOROOT` and `GOPATH` in your shell config file (`.bashrc` or `.zshrc`).
+Set `GOPATH` in your shell config file (`.bashrc` or `.zshrc`).
 
 ```sh
 # optionally set
-export GOROOT="$HOME/.gobrew/current/go"
-# optionally set
-export GOPATH="$HOME/.gobrew/current/go"
+export GOPATH="$HOME/go"
 ```
 
 # CHANGELOG
