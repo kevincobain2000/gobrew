@@ -321,7 +321,7 @@ func (gb *GoBrew) Install(version string) string {
 		color.Errorln("[Error] No version provided")
 		os.Exit(1)
 	}
-	// if version has 3 dots, then remove the @latest or @dev-latest
+	// if version has 2 dots, then remove the @latest or @dev-latest
 	if strings.Count(version, ".") == 2 {
 		if strings.HasSuffix(version, "@latest") || strings.HasSuffix(version, "@dev-latest") {
 			version = strings.TrimSuffix(version, "@latest")
