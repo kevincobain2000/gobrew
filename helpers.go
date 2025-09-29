@@ -26,15 +26,28 @@ import (
 
 func (gb *GoBrew) getLatestVersion() string {
 	getGolangVersions := gb.getGolangVersions()
-	// loop through reverse and ignore beta and rc versions to get latest version
-	for i := len(getGolangVersions) - 1; i >= 0; i-- {
+
+	// Filter out beta and rc versions and create semantic versions
+	var validVersions []*semver.Version
+	for _, version := range getGolangVersions {
 		r := regexp.MustCompile("beta.*|rc.*")
-		matches := r.FindAllString(getGolangVersions[i], -1)
+		matches := r.FindAllString(version, -1)
 		if len(matches) == 0 {
-			return getGolangVersions[i]
+			if v, err := semver.NewVersion(version); err == nil {
+				validVersions = append(validVersions, v)
+			}
 		}
 	}
-	return ""
+
+	if len(validVersions) == 0 {
+		return ""
+	}
+
+	// Sort semantic versions
+	sort.Sort(semver.Collection(validVersions))
+
+	// Return the latest version (last in sorted order)
+	return validVersions[len(validVersions)-1].String()
 }
 
 func (gb *GoBrew) getArch() string {
@@ -503,7 +516,7 @@ func askForConfirmation(s string) bool {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		color.Successf(s) // nolint:govet
+		color.Successln(s)
 		fmt.Print(" [y/n]: ")
 
 		response, err := reader.ReadString('\n')

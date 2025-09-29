@@ -1,8 +1,5 @@
 name: golangci-lint
 on:
-  push:
-    branches:
-      - '**'
   pull_request:
     branches:
       - '**'
@@ -21,7 +18,5 @@ jobs:
         uses: kevincobain2000/action-gobrew@v2
         with:
           version: latest
-      -
-        uses: golangci/golangci-lint-action@v6
-        with:
-          version: latest
+      - run: go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.5.0
+      - run: golangci-lint run ./...

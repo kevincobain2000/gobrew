@@ -108,7 +108,7 @@ func (gb *GoBrew) Interactive(ask bool) {
 	modVersion := NoneVersion
 	if gb.hasModFile() {
 		modVersion = gb.getModVersion()
-		modVersion = extractMajorVersion(modVersion)
+		// modVersion = extractMajorVersion(modVersion)
 	}
 
 	fmt.Println()
@@ -135,7 +135,7 @@ func (gb *GoBrew) Interactive(ask bool) {
 	}
 
 	if modVersion != NoneVersion && latestMajorVersion != modVersion {
-		label := " " + color.FgYellow.Render("\t⚠️  not latest")
+		label := " " + color.FgYellow.Render("\t⚠️ not latest")
 		color.Successln("📄 go.mod Version", "   .......", modVersion+label)
 	} else {
 		color.Successln("📄 go.mod Version", "   .......", modVersion)
@@ -156,7 +156,7 @@ func (gb *GoBrew) Interactive(ask bool) {
 	}
 
 	if modVersion != NoneVersion && currentMajorVersion != modVersion {
-		color.Warnf("⚠️  GO Installed Version (%s) and go.mod Version (%s) are different.\n", currentMajorVersion, modVersion)
+		color.Warnf("⚠️ GO Installed Version (%s) and go.mod Version (%s) are different.\n", currentMajorVersion, modVersion)
 		fmt.Println("   Please consider updating your go.mod file")
 		c := true
 		if ask {
@@ -169,7 +169,7 @@ func (gb *GoBrew) Interactive(ask bool) {
 	}
 
 	if currentVersion != latestVersion {
-		color.Warnf("⚠️  GO Installed Version (%s) and GO Latest Version (%s) are different.\n", currentVersion, latestVersion)
+		color.Warnf("⚠️ GO Installed Version (%s) and GO Latest Version (%s) are different.\n", currentVersion, latestVersion)
 		c := true
 		if ask {
 			c = askForConfirmation("🤔 Do you want to update GO to latest version (" + latestVersion + ")?")
@@ -321,9 +321,17 @@ func (gb *GoBrew) Install(version string) string {
 		color.Errorln("[Error] No version provided")
 		os.Exit(1)
 	}
+	// if version has 2 dots, then remove the @latest or @dev-latest
+	if strings.Count(version, ".") == 2 {
+		if strings.HasSuffix(version, "@latest") || strings.HasSuffix(version, "@dev-latest") {
+			version = strings.TrimSuffix(version, "@latest")
+			version = strings.TrimSuffix(version, "@dev-latest")
+		}
+	}
+	tmpVersion := version
 	version = gb.judgeVersion(version)
 	if version == NoneVersion {
-		color.Errorln("[Error] Version non exists")
+		color.Errorln("[Error] Version", tmpVersion, "does not exists")
 		os.Exit(1)
 	}
 	if gb.existsVersion(version) {
