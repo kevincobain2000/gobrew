@@ -34,7 +34,7 @@ func (vm *VersionManager) ParseAndValidateVersion(version string) (*semver.Versi
 	// Parse using semver library
 	semverVersion, err := semver.NewVersion(cleanVersion)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse version %s: %v", version, err)
+		return nil, fmt.Errorf("failed to parse version %s: %w", version, err)
 	}
 
 	return semverVersion, nil
