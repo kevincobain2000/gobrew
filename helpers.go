@@ -12,7 +12,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime"
-	"slices"
 	"sort"
 	"strings"
 	"time"
@@ -25,29 +24,8 @@ import (
 )
 
 func (gb *GoBrew) getLatestVersion() string {
-	getGolangVersions := gb.getGolangVersions()
-
-	// Filter out beta and rc versions and create semantic versions
-	var validVersions []*semver.Version
-	for _, version := range getGolangVersions {
-		r := regexp.MustCompile("beta.*|rc.*")
-		matches := r.FindAllString(version, -1)
-		if len(matches) == 0 {
-			if v, err := semver.NewVersion(version); err == nil {
-				validVersions = append(validVersions, v)
-			}
-		}
-	}
-
-	if len(validVersions) == 0 {
-		return ""
-	}
-
-	// Sort semantic versions
-	sort.Sort(semver.Collection(validVersions))
-
-	// Return the latest version (last in sorted order)
-	return validVersions[len(validVersions)-1].String()
+	// Use VersionManager for better reliability
+	return gb.versionManager.getLatestStableVersion()
 }
 
 func (gb *GoBrew) getArch() string {
@@ -183,120 +161,14 @@ func (gb *GoBrew) cleanDownloadsDir() {
 	_ = os.RemoveAll(gb.downloadsDir)
 }
 
+// judgeVersion is a wrapper around VersionManager.ResolveVersion for backward compatibility
+// Deprecated: Use gb.versionManager.ResolveVersion() instead
 func (gb *GoBrew) judgeVersion(version string) string {
-	judgedVersion := NoneVersion
-	rcBetaOk := false
-	reRcOrBeta := regexp.MustCompile("beta.*|rc.*")
-
-	// check if version string ends with x
-	if strings.HasSuffix(version, "x") {
-		judgedVersion = strings.TrimSuffix(version, "x")
-	}
-
-	if strings.HasSuffix(version, ".x") {
-		judgedVersion = strings.TrimSuffix(version, ".x")
-	}
-	if strings.HasSuffix(version, "@latest") {
-		judgedVersion = strings.TrimSuffix(version, "@latest")
-	}
-	if strings.HasSuffix(version, "@dev-latest") {
-		judgedVersion = strings.TrimSuffix(version, "@dev-latest")
-		rcBetaOk = true
-	}
-
-	if version == "mod" {
-		// get version by reading the mod file of Go
-		modVersion := gb.getModVersion()
-		// if modVersion is like 1.19, 1.20, 1.21 then appened @latest to it
-		if strings.Count(modVersion, ".") == 1 {
-			modVersion += "@latest"
-		}
-		return gb.judgeVersion(modVersion)
-	}
-	groupedVersions := gb.ListRemoteVersions(false) // donot print
-
-	// latest will pick the latest version excluding rc and beta
-	// dev-latest will first remove rc and beta from the list of versions and then pick the latest version
-	if version == "latest" || version == "dev-latest" {
-		groupedVersionKeys := make([]string, 0, len(groupedVersions))
-		for groupedVersionKey := range groupedVersions {
-			groupedVersionKeys = append(groupedVersionKeys, groupedVersionKey)
-		}
-		versionsSemantic := make([]*semver.Version, 0)
-		for _, r := range groupedVersionKeys {
-			if v, err := semver.NewVersion(r); err == nil {
-				versionsSemantic = append(versionsSemantic, v)
-			}
-		}
-		if len(versionsSemantic) == 0 {
-			return NoneVersion
-		}
-
-		// sort semantic versions
-		sort.Sort(semver.Collection(versionsSemantic))
-		// loop in reverse
-		for i := len(versionsSemantic) - 1; i >= 0; i-- {
-			judgedVersions := groupedVersions[versionsSemantic[i].Original()]
-			// get last element
-			if version == "dev-latest" {
-				if len(judgedVersions) == 0 {
-					return NoneVersion
-				}
-				// Filter versions containing "rc" or "beta"
-				filteredVersions := gb.filterVersions(judgedVersions, []string{"rc", "beta"})
-
-				// Get the last element of the filtered slice
-				var lastVersion string
-				if len(filteredVersions) > 0 {
-					lastVersion = filteredVersions[len(filteredVersions)-1]
-				}
-
-				return lastVersion
-			}
-
-			// loop in reverse
-			for j := len(judgedVersions) - 1; j >= 0; j-- {
-				matches := reRcOrBeta.FindAllString(judgedVersions[j], -1)
-				if len(matches) == 0 {
-					return judgedVersions[j]
-				}
-			}
-		}
-
-		latest := versionsSemantic[len(versionsSemantic)-1].String()
-		return gb.judgeVersion(latest)
-	}
-
-	if judgedVersion != NoneVersion {
-		// check if judgedVersion is in the groupedVersions
-		if _, ok := groupedVersions[judgedVersion]; ok {
-			// get last item in the groupedVersions excluding rc and beta
-			// loop in reverse groupedVersions
-			for i := len(groupedVersions[judgedVersion]) - 1; i >= 0; i-- {
-				matches := reRcOrBeta.FindAllString(groupedVersions[judgedVersion][i], -1)
-				if len(matches) == 0 {
-					return groupedVersions[judgedVersion][i]
-				}
-			}
-			if rcBetaOk {
-				// return last element including beta and rc if present
-				return groupedVersions[judgedVersion][len(groupedVersions[judgedVersion])-1]
-			}
-		}
-	}
-
-	exists := false
-	for _, value := range groupedVersions {
-		if slices.Contains(value, version) {
-			exists = true
-			break
-		}
-	}
-	if !exists {
+	resolvedVersion, err := gb.versionManager.ResolveVersion(version)
+	if err != nil {
 		return NoneVersion
 	}
-
-	return version
+	return resolvedVersion
 }
 
 func (gb *GoBrew) hasModFile() bool {
@@ -498,6 +370,8 @@ func (gb *GoBrew) extract(srcTar string, dstDir string) error {
 	return nil
 }
 
+// extractMajorVersion is deprecated and replaced by VersionManager.ExtractMajorVersion
+// This function is kept for backward compatibility
 func extractMajorVersion(version string) string {
 	parts := strings.Split(version, ".")
 	if len(parts) < 2 {

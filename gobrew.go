@@ -7,9 +7,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"regexp"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 
@@ -58,6 +56,7 @@ type GoBrew struct {
 	currentGoDir  string
 	downloadsDir  string
 	cacheFile     string
+	versionManager *VersionManager
 	Config
 }
 
@@ -90,6 +89,8 @@ func NewGoBrew(config Config) GoBrew {
 		cacheFile:     cacheFile,
 	}
 
+	gb.versionManager = NewVersionManager(&gb)
+
 	if gb.ClearCache {
 		_ = os.RemoveAll(gb.cacheFile)
 	}
@@ -100,10 +101,10 @@ func NewGoBrew(config Config) GoBrew {
 // Interactive used by default
 func (gb *GoBrew) Interactive(ask bool) {
 	currentVersion := gb.CurrentVersion()
-	currentMajorVersion := extractMajorVersion(currentVersion)
+	currentMajorVersion := gb.versionManager.ExtractMajorVersion(currentVersion)
 
 	latestVersion := gb.getLatestVersion()
-	latestMajorVersion := extractMajorVersion(latestVersion)
+	latestMajorVersion := gb.versionManager.ExtractMajorVersion(latestVersion)
 
 	modVersion := NoneVersion
 	if gb.hasModFile() {
@@ -160,10 +161,18 @@ func (gb *GoBrew) Interactive(ask bool) {
 		fmt.Println("   Please consider updating your go.mod file")
 		c := true
 		if ask {
-			c = askForConfirmation("🤔 Do you want to use GO version same as go.mod version (" + modVersion + "@latest)?")
+			versionToUse := modVersion
+			if strings.Count(modVersion, ".") == 1 {
+				versionToUse = modVersion + "@latest"
+			}
+			c = askForConfirmation("🤔 Do you want to use GO version same as go.mod version (" + versionToUse + ")?")
 		}
 		if c {
-			gb.Use(modVersion + "@latest")
+			versionToUse := modVersion
+			if strings.Count(modVersion, ".") == 1 {
+				versionToUse = modVersion + "@latest"
+			}
+			gb.Use(versionToUse)
 		}
 		return
 	}
@@ -223,9 +232,12 @@ func (gb *GoBrew) ListVersions() {
 	cv := gb.CurrentVersion()
 
 	versionsSemantic := make([]*semver.Version, 0)
+	rcBetaVersions := make([]string, 0)
 
 	for _, f := range files {
-		if v, err := semver.NewVersion(f.Name()); err == nil {
+		if gb.versionManager.isBetaOrRC(f.Name()) {
+			rcBetaVersions = append(rcBetaVersions, f.Name())
+		} else if v, err := semver.NewVersion(f.Name()); err == nil {
 			versionsSemantic = append(versionsSemantic, v)
 		}
 	}
@@ -235,15 +247,9 @@ func (gb *GoBrew) ListVersions() {
 
 	for _, versionSemantic := range versionsSemantic {
 		version := versionSemantic.String()
-		// 1.8.0 -> 1.8, if version < 1.21.0
-		reMajorVersion := regexp.MustCompile("([0-9]+).([0-9]+).0")
-		if len(reMajorVersion.FindStringSubmatch(version)) > 1 {
-			vv, _ := strconv.Atoi(reMajorVersion.FindStringSubmatch(version)[2])
-			if vv < 21 {
-				if reMajorVersion.MatchString(version) {
-					version = strings.Split(version, ".")[0] + "." + strings.Split(version, ".")[1]
-				}
-			}
+		// For versions < 1.21.0, display as major.minor
+		if versionSemantic.Major() == 1 && versionSemantic.Minor() < 21 && versionSemantic.Patch() == 0 {
+			version = fmt.Sprintf("%d.%d", versionSemantic.Major(), versionSemantic.Minor())
 		}
 		if version == cv {
 			version = cv + "*"
@@ -254,17 +260,12 @@ func (gb *GoBrew) ListVersions() {
 	}
 
 	// print rc and beta versions in the end
-	for _, f := range files {
-		rcVersion := f.Name()
-		r := regexp.MustCompile("beta.*|rc.*")
-		matches := r.FindAllString(rcVersion, -1)
-		if len(matches) == 1 {
-			if rcVersion == cv {
-				rcVersion = cv + "*"
-				color.Successln(rcVersion)
-			} else {
-				color.Infoln(rcVersion)
-			}
+	for _, rcVersion := range rcBetaVersions {
+		if rcVersion == cv {
+			rcVersion = cv + "*"
+			color.Successln(rcVersion)
+		} else {
+			color.Infoln(rcVersion)
 		}
 	}
 
@@ -321,19 +322,18 @@ func (gb *GoBrew) Install(version string) string {
 		color.Errorln("[Error] No version provided")
 		os.Exit(1)
 	}
-	// if version has 2 dots, then remove the @latest or @dev-latest
-	if strings.Count(version, ".") == 2 {
-		if strings.HasSuffix(version, "@latest") || strings.HasSuffix(version, "@dev-latest") {
-			version = strings.TrimSuffix(version, "@latest")
-			version = strings.TrimSuffix(version, "@dev-latest")
-		}
-	}
+	// Use VersionManager to resolve the version
 	tmpVersion := version
-	version = gb.judgeVersion(version)
-	if version == NoneVersion {
+	resolvedVersion, err := gb.versionManager.ResolveVersion(version)
+	if err != nil {
+		color.Errorln("[Error]", err)
+		os.Exit(1)
+	}
+	if resolvedVersion == NoneVersion {
 		color.Errorln("[Error] Version", tmpVersion, "does not exists")
 		os.Exit(1)
 	}
+	version = resolvedVersion
 	if gb.existsVersion(version) {
 		color.Infof("==> [Info] Version: %s exists\n", version)
 		return version
