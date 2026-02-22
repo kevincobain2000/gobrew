@@ -11,18 +11,12 @@ jobs:
   build:
     strategy:
       matrix:
-        go-version: [latest, dev-latest, mod]
         os: [windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v6
-        with:
-          go-version: ${{ matrix.go-version }}
 
-      - name: Go version
-        run: go version
-        shell: bash
       - name: Build
         run: go build ./cmd/gobrew
         shell: bash
