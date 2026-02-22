@@ -1,6 +1,6 @@
 module github.com/kevincobain2000/gobrew
 
-go 1.25.1
+go 1.26.0
 
 require (
 	github.com/Masterminds/semver v1.5.0
