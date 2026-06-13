@@ -154,6 +154,31 @@ func TestPrune(t *testing.T) {
 	t.Log("test finished")
 }
 
+// TestPruneReadOnlyDir reproduces issue #226: a read-only directory inside an
+// installed version (e.g. a Go module-cache style tree with mode 0555) made
+// os.RemoveAll fail with "permission denied", so prune reported success while
+// the version stayed on disk.
+func TestPruneReadOnlyDir(t *testing.T) {
+	t.Parallel()
+	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))
+	defer ts.Close()
+	gb := setupGobrew(t, ts)
+	gb.Install("1.20")
+	gb.Install("1.19")
+	gb.Use("1.19")
+
+	// Inject a read-only directory holding a read-only file into version 1.20.
+	roDir := filepath.Join(gb.getVersionDir("1.20"), "go", "readonly")
+	assert.NoError(t, os.MkdirAll(roDir, 0o755))
+	assert.NoError(t, os.WriteFile(filepath.Join(roDir, "f"), []byte("x"), 0o600))
+	assert.NoError(t, os.Chmod(roDir, 0o555))
+
+	gb.Prune()
+	assert.Equal(t, false, gb.existsVersion("1.20"))
+	assert.Equal(t, true, gb.existsVersion("1.19"))
+	t.Log("test finished")
+}
+
 func TestGoBrew_CurrentVersion(t *testing.T) {
 	t.Parallel()
 	ts := httptest.NewServer(http.FileServer(http.Dir("testdata")))

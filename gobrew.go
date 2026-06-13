@@ -312,7 +312,10 @@ func (gb *GoBrew) Uninstall(version string) {
 		color.Errorf("[Error] Version: %s you are trying to remove is your current version. Please use a different version first before uninstalling the current version\n", version)
 		os.Exit(1)
 	}
-	gb.cleanVersionDir(version)
+	if err := gb.cleanVersionDir(version); err != nil {
+		color.Errorf("==> [Error] Failed to uninstall version: %s: %s\n", version, err)
+		return
+	}
 	color.Successf("==> [Success] Version: %s uninstalled\n", version)
 }
 
