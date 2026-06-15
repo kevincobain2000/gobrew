@@ -3,9 +3,11 @@ package utils
 import (
 	"fmt"
 	"io"
+	"io/fs"
 	"net/http"
 	"os"
 	"path"
+	"path/filepath"
 
 	"github.com/gookit/color"
 	"github.com/schollz/progressbar/v3"
@@ -50,6 +52,27 @@ func DownloadWithProgress(url string, tarName string, destFolder string) (err er
 	}
 
 	return nil
+}
+
+// RemoveAll removes path and all its children, making any read-only
+// directories writable first. A plain os.RemoveAll fails with
+// "permission denied" when the tree contains read-only directories
+// (e.g. Go module-cache style trees with mode 0555), leaving the
+// directory in place. Making directories writable before removal avoids
+// silently failing to delete an installed Go version.
+func RemoveAll(path string) error {
+	_ = filepath.WalkDir(path, func(p string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return nil
+		}
+		// WalkDir does not follow symlinks and d.IsDir() is false for
+		// symlinked dirs, so p stays within gobrew's version tree.
+		if d.IsDir() {
+			_ = os.Chmod(p, 0o755) //nolint:gosec // path is confined to the walked tree
+		}
+		return nil
+	})
+	return os.RemoveAll(path)
 }
 
 func CheckError(err error, format string) {

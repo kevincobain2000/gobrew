@@ -153,8 +153,8 @@ func (gb *GoBrew) existsVersion(version string) bool {
 	return err == nil
 }
 
-func (gb *GoBrew) cleanVersionDir(version string) {
-	_ = os.RemoveAll(gb.getVersionDir(version))
+func (gb *GoBrew) cleanVersionDir(version string) error {
+	return utils.RemoveAll(gb.getVersionDir(version))
 }
 
 func (gb *GoBrew) cleanDownloadsDir() {
@@ -263,7 +263,7 @@ func (gb *GoBrew) downloadAndExtract(version string) {
 	err = gb.extract(srcTar, dstDir)
 	if err != nil {
 		// clean up dir
-		gb.cleanVersionDir(version)
+		_ = gb.cleanVersionDir(version)
 		color.Errorln("==> [Info] Extract failed:", err)
 		os.Exit(1)
 	}
